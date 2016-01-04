@@ -6,7 +6,6 @@
 
 package com.mygdx.game.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -24,7 +23,7 @@ public class Polygon {
     {
         this.vertices = vertices;
         this.friction = friction;
-        startPos = vertices[0].cpy();
+        updateHome();
     }
     
     public void setVelocity(float diffX, float diffY)
@@ -54,6 +53,10 @@ public class Polygon {
         velocity.x = (startPos.x-vertices[0].x)*speedFactor;
         velocity.y = (startPos.y-vertices[0].y)*speedFactor;
         move();
+    }
+    public void updateHome()
+    {
+        startPos = vertices[0].cpy();
     }
     
     public Vector2[] getVertices()

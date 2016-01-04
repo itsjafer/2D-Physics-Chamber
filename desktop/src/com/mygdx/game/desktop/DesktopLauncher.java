@@ -7,8 +7,9 @@ import com.mygdx.game.MyGdxGame;
 public class DesktopLauncher {
     public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.height = 800;
-        config.width = 1300;
+        config.title = "SAT COLLISIONS";
+        config.height = 850;
+        config.width = 1400;
         new LwjglApplication(new MyGdxGame(), config);
     }
 }

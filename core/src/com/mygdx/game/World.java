@@ -106,6 +106,14 @@ public class World {
             }
         }
         
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S))
+        {
+            for (Polygon polygon: polygons)
+            {
+                polygon.updateHome();
+            }
+        }
+        
         for (Polygon polygon: polygons)
         {
             polygon.move();
