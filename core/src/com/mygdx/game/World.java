@@ -9,7 +9,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.model.Polygon;
+import com.mygdx.game.model.Polygons;
 import java.util.ArrayList;
 
 /**
@@ -18,11 +18,11 @@ import java.util.ArrayList;
  */
 public class World {
     
-    private ArrayList<Polygon> polygons;
+    private ArrayList<Polygons> polygons;
     boolean mousePressed = false;
     Vector2 lastMousePos = null;
     Vector2 mousePos = null;
-    Polygon movedPoly = null;
+    Polygons movedPoly = null;
     
     private float frictionNormal = 0.95f;
     private float frictionContact = 0.4f;
@@ -87,7 +87,7 @@ public class World {
         {
             if (potentialPolygon.size() >= 3)
             {
-                polygons.add(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), frictionNormal));
+                polygons.add(new Polygons(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), frictionNormal));
                 potentialPolygon.clear();
             }
         }
@@ -100,7 +100,7 @@ public class World {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE))
         {
-            for (Polygon polygon: polygons)
+            for (Polygons polygon: polygons)
             {
                 polygon.goHome(1f/60);
             }
@@ -108,23 +108,23 @@ public class World {
         
         if (Gdx.input.isKeyJustPressed(Input.Keys.S))
         {
-            for (Polygon polygon: polygons)
+            for (Polygons polygon: polygons)
             {
                 polygon.updateHome();
             }
         }
         
-        for (Polygon polygon: polygons)
+        for (Polygons polygon: polygons)
         {
             polygon.move();
         }
     }
     
-    public Polygon collidePoint(Vector2 point)
+    public Polygons collidePoint(Vector2 point)
     {
         if (Gdx.input.isTouched() && movedPoly != null)
             return movedPoly;
-        Polygon collidedPolygon = null;
+        Polygons collidedPolygon = null;
         
         Vector2[] normals;
         
@@ -141,7 +141,7 @@ public class World {
             for (Vector2 normal: normals)
             {
                 proj = polygons.get(i).project(normal);
-                dotProj = Polygon.projectVector(point, normal);
+                dotProj = Polygons.projectVector(point, normal);
                 
                 if (proj.x > dotProj || proj.y < dotProj)
                 {
@@ -157,9 +157,9 @@ public class World {
         return null;
     }
     
-    public ArrayList<Polygon> collidePolygons()
+    public ArrayList<Polygons> collidePolygons()
     {
-        ArrayList<Polygon> collidedPolygons = new ArrayList();
+        ArrayList<Polygons> collidedPolygons = new ArrayList();
         
         Vector2[] normals1;
         Vector2[] normals2;
@@ -236,7 +236,7 @@ public class World {
         return collidedPolygons;
     }
     
-    public ArrayList<Polygon> getPolygons()
+    public ArrayList<Polygons> getPolygons()
     {
         return polygons;
     }
