@@ -11,45 +11,59 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.Texture;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
- *
+ * 
  * @author Dmitry
  */
 public class UI {
     
-    SpriteBatch batch;
     OrthographicCamera camera;
     Viewport viewport;
     
-    public UI(float width, float height)
-    {
-        create(width, height);
-    }
+    SpriteBatch batch;
     
-    public void create(float width, float height)
+    // Just to test
+    Texture img = new Texture("badlogic.jpg");
+    
+    /**
+     * Creates a UI object
+     */
+    public UI()
     {
+        // initialize some objects
         batch = new SpriteBatch();
 
         camera = new OrthographicCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
+        // this should center the camera by default. if it doesn't work, use the code below
+        viewport.apply(true);
         
-        camera.position.x = Gdx.graphics.getWidth()/2;
-        camera.position.y = Gdx.graphics.getHeight()/2;
+        // Since the camera's (x, y) is in its center, the camera needs to be set to the middle of the screen
+//        camera.position.x = camera.viewportWidth/2;
+//        camera.position.y = camera.viewportHeight/2;
         
     }
     
+    /**
+     * Draws the game
+     */
     public void render()
     {
+        // clear the screen
         Gdx.gl20.glClearColor(0, 0, 0, 1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
+        // updates the camera to the world space
         camera.update();
+        // loads the batch and sets it to follow the camera's projection matrix
         batch.setProjectionMatrix(camera.combined);
-        
         batch.begin();
+        // test
+        batch.draw(img, 0, 0);
         batch.end();
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
@@ -93,6 +107,8 @@ public class UI {
 
     void resize(int width, int height) {
         viewport.update(width, height);
+        // test
+        viewport.apply(true);
     }
     
 }

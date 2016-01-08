@@ -87,7 +87,7 @@ public class World {
         {
             if (potentialPolygon.size() >= 3)
             {
-                polygons.add(new Polygons(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), frictionNormal));
+//                polygons.add(new Polygons(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), frictionNormal));
                 potentialPolygon.clear();
             }
         }

@@ -14,13 +14,7 @@ import com.mygdx.game.GameInputProcessor;
  */
 public class GameWorld {
 
-    public GameWorld() {
-    }
-
     public void update(GameInputProcessor inputProcessor) {
 //        System.out.println(inputProcessor.keyDown(Input.Keys.W));
-    }
-
-    public void moveMarioUp() {
     }
 }

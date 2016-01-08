@@ -9,21 +9,34 @@ package com.mygdx.game.model;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- *
+ * For now lets not extends shape cause I'm not exactly sure how that's going to be structured
+ *  ^^ still need to fool around with circles before we can decide
  * @author Dmitry
  */
-public class Polygons extends Shape {
+public class Polygons {
 
+    // All of the vertices of the polygon
     private Vector2[] vertices;
-    private Vector2 velocity = new Vector2(0, 0);
+    // the polygon's current velocity
+    private Vector2 velocity;
+    // The polygon's center
+    private Vector2 center;
+    
+    // FRICTION ... TO BE ADDED LATER, JUST IGNORE FOR NOW
     private float friction;
+    //////////////////////////////////////////////////
+    
+    // The polygon's center when its position was last saved
     private Vector2 startPos = null;
 
     public Polygons(Vector2[] vertices, float friction, Vector2 startPos) {
         
-        super(friction,startPos);
+        this.friction = friction;
+        
         this.vertices = vertices;
-        updateHome();
+        velocity = new Vector2(0, 0);
+        
+        savePosition();
     }
 
     public void setVelocity(float diffX, float diffY) {
@@ -52,7 +65,7 @@ public class Polygons extends Shape {
         move();
     }
 
-    public void updateHome() {
+    public void savePosition() {
         startPos = vertices[0].cpy();
     }
 
