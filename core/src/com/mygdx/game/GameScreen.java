@@ -12,6 +12,7 @@ import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
@@ -47,9 +48,9 @@ public class GameScreen extends MyScreen{
     public void render(float deltaTime)
     {
         // updates the camera to the world space
-//        camera.update();
+        camera.update();
         // loads the batch and sets it to follow the camera's projection matrix
-//        batch.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         // test
         batch.draw(img, x, 0);
@@ -98,9 +99,9 @@ public class GameScreen extends MyScreen{
     @Override
     public void init() {
         batch = new SpriteBatch();
-//        camera = new OrthographicCamera();
-//        viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
-//        viewport.apply(true);
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
+        viewport.apply(true);
     }
 
     @Override
@@ -142,8 +143,8 @@ public class GameScreen extends MyScreen{
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
-//        // test
-//        viewport.apply(true);
+        // test
+        viewport.apply(true);
     }
     
 }

@@ -7,11 +7,15 @@ import com.mygdx.game.gamestate.GameScreenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class MyGdxGame extends Game {
 
     // The game state manager for the entire game
-    GameScreenManager gameStateManager;
+    private GameScreenManager gameScreenManager;
+    
+    ////////////NEED TO ASK ABOUT VIEWPORTS
+    public static OrthographicCamera camera;
     
     // screen width and height
     public static int WIDTH, HEIGHT;
@@ -25,7 +29,7 @@ public class MyGdxGame extends Game {
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
         // The game state manager starts out showing the menu screen
-        gameStateManager = new GameScreenManager(GameScreenManager.GameStates.MENU);
+        gameScreenManager = new GameScreenManager(GameScreenManager.GameStates.MENU);
         // The game input processor is gonna distribute all of the input for the game
         Gdx.input.setInputProcessor(new GameInputProcessor());
     }
@@ -39,9 +43,9 @@ public class MyGdxGame extends Game {
         Gdx.gl20.glClearColor(0, 0, 0, 1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // First update the current gamestate
-        gameStateManager.update(Gdx.graphics.getDeltaTime());
+        gameScreenManager.update(Gdx.graphics.getDeltaTime());
         // Then draw it
-        gameStateManager.render(Gdx.graphics.getDeltaTime());
+        gameScreenManager.render(Gdx.graphics.getDeltaTime());
         // Update the GameKeys key states
         GameKeys.update();
     }
@@ -53,5 +57,8 @@ public class MyGdxGame extends Game {
      */
     @Override
     public void resize(int width, int height) {
+        WIDTH = width;
+        HEIGHT = height;
+        gameScreenManager.resize(width, height);
     }
 }

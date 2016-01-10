@@ -8,6 +8,7 @@ package com.mygdx.game.gamestate;
 
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.MainMenuScreen;
+import com.mygdx.game.MyGdxGame;
 
 /**
  * Controls the GameStates for the entire game. It basically mimics the screen managing functions of the badlogic Game class
@@ -58,6 +59,8 @@ public class GameScreenManager {
                 currentGameState = new MainMenuScreen(this);
                 break;
         }
+        
+        currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
     }
     /**
      * Draws the current game state
@@ -75,6 +78,16 @@ public class GameScreenManager {
     public void update(float deltaTime)
     {
         currentGameState.update(deltaTime);
+    }
+    
+    /**
+     * Resizes the current screen
+     * @param width the new width
+     * @param height the new height
+     */
+    public void resize(int width, int height)
+    {
+        currentGameState.resize(width, height);
     }
     
 }

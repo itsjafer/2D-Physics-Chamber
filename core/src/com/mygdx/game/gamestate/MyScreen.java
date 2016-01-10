@@ -41,4 +41,12 @@ public abstract class MyScreen implements Screen{
      */
     public abstract void processInput();
     
+    /**
+     * Resizes the screen
+     * @param width new screen width
+     * @param height new screen height
+     */
+    @Override
+    public abstract void resize(int width, int height);
+    
 }
