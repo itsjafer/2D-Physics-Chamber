@@ -128,15 +128,20 @@ public class Polygons {
 
     /**
      * CONSIDER MOVING THIS OUT OF THE CLASS
-     * @param axis the Axis onto which the polygon is to be projected
-     * @return the polygon's projection onto the axis. Since a normal projection returns a 
+     * @param axis the Axis onto which the polygon is to be projected.
+     * @return the polygon's projection onto the axis.
      */
     public Vector2 project(Vector2 axis) {
+        // set the minimum projection length to the first vertex
         float min = vertices[0].dot(axis);
+        // the max will be the min for now
         float max = min;
+        // At first, only the dot products will be compared and stored
         float dot = 0f;
+        // Start at the second vertex since the first one was already checked
         for (int i = 1; i < vertices.length; i++) {
             dot = vertices[i].dot(axis);
+            // Adjust max/min
             if (dot < min) {
                 min = dot;
             }
@@ -144,25 +149,21 @@ public class Polygons {
                 max = dot;
             }
         }
+        
+        // Now that the max and min dot product have been calculated, they can be converted into vector projections, thereby providing the bounds of the polygon's projection the given axis
         return new Vector2(min / axis.len(), max / axis.len());
     }
 
-//    public Vector2[] getEdges()
-//    {
-//        Vector2[] edges = new Vector2[vertices.length];
-//        Vector2 edge;
-//        for (int i = 0; i < vertices.length; i ++)
-//        {
-//            edge = vertices[i].cpy().sub(vertices[i+1 == vertices.length ? 0: i+1]);
-//            edges[i] = edge;
-//        }
-//        return edges;
-//    }
+    /**
+     * @return an array of normals for each axis on the polygon
+     */
     public Vector2[] getNormals() {
         Vector2[] normals = new Vector2[vertices.length];
         Vector2 axis = null;
         for (int i = 0; i < vertices.length; i++) {
+            // getting an edge between two vertices
             axis = vertices[i].cpy().sub(vertices[i + 1 == vertices.length ? 0 : i + 1]);
+            // the normal is the negative reciprocal of the slope
             normals[i] = new Vector2(-axis.y, axis.x);
         }
         return normals;
