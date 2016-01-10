@@ -110,7 +110,7 @@ public class World {
         {
             for (Polygons polygon: polygons)
             {
-                polygon.updateHome();
+                polygon.savePosition();
             }
         }
         

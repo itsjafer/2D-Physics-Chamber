@@ -4,9 +4,7 @@
  */
 package com.mygdx.game.model;
 
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.mygdx.game.GameInputProcessor;
+import com.mygdx.game.input.GameInputProcessor;
 
 /**
  *

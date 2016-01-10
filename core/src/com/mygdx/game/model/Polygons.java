@@ -66,6 +66,7 @@ public class Polygons {
         for (Vector2 vertex : vertices) {
             vertex.add(velocity);
         }
+        updateCenter();
         
         /// UNUSED //////
         velocity.scl(friction);

@@ -1,42 +1,33 @@
 
 package com.mygdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.mygdx.game.input.GameKeys;
+import com.mygdx.game.input.GameInputProcessor;
+import com.mygdx.game.gamestate.GameScreenManager;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.mygdx.game.model.GameWorld;
+import com.badlogic.gdx.graphics.GL20;
 
-public class MyGdxGame extends ApplicationAdapter {
+public class MyGdxGame extends Game {
 
-    // The in-game UI
-    UI gameUI;
-    GameWorld world;
-    // this input processor is specific to the in-game environment
-    GameInputProcessor gameInputManager;
-    // controls the various (TO BE ADDED) input processors for the game
-    InputMultiplexer multiplexer;
+    // The game state manager for the entire game
+    GameScreenManager gameStateManager;
+    
+    // screen width and height
+    public static int WIDTH, HEIGHT;
     
     /**
      * Creates the game
      */
     @Override
     public void create() {
-        
-        // Initialize the game elements
-        gameUI = new UI();
-        world = new GameWorld();
-        
-        /////////////// MULTIPLEXER CODE.. UNTIL WE ACTUALLY USE MULTIPLE INPUT STREAMS DON'T USE THIS
-        //////////////////// CAIUS THIS MEANS U ////////////////////////
-//        // Create the multiplexer, and add to it the various input processors
-//        multiplexer = new InputMultiplexer();
-//        multiplexer.addProcessor(new GameInputProcessor(world));
-//        // The multiplexer is now the main input controller for the game
-        
-        // Sets the game input processor to 
-        gameInputManager = new GameInputProcessor(world);
-        Gdx.input.setInputProcessor(gameInputManager);
-        
+        // initialize width and height
+        WIDTH = Gdx.graphics.getWidth();
+        HEIGHT = Gdx.graphics.getHeight();
+        // The game state manager starts out showing the menu screen
+        gameStateManager = new GameScreenManager(GameScreenManager.GameStates.MENU);
+        // The game input processor is gonna distribute all of the input for the game
+        Gdx.input.setInputProcessor(new GameInputProcessor());
     }
 
     /**
@@ -44,11 +35,15 @@ public class MyGdxGame extends ApplicationAdapter {
      */
     @Override
     public void render() {
-        // Updates all of the elements in the world <<< CAIUS U NEED TO CHANGE THIS SINCE WE'RE USING
-        // AN INPUT MULTIPLEXER... U MIGHT EVEN NEED TO CHANGE THE ENTIRE INPUT FLOW
-        world.update(gameInputManager);
-        // renders the game world
-        gameUI.render();
+        // Clear the screen
+        Gdx.gl20.glClearColor(0, 0, 0, 1);
+        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        // First update the current gamestate
+        gameStateManager.update(Gdx.graphics.getDeltaTime());
+        // Then draw it
+        gameStateManager.render(Gdx.graphics.getDeltaTime());
+        // Update the GameKeys key states
+        GameKeys.update();
     }
 
     /**
@@ -58,6 +53,5 @@ public class MyGdxGame extends ApplicationAdapter {
      */
     @Override
     public void resize(int width, int height) {
-        gameUI.resize(width, height);
     }
 }

@@ -6,20 +6,19 @@
 
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.GL20;
+import com.mygdx.game.input.GameKeys;
+import com.mygdx.game.gamestate.GameScreenManager;
+import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.Texture;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * 
  * @author Dmitry
  */
-public class UI {
+public class GameScreen extends MyScreen{
     
     OrthographicCamera camera;
     Viewport viewport;
@@ -29,42 +28,33 @@ public class UI {
     // Just to test
     Texture img = new Texture("badlogic.jpg");
     
+    float x = 0;
+    
     /**
      * Creates a UI object
+     * @param gameStateManager
      */
-    public UI()
+    public GameScreen(GameScreenManager gameStateManager)
     {
-        // initialize some objects
-        batch = new SpriteBatch();
-
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
-        // this should center the camera by default. if it doesn't work, use the code below
-        viewport.apply(true);
-        
-        // Since the camera's (x, y) is in its center, the camera needs to be set to the middle of the screen
-//        camera.position.x = camera.viewportWidth/2;
-//        camera.position.y = camera.viewportHeight/2;
-        
+        super(gameStateManager);
     }
     
     /**
      * Draws the game
+     * @param deltaTime
      */
-    public void render()
+    @Override
+    public void render(float deltaTime)
     {
-        // clear the screen
-        Gdx.gl20.glClearColor(0, 0, 0, 1);
-        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
         // updates the camera to the world space
-        camera.update();
+//        camera.update();
         // loads the batch and sets it to follow the camera's projection matrix
-        batch.setProjectionMatrix(camera.combined);
+//        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         // test
-        batch.draw(img, 0, 0);
+        batch.draw(img, x, 0);
         batch.end();
+        
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -105,10 +95,55 @@ public class UI {
         
     }
 
-    void resize(int width, int height) {
+    @Override
+    public void init() {
+        batch = new SpriteBatch();
+//        camera = new OrthographicCamera();
+//        viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
+//        viewport.apply(true);
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        processInput();
+        
+        // move 20 pixels/ second
+        x += 20*deltaTime;
+    }
+
+    @Override
+    public void processInput() {
+        if (GameKeys.isKeyJustPressed(GameKeys.Keys.ESCAPE))
+        {
+            gameStateManager.setGameState(GameScreenManager.GameStates.MENU);
+        }
+    }
+    
+    @Override
+    public void show() {
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public void resize(int width, int height) {
         viewport.update(width, height);
-        // test
-        viewport.apply(true);
+//        // test
+//        viewport.apply(true);
     }
     
 }
