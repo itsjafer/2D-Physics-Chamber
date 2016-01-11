@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
@@ -22,60 +21,56 @@ import com.mygdx.game.model.Polygons;
 import java.util.ArrayList;
 
 /**
- * 
+ *
  * @author Dmitry
  */
-public class GameScreen extends MyScreen{
-    
+public class GameScreen extends MyScreen {
+
     OrthographicCamera camera;
     Viewport viewport;
     SpriteBatch batch;
     ShapeRenderer shapeRenderer;
-    
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-    
+
     /**
      * Creates a UI object
+     *
      * @param gameStateManager
      */
-    public GameScreen(GameScreenManager gameStateManager)
-    {
+    public GameScreen(GameScreenManager gameStateManager) {
         super(gameStateManager);
     }
-    
+
     /**
      * Draws the game
+     *
      * @param deltaTime
      */
     @Override
-    public void render(float deltaTime)
-    {
+    public void render(float deltaTime) {
         // updates the camera to the world space
         camera.update();
         // loads the batch and sets it to follow the camera's projection matrix
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.end();
-        
+
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
-        for (int i = 0; i < potentialPolygon.size(); i++)
-        {
+        for (int i = 0; i < potentialPolygon.size(); i++) {
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
-            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i+1 == potentialPolygon.size() ? 0: i+1));
+            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
         }
-        
-        for (Polygons polygon: world.getPolygons())
-        {
+
+        for (Polygons polygon : world.getPolygons()) {
             Vector2[] shapeVertices = polygon.getVertices();
-            for (int i = 0; i < shapeVertices.length; i++)
-            {
-                shapeRenderer.line(shapeVertices[i], shapeVertices[i+1 == shapeVertices.length ? 0: i+1]);
+            for (int i = 0; i < shapeVertices.length; i++) {
+                shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
             }
         }
         shapeRenderer.end();
-        
+
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -113,7 +108,7 @@ public class GameScreen extends MyScreen{
 //        }
 //        
 //        shapeRenderer.end();
-        
+
     }
 
     @Override
@@ -122,9 +117,9 @@ public class GameScreen extends MyScreen{
         camera = new OrthographicCamera();
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
-        
+
         shapeRenderer = new ShapeRenderer();
-        
+
         world = new GameWorld();
         potentialPolygon = new ArrayList();
     }
@@ -136,37 +131,37 @@ public class GameScreen extends MyScreen{
 
     @Override
     public void processInput() {
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE))
-        {
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameState(GameScreenManager.GameStates.MENU);
         }
-        
-        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT))
-        {
-            Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT-Gdx.input.getY());
-            potentialPolygon.add(newPoint);
-            world.setPotentialPolygon(potentialPolygon);
-        }
-        
-        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT))
-        {
-            if (potentialPolygon.size() > 0)
-            {
-                potentialPolygon.remove(potentialPolygon.size()-1);
+
+        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
+            Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
+            if (potentialPolygon.size() > 2 && (new Polygons(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), 0).containsPoint(newPoint))) {
+                potentialPolygon.add(newPoint);
+                world.setPotentialPolygon(potentialPolygon);
+
+            } else if (potentialPolygon.size() <= 2) {
+                potentialPolygon.add(newPoint);
                 world.setPotentialPolygon(potentialPolygon);
             }
         }
-        
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER))
-        {
-            if (potentialPolygon.size() > 2)
-            {
+
+        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
+            if (potentialPolygon.size() > 0) {
+                potentialPolygon.remove(potentialPolygon.size() - 1);
+                world.setPotentialPolygon(potentialPolygon);
+            }
+        }
+
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
+            if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
                 potentialPolygon.clear();
             }
         }
     }
-    
+
     @Override
     public void show() {
     }
@@ -193,5 +188,4 @@ public class GameScreen extends MyScreen{
         // test
         viewport.apply(true);
     }
-    
 }
