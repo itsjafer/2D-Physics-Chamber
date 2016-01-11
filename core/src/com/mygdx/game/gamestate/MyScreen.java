@@ -15,12 +15,12 @@ import com.badlogic.gdx.Screen;
 public abstract class MyScreen implements Screen{
     
     // Has an instance of the game state manager so that individual MyScreen instances can invoke switched to other MyScreen instances
-    protected GameScreenManager gameStateManager;
+    protected ScreenManager gameStateManager;
     /**
      * Creates a MyScreen object
      * @param gameStateManager the gameStateManager
      */
-    public MyScreen(GameScreenManager gameStateManager)
+    public MyScreen(ScreenManager gameStateManager)
     {
         this.gameStateManager = gameStateManager;
         // Upon creation, initialize this object

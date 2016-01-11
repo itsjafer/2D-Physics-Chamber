@@ -2,8 +2,8 @@
 package com.mygdx.game;
 
 import com.mygdx.game.input.GameInputs;
-import com.mygdx.game.input.GameInputProcessor;
-import com.mygdx.game.gamestate.GameScreenManager;
+import com.mygdx.game.input.InputProcessor;
+import com.mygdx.game.gamestate.ScreenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 public class MyGdxGame extends Game {
 
     // The game state manager for the entire game
-    private GameScreenManager gameScreenManager;
+    private ScreenManager screenManager;
     
     ////////////NEED TO ASK ABOUT VIEWPORTS
     public static OrthographicCamera camera;
@@ -29,9 +29,9 @@ public class MyGdxGame extends Game {
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
         // The game state manager starts out showing the menu screen
-        gameScreenManager = new GameScreenManager(GameScreenManager.GameStates.MENU);
+        screenManager = new ScreenManager(ScreenManager.GameStates.MAIN_MENU);
         // The game input processor is gonna distribute all of the input for the game
-        Gdx.input.setInputProcessor(new GameInputProcessor());
+        Gdx.input.setInputProcessor(new InputProcessor());
     }
 
     /**
@@ -43,9 +43,9 @@ public class MyGdxGame extends Game {
         Gdx.gl20.glClearColor(0, 0, 0, 1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // First update the current gamestate
-        gameScreenManager.update(Gdx.graphics.getDeltaTime());
+        screenManager.update(Gdx.graphics.getDeltaTime());
         // Then draw it
-        gameScreenManager.render(Gdx.graphics.getDeltaTime());
+        screenManager.render(Gdx.graphics.getDeltaTime());
         // Update the GameInputs key states
         GameInputs.update();
     }
@@ -59,6 +59,6 @@ public class MyGdxGame extends Game {
     public void resize(int width, int height) {
         WIDTH = width;
         HEIGHT = height;
-        gameScreenManager.resize(width, height);
+        screenManager.resize(width, height);
     }
 }

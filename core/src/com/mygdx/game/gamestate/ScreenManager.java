@@ -14,7 +14,7 @@ import com.mygdx.game.MyGdxGame;
  * Controls the GameStates for the entire game. It basically mimics the screen managing functions of the badlogic Game class
  * @author Dmitry
  */
-public class GameScreenManager {
+public class ScreenManager {
 
     // the MyScreen currently being shown on screen
     private MyScreen currentGameState;
@@ -25,13 +25,13 @@ public class GameScreenManager {
     
     // All of the game states for the game
     public static enum GameStates{
-        MENU, MAIN_GAME;
+        MAIN_MENU, MAIN_GAME;
     }
     /**
      * Creates a MyScreen manager.
      * @param startingGameState the starting game state.
      */
-    public GameScreenManager(GameStates startingGameState)
+    public ScreenManager(GameStates startingGameState)
     {
         setGameState(startingGameState);
     }
@@ -55,7 +55,7 @@ public class GameScreenManager {
                     gameScreenInstance = new GameScreen(this);
                 currentGameState = gameScreenInstance;
                 break;
-            case MENU:
+            case MAIN_MENU:
                 currentGameState = new MainMenuScreen(this);
                 break;
         }

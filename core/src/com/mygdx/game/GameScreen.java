@@ -7,7 +7,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.mygdx.game.input.GameInputs;
-import com.mygdx.game.gamestate.GameScreenManager;
+import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -38,7 +38,8 @@ public class GameScreen extends MyScreen {
      *
      * @param gameStateManager
      */
-    public GameScreen(GameScreenManager gameStateManager) {
+    public GameScreen(ScreenManager gameStateManager)
+    {
         super(gameStateManager);
     }
 
@@ -131,8 +132,9 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void processInput() {
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
-            gameStateManager.setGameState(GameScreenManager.GameStates.MENU);
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE))
+        {
+            gameStateManager.setGameState(ScreenManager.GameStates.MAIN_MENU);
         }
 
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {

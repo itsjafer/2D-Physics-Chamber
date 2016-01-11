@@ -12,7 +12,7 @@ import com.badlogic.gdx.InputAdapter;
  * The source of the input for the game
  * @author kobed6328
  */
-public class GameInputProcessor extends InputAdapter{
+public class InputProcessor extends InputAdapter{
 
     @Override
     public boolean keyDown(int keyCode) {
