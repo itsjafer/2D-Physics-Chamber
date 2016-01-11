@@ -42,6 +42,7 @@ public class Polygons {
         
         // Initializes position info
         this.vertices = vertices;
+        center = new Vector2(0,0);
         updateCenter();
         // The Polygon's startPos is initially set as its spawn location
         savePosition();
