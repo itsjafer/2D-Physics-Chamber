@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.mygdx.game;
+package com.mygdx.game.model;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author Dmitry
  */
-public class World {
+public class OldWorld {
     
     private ArrayList<Polygons> polygons;
     boolean mousePressed = false;
@@ -29,7 +29,7 @@ public class World {
     
     public ArrayList<Vector2> potentialPolygon = new ArrayList();
     
-    public World()
+    public OldWorld()
     {
         polygons = new ArrayList();
     }
