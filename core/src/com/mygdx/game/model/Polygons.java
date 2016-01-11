@@ -6,6 +6,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -41,6 +42,7 @@ public class Polygons {
         
         // Initializes position info
         this.vertices = vertices;
+        center = new Vector2(0,0);
         updateCenter();
         // The Polygon's startPos is initially set as its spawn location
         savePosition();
@@ -119,7 +121,7 @@ public class Polygons {
      * @param v2 the vector being projected on
      * @return the scalar projection of v1 onto v2
      */
-    public static float projectVector(Vector2 v1, Vector2 v2) {
+    public static float scalarProject(Vector2 v1, Vector2 v2) {
         
         float dotProduct = v1.dot(v2);
         float scalarProjection = dotProduct/v2.len();
@@ -132,7 +134,7 @@ public class Polygons {
      * @param axis the Axis onto which the polygon is to be projected.
      * @return the polygon's projection onto the axis.
      */
-    public Vector2 project(Vector2 axis) {
+    public Vector2 projectPolygon(Vector2 axis) {
         // set the minimum projection length to the first vertex
         float min = vertices[0].dot(axis);
         // the max will be the min for now
@@ -169,4 +171,60 @@ public class Polygons {
         }
         return normals;
     }
+    
+    public boolean containsPoint(Vector2 point)
+    {
+        Vector2[] normals;
+        
+        Vector2 polyProjection;
+        float pointProjection;
+        
+        normals = getNormals();
+        for (Vector2 normal: normals)
+        {
+            polyProjection = projectPolygon(normal);
+            pointProjection = scalarProject(point, normal);
+            
+            if (polyProjection.x > pointProjection || polyProjection.y < pointProjection)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+////    public Polygons collidePoint(Vector2 point)
+////    {
+////        Polygons collidedPolygon = null;
+////        
+////        Vector2[] normals;
+////        
+////        Vector2 proj;
+////        float dotProj;
+////        
+////        boolean collided;
+////        
+////        for (int i = polygons.size()-1; i >= 0; i --)
+////        {
+////            collided = true;
+////            
+////            normals = polygons.get(i).getNormals();
+////            for (Vector2 normal: normals)
+////            {
+////                proj = polygons.get(i).project(normal);
+////                dotProj = Polygons.projectVector(point, normal);
+////                
+////                if (proj.x > dotProj || proj.y < dotProj)
+////                {
+////                    collided = false;
+////                    break;
+////                }
+////            }
+////            if (collided)
+////            {
+////                return polygons.get(i);
+////            }
+////        }
+////        return null;
+////    }
 }

@@ -14,10 +14,12 @@ import java.util.ArrayList;
 public class GameWorld {
 
     private ArrayList<Vector2> potentialPolygon;
+    private ArrayList<Polygons> polygons;
     
     public GameWorld()
     {
         potentialPolygon = new ArrayList();
+        polygons = new ArrayList();
     }
     
     public void setPotentialPolygon(ArrayList<Vector2> potentialPolygon)
@@ -26,4 +28,13 @@ public class GameWorld {
         this.potentialPolygon = potentialPolygon;
     }
     
+    public void createPolygon(ArrayList<Vector2> polygon)
+    {
+        polygons.add(new Polygons(polygon.toArray(new Vector2[polygon.size()]), 0));
+    }
+    
+    public ArrayList<Polygons> getPolygons()
+    {
+        return polygons;
+    }
 }

@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.model.GameWorld;
+import com.mygdx.game.model.Polygons;
 import java.util.ArrayList;
 
 /**
@@ -63,6 +64,15 @@ public class GameScreen extends MyScreen{
         {
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i+1 == potentialPolygon.size() ? 0: i+1));
+        }
+        
+        for (Polygons polygon: world.getPolygons())
+        {
+            Vector2[] shapeVertices = polygon.getVertices();
+            for (int i = 0; i < shapeVertices.length; i++)
+            {
+                shapeRenderer.line(shapeVertices[i], shapeVertices[i+1 == shapeVertices.length ? 0: i+1]);
+            }
         }
         shapeRenderer.end();
         
@@ -144,6 +154,15 @@ public class GameScreen extends MyScreen{
             {
                 potentialPolygon.remove(potentialPolygon.size()-1);
                 world.setPotentialPolygon(potentialPolygon);
+            }
+        }
+        
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER))
+        {
+            if (potentialPolygon.size() > 2)
+            {
+                world.createPolygon(potentialPolygon);
+                potentialPolygon.clear();
             }
         }
     }
