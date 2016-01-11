@@ -6,14 +6,19 @@
 
 package com.mygdx.game;
 
-import com.mygdx.game.input.GameKeys;
+import com.badlogic.gdx.Gdx;
+import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.GameScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.model.GameWorld;
+import java.util.ArrayList;
 
 /**
  * 
@@ -23,13 +28,11 @@ public class GameScreen extends MyScreen{
     
     OrthographicCamera camera;
     Viewport viewport;
-    
     SpriteBatch batch;
+    ShapeRenderer shapeRenderer;
     
-    // Just to test
-    Texture img = new Texture("badlogic.jpg");
-    
-    float x = 0;
+    GameWorld world;
+    ArrayList<Vector2> potentialPolygon;
     
     /**
      * Creates a UI object
@@ -52,9 +55,16 @@ public class GameScreen extends MyScreen{
         // loads the batch and sets it to follow the camera's projection matrix
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        // test
-        batch.draw(img, x, 0);
         batch.end();
+        
+        shapeRenderer.setAutoShapeType(true);
+        shapeRenderer.begin();
+        for (int i = 0; i < potentialPolygon.size(); i++)
+        {
+            shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
+            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i+1 == potentialPolygon.size() ? 0: i+1));
+        }
+        shapeRenderer.end();
         
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
@@ -102,21 +112,39 @@ public class GameScreen extends MyScreen{
         camera = new OrthographicCamera();
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
+        
+        shapeRenderer = new ShapeRenderer();
+        
+        world = new GameWorld();
+        potentialPolygon = new ArrayList();
     }
 
     @Override
     public void update(float deltaTime) {
         processInput();
-        
-        // move 20 pixels/ second
-        x += 20*deltaTime;
     }
 
     @Override
     public void processInput() {
-        if (GameKeys.isKeyJustPressed(GameKeys.Keys.ESCAPE))
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE))
         {
             gameStateManager.setGameState(GameScreenManager.GameStates.MENU);
+        }
+        
+        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT))
+        {
+            Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT-Gdx.input.getY());
+            potentialPolygon.add(newPoint);
+            world.setPotentialPolygon(potentialPolygon);
+        }
+        
+        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT))
+        {
+            if (potentialPolygon.size() > 0)
+            {
+                potentialPolygon.remove(potentialPolygon.size()-1);
+                world.setPotentialPolygon(potentialPolygon);
+            }
         }
     }
     

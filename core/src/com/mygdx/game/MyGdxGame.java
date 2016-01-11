@@ -1,7 +1,7 @@
 
 package com.mygdx.game;
 
-import com.mygdx.game.input.GameKeys;
+import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.input.GameInputProcessor;
 import com.mygdx.game.gamestate.GameScreenManager;
 import com.badlogic.gdx.Game;
@@ -46,8 +46,8 @@ public class MyGdxGame extends Game {
         gameScreenManager.update(Gdx.graphics.getDeltaTime());
         // Then draw it
         gameScreenManager.render(Gdx.graphics.getDeltaTime());
-        // Update the GameKeys key states
-        GameKeys.update();
+        // Update the GameInputs key states
+        GameInputs.update();
     }
 
     /**

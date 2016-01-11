@@ -21,13 +21,13 @@ public class GameInputProcessor extends InputAdapter{
         switch (keyCode)
         {
             case Input.Keys.UP:
-                GameKeys.setKey(GameKeys.Keys.UP, true);
+                GameInputs.setKey(GameInputs.Keys.UP, true);
                 break;
             case Input.Keys.ENTER:
-                GameKeys.setKey(GameKeys.Keys.ENTER, true);
+                GameInputs.setKey(GameInputs.Keys.ENTER, true);
                 break;
             case Input.Keys.ESCAPE:
-                GameKeys.setKey(GameKeys.Keys.ESCAPE, true);
+                GameInputs.setKey(GameInputs.Keys.ESCAPE, true);
                 break;
         }
         return true;
@@ -40,13 +40,13 @@ public class GameInputProcessor extends InputAdapter{
         switch (keyCode)
         {
             case Input.Keys.UP:
-                GameKeys.setKey(GameKeys.Keys.UP, false);
+                GameInputs.setKey(GameInputs.Keys.UP, false);
                 break;
             case Input.Keys.ENTER:
-                GameKeys.setKey(GameKeys.Keys.ENTER, false);
+                GameInputs.setKey(GameInputs.Keys.ENTER, false);
                 break;
             case Input.Keys.ESCAPE:
-                GameKeys.setKey(GameKeys.Keys.ESCAPE, false);
+                GameInputs.setKey(GameInputs.Keys.ESCAPE, false);
                 break;
         }
         return true;
@@ -58,13 +58,31 @@ public class GameInputProcessor extends InputAdapter{
     }
 
     @Override
-    public boolean touchDown(int i, int i1, int i2, int i3) {
-        return false;
+    public boolean touchDown(int i, int i1, int i2, int button) {
+        switch (button)
+        {
+            case 0:
+                GameInputs.setMouseButton(GameInputs.MouseButtons.LEFT, true);
+                break;
+            case 1:
+                GameInputs.setMouseButton(GameInputs.MouseButtons.RIGHT, true);
+                break;
+        }
+        return true;
     }
 
     @Override
-    public boolean touchUp(int i, int i1, int i2, int i3) {
-        return false;
+    public boolean touchUp(int i, int i1, int i2, int button) {
+        switch (button)
+        {
+            case 0:
+                GameInputs.setMouseButton(GameInputs.MouseButtons.LEFT, false);
+                break;
+            case 1:
+                GameInputs.setMouseButton(GameInputs.MouseButtons.RIGHT, false);
+                break;
+        }
+        return true;
     }
 
     @Override

@@ -6,7 +6,7 @@
 
 package com.mygdx.game;
 
-import com.mygdx.game.input.GameKeys;
+import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.GameScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.Color;
@@ -52,7 +52,7 @@ public class MainMenuScreen extends MyScreen{
 
     @Override
     public void processInput() {
-        if (GameKeys.isKeyJustPressed(GameKeys.Keys.ENTER))
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER))
         {
             gameStateManager.setGameState(GameScreenManager.GameStates.MAIN_GAME);
         }
