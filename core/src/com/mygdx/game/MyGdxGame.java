@@ -1,4 +1,3 @@
-
 package com.mygdx.game;
 
 import com.mygdx.game.input.GameInputs;
@@ -13,13 +12,13 @@ public class MyGdxGame extends Game {
 
     // The game state manager for the entire game
     private ScreenManager screenManager;
-    
     ////////////NEED TO ASK ABOUT VIEWPORTS
     public static OrthographicCamera camera;
-    
+    //game input processor
+    public static InputProcessor gameInput;
     // screen width and height
     public static int WIDTH, HEIGHT;
-    
+
     /**
      * Creates the game
      */
@@ -31,7 +30,8 @@ public class MyGdxGame extends Game {
         // The game state manager starts out showing the menu screen
         screenManager = new ScreenManager(ScreenManager.GameStates.MAIN_MENU);
         // The game input processor is gonna distribute all of the input for the game
-        Gdx.input.setInputProcessor(new InputProcessor());
+        gameInput = new InputProcessor();
+        Gdx.input.setInputProcessor(gameInput);
     }
 
     /**
@@ -52,6 +52,7 @@ public class MyGdxGame extends Game {
 
     /**
      * Resizes the window
+     *
      * @param width the new window width
      * @param height the new window height
      */
