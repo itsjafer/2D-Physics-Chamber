@@ -15,26 +15,46 @@ public class GameWorld {
 
     private ArrayList<Vector2> potentialPolygon;
     private ArrayList<Polygons> polygons;
-    
-    public GameWorld()
-    {
+    private Player player;
+
+    public GameWorld() {
         potentialPolygon = new ArrayList();
         polygons = new ArrayList();
     }
     
-    public void setPotentialPolygon(ArrayList<Vector2> potentialPolygon)
+    public void update(float deltaTime)
     {
-        /// CONSIDER USING THE INSIDE OUT EVEN ODD CHECK THING TO MAKE SURE THE POLYGON IS CONVEX
+        if (player != null)
+        {
+            player.move(deltaTime);
+            if (!polygons.isEmpty())
+            {
+                player.collideWithPolygons(polygons);
+            }
+        }
+    }
+
+    public void setPotentialPolygon(ArrayList<Vector2> potentialPolygon) {
         this.potentialPolygon = potentialPolygon;
     }
-    
-    public void createPolygon(ArrayList<Vector2> polygon)
-    {
+
+    public void createPolygon(ArrayList<Vector2> polygon) {
         polygons.add(new Polygons(polygon.toArray(new Vector2[polygon.size()]), 0));
     }
-    
-    public ArrayList<Polygons> getPolygons()
-    {
+
+    public ArrayList<Polygons> getPolygons() {
         return polygons;
+    }
+
+    public void createPlayer() {
+        if (player == null) {
+            Vector2[] playerVertices = {new Vector2(100, 125), new Vector2(112, 125), new Vector2(112, 100), new Vector2(100, 100)};
+            player = new Player(playerVertices, 0);
+        }
+    }
+    
+    public Player getPlayer()
+    {
+        return player;
     }
 }

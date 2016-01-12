@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.model.GameWorld;
+import com.mygdx.game.model.Player;
 import com.mygdx.game.model.Polygons;
 import java.util.ArrayList;
 
@@ -30,7 +31,6 @@ public class GameScreen extends MyScreen {
     Viewport viewport;
     SpriteBatch batch;
     ShapeRenderer shapeRenderer;
-    InGameMenu menu;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
 
@@ -70,10 +70,14 @@ public class GameScreen extends MyScreen {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
             }
         }
-        shapeRenderer.end();
-        if (GameInputs.isKeyDown(GameInputs.Keys.ENTER)) {
-            menu.render();
+        if (world.getPlayer() != null) {
+            Player player = world.getPlayer();
+            Vector2[] playerVertices = player.getVertices();
+            for (int i = 0; i < playerVertices.length; i++) {
+                shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
+            }
         }
+        shapeRenderer.end();
 
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
@@ -134,6 +138,8 @@ public class GameScreen extends MyScreen {
     @Override
     public void update(float deltaTime) {
         processInput();
+        
+        world.update(deltaTime);
     }
 
     @Override
@@ -143,10 +149,15 @@ public class GameScreen extends MyScreen {
         }
 
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-            System.out.println("test");
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
-            potentialPolygon.add(newPoint);
-            world.setPotentialPolygon(potentialPolygon);
+            if (potentialPolygon.size() > 2 && !(new Polygons(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), 0).containsPoint(newPoint))) {
+                potentialPolygon.add(newPoint);
+                world.setPotentialPolygon(potentialPolygon);
+
+            } else if (potentialPolygon.size() <= 2) {
+                potentialPolygon.add(newPoint);
+                world.setPotentialPolygon(potentialPolygon);
+            }
         }
 
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
@@ -161,6 +172,9 @@ public class GameScreen extends MyScreen {
                 world.createPolygon(potentialPolygon);
                 potentialPolygon.clear();
             }
+        }
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
+            world.createPlayer();
         }
     }
 
