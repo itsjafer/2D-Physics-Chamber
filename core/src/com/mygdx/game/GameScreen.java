@@ -33,8 +33,6 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-    Player player;
-    boolean playerCreated;
 
     /**
      * Creates a UI object
@@ -72,7 +70,8 @@ public class GameScreen extends MyScreen {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
             }
         }
-        if (playerCreated) {
+        if (world.getPlayer() != null) {
+            Player player = world.getPlayer();
             Vector2[] playerVertices = player.getVertices();
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
@@ -136,6 +135,8 @@ public class GameScreen extends MyScreen {
     @Override
     public void update(float deltaTime) {
         processInput();
+        
+        world.update(deltaTime);
     }
 
     @Override
@@ -170,9 +171,7 @@ public class GameScreen extends MyScreen {
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
-            Vector2[] playerVertices = {new Vector2(0, 25), new Vector2(12, 25), new Vector2(12, 0), new Vector2(0, 0)};
-            player = new Player(playerVertices, 0, new Vector2(0, 0));
-            playerCreated = true;
+            world.createPlayer();
         }
     }
 

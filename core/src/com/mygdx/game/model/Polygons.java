@@ -6,8 +6,8 @@
  */
 package com.mygdx.game.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import java.util.ArrayList;
 
 /**
  * For now lets not extends shape cause I'm not exactly sure how that's going to be structured
@@ -17,14 +17,14 @@ import com.badlogic.gdx.math.Vector2;
 public class Polygons {
 
     // All of the vertices of the polygon
-    private Vector2[] vertices;
+    protected Vector2[] vertices;
     // the polygon's current velocity
-    private Vector2 velocity;
+    protected Vector2 velocity;
     // The polygon's center
-    private Vector2 center;
+    protected Vector2 center;
     
     // FRICTION ... TO BE ADDED LATER, JUST IGNORE FOR NOW
-    private float friction;
+    protected float friction;
     //////////////////////////////////////////////////
     
     // The polygon's center when its position was last saved
@@ -42,7 +42,6 @@ public class Polygons {
         
         // Initializes position info
         this.vertices = vertices;
-        center = new Vector2(0,0);
         updateCenter();
         // The Polygon's startPos is initially set as its spawn location
         savePosition();
@@ -99,6 +98,12 @@ public class Polygons {
      */
     public void updateCenter()
     {
+        if (center == null)
+        {
+            center = new Vector2();
+        }
+        
+        // The center is the average of the x and y coordinates of all the vertices
         float x = 0, y = 0;
         for (Vector2 vertex: vertices)
         {
@@ -192,39 +197,4 @@ public class Polygons {
         }
         return true;
     }
-    
-////    public Polygons collidePoint(Vector2 point)
-////    {
-////        Polygons collidedPolygon = null;
-////        
-////        Vector2[] normals;
-////        
-////        Vector2 proj;
-////        float dotProj;
-////        
-////        boolean collided;
-////        
-////        for (int i = polygons.size()-1; i >= 0; i --)
-////        {
-////            collided = true;
-////            
-////            normals = polygons.get(i).getNormals();
-////            for (Vector2 normal: normals)
-////            {
-////                proj = polygons.get(i).project(normal);
-////                dotProj = Polygons.projectVector(point, normal);
-////                
-////                if (proj.x > dotProj || proj.y < dotProj)
-////                {
-////                    collided = false;
-////                    break;
-////                }
-////            }
-////            if (collided)
-////            {
-////                return polygons.get(i);
-////            }
-////        }
-////        return null;
-////    }
 }
