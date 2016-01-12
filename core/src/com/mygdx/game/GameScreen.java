@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.model.GameWorld;
+import com.mygdx.game.model.Player;
 import com.mygdx.game.model.Polygons;
 import java.util.ArrayList;
 
@@ -32,14 +33,15 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
+    Player player;
+    boolean playerCreated;
 
     /**
      * Creates a UI object
      *
      * @param gameStateManager
      */
-    public GameScreen(ScreenManager gameStateManager)
-    {
+    public GameScreen(ScreenManager gameStateManager) {
         super(gameStateManager);
     }
 
@@ -68,6 +70,12 @@ public class GameScreen extends MyScreen {
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
+            }
+        }
+        if (playerCreated) {
+            Vector2[] playerVertices = player.getVertices();
+            for (int i = 0; i < playerVertices.length; i++) {
+                shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
         }
         shapeRenderer.end();
@@ -132,8 +140,7 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void processInput() {
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE))
-        {
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameState(ScreenManager.GameStates.MAIN_MENU);
         }
 
@@ -161,6 +168,11 @@ public class GameScreen extends MyScreen {
                 world.createPolygon(potentialPolygon);
                 potentialPolygon.clear();
             }
+        }
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
+            Vector2[] playerVertices = {new Vector2(0, 25), new Vector2(12, 25), new Vector2(12, 0), new Vector2(0, 0)};
+            player = new Player(playerVertices, 0, new Vector2(0, 0));
+            playerCreated = true;
         }
     }
 

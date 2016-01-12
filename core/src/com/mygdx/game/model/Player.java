@@ -15,4 +15,5 @@ public class Player extends Polygons {
     public Player(Vector2[] vertices, float friction, Vector2 startPos) {
         super(vertices, friction);
     }
+    
 }

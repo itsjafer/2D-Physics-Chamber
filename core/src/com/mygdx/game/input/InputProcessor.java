@@ -7,19 +7,18 @@ package com.mygdx.game.input;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 
-
 /**
  * The source of the input for the game
+ *
  * @author kobed6328
  */
-public class InputProcessor extends InputAdapter{
+public class InputProcessor extends InputAdapter {
 
     @Override
     public boolean keyDown(int keyCode) {
-        
+
         // If the user has pressed a key recognized by the game, the key's flag is updated
-        switch (keyCode)
-        {
+        switch (keyCode) {
             case Input.Keys.UP:
                 GameInputs.setKey(GameInputs.Keys.UP, true);
                 break;
@@ -29,16 +28,18 @@ public class InputProcessor extends InputAdapter{
             case Input.Keys.ESCAPE:
                 GameInputs.setKey(GameInputs.Keys.ESCAPE, true);
                 break;
+            case Input.Keys.P:
+                GameInputs.setKey(GameInputs.Keys.P, true);
+                break;
         }
         return true;
     }
 
     @Override
     public boolean keyUp(int keyCode) {
-        
+
         // If the user has pressed a key recognized by the game, the key's flag is updated
-        switch (keyCode)
-        {
+        switch (keyCode) {
             case Input.Keys.UP:
                 GameInputs.setKey(GameInputs.Keys.UP, false);
                 break;
@@ -47,6 +48,9 @@ public class InputProcessor extends InputAdapter{
                 break;
             case Input.Keys.ESCAPE:
                 GameInputs.setKey(GameInputs.Keys.ESCAPE, false);
+                break;
+            case Input.Keys.P:
+                GameInputs.setKey(GameInputs.Keys.P, false);
                 break;
         }
         return true;
@@ -59,8 +63,7 @@ public class InputProcessor extends InputAdapter{
 
     @Override
     public boolean touchDown(int i, int i1, int i2, int button) {
-        switch (button)
-        {
+        switch (button) {
             case 0:
                 GameInputs.setMouseButton(GameInputs.MouseButtons.LEFT, true);
                 break;
@@ -73,8 +76,7 @@ public class InputProcessor extends InputAdapter{
 
     @Override
     public boolean touchUp(int i, int i1, int i2, int button) {
-        switch (button)
-        {
+        switch (button) {
             case 0:
                 GameInputs.setMouseButton(GameInputs.MouseButtons.LEFT, false);
                 break;
@@ -99,5 +101,4 @@ public class InputProcessor extends InputAdapter{
     public boolean scrolled(int i) {
         return false;
     }
-    
 }
