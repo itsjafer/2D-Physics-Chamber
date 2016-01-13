@@ -39,7 +39,6 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-
     //ingame Menu
     InGameMenu menu;
 
@@ -87,7 +86,7 @@ public class GameScreen extends MyScreen {
             }
         }
         shapeRenderer.end();
-        
+
         if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
             Gdx.input.setInputProcessor(menu.stage);
             menu.render();
@@ -189,10 +188,15 @@ public class GameScreen extends MyScreen {
             if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
                 potentialPolygon.clear();
+                System.out.println("Polygon made.");
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
-            world.createPlayer();
+            if (world.getPlayer() == null) {
+                world.createPlayer(potentialPolygon);
+                potentialPolygon.clear();
+                System.out.println("Player made.");
+            }
         }
     }
 

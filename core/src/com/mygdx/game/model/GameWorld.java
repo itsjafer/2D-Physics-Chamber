@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author kobed6328
+ * @author Dmitry, Jafer, Caius
  */
 public class GameWorld {
 
@@ -21,14 +21,11 @@ public class GameWorld {
         potentialPolygon = new ArrayList();
         polygons = new ArrayList();
     }
-    
-    public void update(float deltaTime)
-    {
-        if (player != null)
-        {
+
+    public void update(float deltaTime) {
+        if (player != null) {
             player.move(deltaTime);
-            if (!polygons.isEmpty())
-            {
+            if (!polygons.isEmpty()) {
                 player.collideWithPolygons(polygons);
             }
         }
@@ -38,23 +35,35 @@ public class GameWorld {
         this.potentialPolygon = potentialPolygon;
     }
 
+    /**
+     * Creates a polygon based on the vectors passed in
+     * @param polygon arraylist of vertices of the polygon
+     */
     public void createPolygon(ArrayList<Vector2> polygon) {
         polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()]), 0));
     }
 
+    /**
+     * Getter method for the polygons arraylist
+     * @return 
+     */
     public ArrayList<Polygon> getPolygons() {
         return polygons;
     }
 
-    public void createPlayer() {
-        if (player == null) {
-            Vector2[] playerVertices = {new Vector2(100, 125), new Vector2(112, 125), new Vector2(112, 100), new Vector2(100, 100)};
-            player = new Player(playerVertices, 0);
-        }
+    /**
+     * Creates the player based on the vectors passed in
+     * @param playerPolygon arraylist of vertices
+     */
+    public void createPlayer(ArrayList<Vector2> playerPolygon) {
+        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), 0);
     }
-    
-    public Player getPlayer()
-    {
+
+    /**
+     * Getter method for the player polygon
+     * @return 
+     */
+    public Player getPlayer() {
         return player;
     }
 }
