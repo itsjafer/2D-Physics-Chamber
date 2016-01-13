@@ -28,7 +28,7 @@ public class MyGdxGame extends Game {
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
         // The game state manager starts out showing the menu screen
-        screenManager = new ScreenManager(ScreenManager.GameStates.MAIN_MENU);
+        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
         // The game input processor is gonna distribute all of the input for the game
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);

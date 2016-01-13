@@ -39,9 +39,6 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-    //ingame Menu
-    InGameMenu menu;
-
     /**
      * Creates a UI object
      *
@@ -94,16 +91,6 @@ public class GameScreen extends MyScreen {
         }
         shapeRenderer.end();
 
-        if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-            Gdx.input.setInputProcessor(menu.stage);
-            menu.render();
-        } else {
-            if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
-                Gdx.input.setInputProcessor(MyGdxGame.gameInput);
-            }
-        }
-
-
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -155,10 +142,6 @@ public class GameScreen extends MyScreen {
 
         world = new GameWorld();
         potentialPolygon = new ArrayList();
-
-        //create the menu + 1 button
-        menu = new InGameMenu();
-        menu.create();
     }
 
     @Override
@@ -171,10 +154,10 @@ public class GameScreen extends MyScreen {
     @Override
     public void processInput() {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
-            gameStateManager.setGameState(ScreenManager.GameStates.MAIN_MENU);
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
-            gameStateManager.setGameState(ScreenManager.GameStates.GAME_MENU);
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());

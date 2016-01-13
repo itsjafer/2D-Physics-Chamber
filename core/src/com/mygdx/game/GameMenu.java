@@ -101,13 +101,14 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
+        processInput();
     }
 
     @Override
     public void processInput() {
-//        if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
-//            gameStateManager.setGameState(ScreenManager.GameStates.MAIN_GAME);
-//        }
+        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
     }
 
     @Override

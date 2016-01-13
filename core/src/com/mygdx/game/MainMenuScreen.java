@@ -54,7 +54,7 @@ public class MainMenuScreen extends MyScreen {
     @Override
     public void processInput() {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
-            gameStateManager.setGameState(ScreenManager.GameStates.MAIN_GAME);
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
     }
 

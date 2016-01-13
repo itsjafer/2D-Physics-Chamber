@@ -12,7 +12,7 @@ import com.mygdx.game.MainMenuScreen;
 import com.mygdx.game.MyGdxGame;
 
 /**
- * Controls the GameStates for the entire game. It basically mimics the screen managing functions of the badlogic Game class
+ * Controls the GameScreens for the entire game. It basically mimics the screen managing functions of the badlogic Game class
  * @author Dmitry
  */
 public class ScreenManager {
@@ -24,23 +24,23 @@ public class ScreenManager {
     //// (like the main menu), we just switch to it and call "init()"
     private GameScreen gameScreenInstance;
     
-    // All of the game states for the game
-    public static enum GameStates{
+    // All of the game screens
+    public static enum GameScreens{
         MAIN_MENU, MAIN_GAME, GAME_MENU;
     }
     /**
      * Creates a MyScreen manager.
      * @param startingGameState the starting game state.
      */
-    public ScreenManager(GameStates startingGameState)
+    public ScreenManager(GameScreens startingGameState)
     {
-        setGameState(startingGameState);
+        setGameScreen(startingGameState);
     }
     /**
      * Sets the current game state
      * @param gameState the enum value of the target game state
      */
-    public void setGameState(GameStates gameState)
+    public void setGameScreen(GameScreens gameState)
     {
         //// we might not need this
         // Dispose of the current game state as it is going to be switched
@@ -60,7 +60,8 @@ public class ScreenManager {
                 currentGameState = new MainMenuScreen(this);
                 break;
             case GAME_MENU:
-                //currentGameState = new GameMenu(this);
+                System.out.println("hey");
+                currentGameState = new GameMenu(this);
                 break;
         }
         
