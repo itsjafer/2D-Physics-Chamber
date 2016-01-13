@@ -60,7 +60,7 @@ public class ScreenManager {
                 currentGameState = new MainMenuScreen(this);
                 break;
             case GAME_MENU:
-                currentGameState = new GameMenu(this);
+                //currentGameState = new GameMenu(this);
                 break;
         }
         

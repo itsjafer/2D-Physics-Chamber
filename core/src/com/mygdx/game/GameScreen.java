@@ -72,8 +72,11 @@ public class GameScreen extends MyScreen {
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
         }
 
-        //Looping the 
+        
         for (Polygon polygon : world.getPolygons()) {
+            if (polygon.containsPoint(GameInputs.getMousePosition())) {
+                System.out.println("Mouse is in a polygon");
+            }
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
@@ -81,6 +84,9 @@ public class GameScreen extends MyScreen {
         }
         if (world.getPlayer() != null) {
             Player player = world.getPlayer();
+            if (player.containsPoint(GameInputs.getMousePosition())) {
+                System.out.println("Mouse is in the player");
+            }
             Vector2[] playerVertices = player.getVertices();
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
