@@ -24,7 +24,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.model.GameWorld;
 import com.mygdx.game.model.Player;
-import com.mygdx.game.model.Polygons;
+import com.mygdx.game.model.Polygon;
 import java.util.ArrayList;
 
 /**
@@ -73,7 +73,7 @@ public class GameScreen extends MyScreen {
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
         }
 
-        for (Polygons polygon : world.getPolygons()) {
+        for (Polygon polygon : world.getPolygons()) {
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
@@ -168,7 +168,7 @@ public class GameScreen extends MyScreen {
 
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
-            if (potentialPolygon.size() > 2 && !(new Polygons(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), 0).containsPoint(newPoint))) {
+            if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), 0).containsPoint(newPoint))) {
                 potentialPolygon.add(newPoint);
                 world.setPotentialPolygon(potentialPolygon);
 

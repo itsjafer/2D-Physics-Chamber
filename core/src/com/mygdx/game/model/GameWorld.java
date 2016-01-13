@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class GameWorld {
 
     private ArrayList<Vector2> potentialPolygon;
-    private ArrayList<Polygons> polygons;
+    private ArrayList<Polygon> polygons;
     private Player player;
 
     public GameWorld() {
@@ -39,10 +39,10 @@ public class GameWorld {
     }
 
     public void createPolygon(ArrayList<Vector2> polygon) {
-        polygons.add(new Polygons(polygon.toArray(new Vector2[polygon.size()]), 0));
+        polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()]), 0));
     }
 
-    public ArrayList<Polygons> getPolygons() {
+    public ArrayList<Polygon> getPolygons() {
         return polygons;
     }
 

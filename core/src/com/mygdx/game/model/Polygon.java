@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *  ^^ still need to fool around with circles before we can decide
  * @author Dmitry
  */
-public class Polygons {
+public class Polygon {
 
     // All of the vertices of the polygon
     protected Vector2[] vertices;
@@ -35,7 +35,7 @@ public class Polygons {
      * @param vertices an array of Vector2.
      * @param friction NOT USED ATM
      */
-    public Polygons(Vector2[] vertices, float friction) {
+    public Polygon(Vector2[] vertices, float friction) {
         
         /// UNUSED///////
         this.friction = friction;

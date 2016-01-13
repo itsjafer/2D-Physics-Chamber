@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author branc2347
  */
-public class Player extends Polygons {
+public class Player extends Polygon {
 
     public Player(Vector2[] vertices, float friction) {
         super(vertices, friction);
@@ -27,7 +27,7 @@ public class Player extends Polygons {
         updateCenter();
     }
     
-    public void collideWithPolygons(ArrayList<Polygons> polygons)
+    public void collideWithPolygons(ArrayList<Polygon> polygons)
     {
         // The player's normals
         Vector2[] normals1 = getNormals();
@@ -39,7 +39,7 @@ public class Player extends Polygons {
         Vector2 projection2;
         
         // Iterate through all the polygons and check for a collision on a 1 to 1 basis
-        for (Polygons otherPoly: polygons)
+        for (Polygon otherPoly: polygons)
         {
             boolean collided = true;
             // Check all of the player's normals
