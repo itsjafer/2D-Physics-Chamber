@@ -25,7 +25,7 @@ public class ScreenManager {
     
     // All of the game states for the game
     public static enum GameStates{
-        MAIN_MENU, MAIN_GAME;
+        MAIN_MENU, MAIN_GAME, GAME_MENU;
     }
     /**
      * Creates a MyScreen manager.
@@ -57,6 +57,9 @@ public class ScreenManager {
                 break;
             case MAIN_MENU:
                 currentGameState = new MainMenuScreen(this);
+                break;
+            case GAME_MENU:
+                currentGameState = new GameMenu(this);
                 break;
         }
         

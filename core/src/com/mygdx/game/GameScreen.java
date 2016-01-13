@@ -72,6 +72,7 @@ public class GameScreen extends MyScreen {
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
         }
 
+        //Looping the 
         for (Polygon polygon : world.getPolygons()) {
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
@@ -95,6 +96,8 @@ public class GameScreen extends MyScreen {
                 Gdx.input.setInputProcessor(MyGdxGame.gameInput);
             }
         }
+
+
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -164,7 +167,9 @@ public class GameScreen extends MyScreen {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameState(ScreenManager.GameStates.MAIN_MENU);
         }
-
+        if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+            gameStateManager.setGameState(ScreenManager.GameStates.GAME_MENU);
+        }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
             if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), 0).containsPoint(newPoint))) {
