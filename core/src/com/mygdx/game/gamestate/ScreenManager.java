@@ -6,6 +6,7 @@
 
 package com.mygdx.game.gamestate;
 
+import com.mygdx.game.GameMenu;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.MainMenuScreen;
 import com.mygdx.game.MyGdxGame;

@@ -167,7 +167,7 @@ public class GameScreen extends MyScreen {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameState(ScreenManager.GameStates.MAIN_MENU);
         }
-        if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
             gameStateManager.setGameState(ScreenManager.GameStates.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
