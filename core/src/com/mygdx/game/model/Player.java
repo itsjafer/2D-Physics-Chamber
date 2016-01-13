@@ -27,6 +27,19 @@ public class Player extends Polygon {
         updateCenter();
     }
     
+    /**
+     * Instantly moves the polygon to a new position by a fixed amount
+     * @param deltaTime the time it took to render the last frame
+     * @param displacement the amount to move the player and the direction
+     */
+    public void bump(Vector2 displacement)
+    {
+        for (Vector2 vertex: vertices)
+        {
+            vertex.add(displacement);
+        }
+    }
+    
     public void collideWithPolygons(ArrayList<Polygon> polygons)
     {
         // The player's normals
@@ -37,6 +50,9 @@ public class Player extends Polygon {
         Vector2 projection1;
         // The other polygon's projection
         Vector2 projection2;
+        
+        float collisionDepth = Float.MAX_VALUE;
+        Vector2 movementAxis = null;
         
         // Iterate through all the polygons and check for a collision on a 1 to 1 basis
         for (Polygon otherPoly: polygons)
@@ -53,6 +69,26 @@ public class Player extends Polygon {
                 {
                     collided = false;
                     break;
+                    // Execution below this point indicates an intersection has occured
+                }
+                // the intersection depth for the current intersection
+                float intersection;
+                
+                // Check the two possible intersection lengths and pick the smaller one
+                if (Math.abs(projection2.y-projection1.x) < Math.abs(projection2.x-projection1.y))
+                {
+                    intersection = projection2.y-projection1.x;
+                }
+                else
+                {
+                    intersection = projection2.x-projection1.y;
+                }
+                
+                // If the current intersection depth is smaller than the overall intersection depth, udpate the overall intersection depth and the overall intersection axis
+                if (Math.abs(intersection) < Math.abs(collisionDepth))
+                {
+                    collisionDepth = intersection;
+                    movementAxis = normal;
                 }
             }   
             
@@ -68,11 +104,43 @@ public class Player extends Polygon {
                 {
                     collided = false;
                     break;
+                    // Execution below this point indicates an intersection has occured
+                }
+                // the intersection depth for the current intersection
+                float intersection;
+                
+                // Check the two possible intersection lengths and pick the smaller one
+                if (Math.abs(projection2.y-projection1.x) < Math.abs(projection2.x-projection1.y))
+                {
+                    intersection = projection2.y-projection1.x;
+                }
+                else
+                {
+                    intersection = projection2.x-projection1.y;
+                }
+                
+                // If the current intersection depth is smaller than the overall intersection depth, udpate the overall intersection depth and the overall intersection axis
+                if (Math.abs(intersection) < Math.abs(collisionDepth))
+                {
+                    collisionDepth = intersection;
+                    movementAxis = normal;
                 }
             }
             if (collided)
-                System.out.println("COLLIDED");
+            {
+                // TESTING
+//                System.out.println("COLLIDED");
+//                System.out.println("Collision depth: " + collisionDepth);
+//                System.out.println("Rebounding axis: " + movementAxis);
+                
+                // Moves the player instantly by the intersection magnitude
+                    // Get the unit vector of movement axis
+                movementAxis.scl(1f/movementAxis.len());
+                    // Multiply that unit vector by the displacement depth
+                movementAxis.scl(collisionDepth);
+                    // Apply this displacement vector to the player's current position
+                bump(movementAxis);
+            }
         }
     }
-    
 }
