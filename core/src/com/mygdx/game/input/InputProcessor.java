@@ -31,6 +31,9 @@ public class InputProcessor extends InputAdapter {
             case Input.Keys.P:
                 GameInputs.setKey(GameInputs.Keys.P, true);
                 break;
+                 case Input.Keys.TAB:
+                GameInputs.setKey(GameInputs.Keys.TAB, true);
+                break;
         }
         return true;
     }
@@ -51,6 +54,9 @@ public class InputProcessor extends InputAdapter {
                 break;
             case Input.Keys.P:
                 GameInputs.setKey(GameInputs.Keys.P, false);
+                break;
+                case Input.Keys.TAB:
+                GameInputs.setKey(GameInputs.Keys.TAB, false);
                 break;
         }
         return true;

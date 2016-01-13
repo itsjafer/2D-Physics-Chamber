@@ -10,10 +10,16 @@ import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.model.GameWorld;
@@ -33,6 +39,9 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
+
+    //ingame Menu
+    InGameMenu menu;
 
     /**
      * Creates a UI object
@@ -78,7 +87,15 @@ public class GameScreen extends MyScreen {
             }
         }
         shapeRenderer.end();
-
+        
+        if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+            Gdx.input.setInputProcessor(menu.stage);
+            menu.render();
+        } else {
+            if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
+                Gdx.input.setInputProcessor(MyGdxGame.gameInput);
+            }
+        }
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -131,6 +148,7 @@ public class GameScreen extends MyScreen {
         world = new GameWorld();
         potentialPolygon = new ArrayList();
 
+        //create the menu + 1 button
         menu = new InGameMenu();
         menu.create();
     }
@@ -138,7 +156,7 @@ public class GameScreen extends MyScreen {
     @Override
     public void update(float deltaTime) {
         processInput();
-        
+
         world.update(deltaTime);
     }
 

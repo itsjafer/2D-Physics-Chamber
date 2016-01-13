@@ -35,7 +35,7 @@ public class InGameMenu {
             
 		batch = new SpriteBatch();
 		stage = new Stage();
-		Gdx.input.setInputProcessor(stage);
+		
 
 		// A skin can be loaded via JSON or defined programmatically, either is fine. Using a skin is optional but strongly
 		// recommended solely for the convenience of getting a texture, region, etc as a drawable, tinted drawable, etc.
@@ -61,7 +61,7 @@ public class InGameMenu {
 
 		// Create a table that fills the screen. Everything else will go inside this table.
 		Table table = new Table();
-		table.setFillParent(true);
+                table.setBounds(0, 0, MyGdxGame.WIDTH/2, MyGdxGame.HEIGHT/2);
 		stage.addActor(table);
 
 		// Create a button with the "default" TextButtonStyle. A 3rd parameter can be used to specify a name other than "default".
@@ -76,6 +76,7 @@ public class InGameMenu {
 			public void changed (ChangeEvent event, Actor actor) {
 				System.out.println("Clicked! Is checked: " + button.isChecked());
 				button.setText("Good job!");
+                                Gdx.input.setInputProcessor(MyGdxGame.gameInput);
 			}
 		});
 
@@ -84,9 +85,8 @@ public class InGameMenu {
 	}
 
 	public void render () {
-		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+                
 		stage.draw();
 	}
 
