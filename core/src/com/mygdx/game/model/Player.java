@@ -163,6 +163,7 @@ public class Player extends Polygon {
                 movementAxis.scl(collisionDepth);
                     // Apply this displacement vector to the player's current position
                 bump(movementAxis);
+                return;
             }
         }
     }
