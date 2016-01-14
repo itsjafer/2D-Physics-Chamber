@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.gamestate.MyScreen;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.input.GameInputs;
@@ -32,6 +33,7 @@ public class GameMenu extends MyScreen {
     Stage stage;
     SpriteBatch batch;
     TextureAtlas atlas;
+    GameScreen background;
 
     public GameMenu(ScreenManager gameStateManager) {
         super(gameStateManager);
@@ -41,50 +43,38 @@ public class GameMenu extends MyScreen {
     public void init() {
         batch = new SpriteBatch();
         stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/atlas.pack");
+        background = new GameScreen(gameStateManager);
 
         //initialize skin
         skin = new Skin(atlas);
-//        skin.addRegions(atlas);
-        
-//        System.out.println(skin.get("button.up", Texture.class));
-        
-//        for (Texture text: atlas.getTextures())
-//        {
-//            System.out.println(text);
-//        }
-        
-//        skin.add("buttonUp", skin.get("button.up", TextureRegion.class));
-        
-//        System.out.println(skin.get("button.up", TextureRegion.class).getTexture().getWidth());
-//        System.out.println(skin.getRegion("button.up").getRegionWidth());
-        
-        skin.add("buttonUp", (skin.getRegion("button.down")), TextureRegion.class);
-        
-        //make a skin for the first button, named logo
-//        skin.add("buttonUp", (atlas.findRegion("button.up").getTexture()));
-//        System.out.println(atlas.findRegion("button.up").getTexture().getWidth());
+
+        //add the images for the first button
+        skin.add("buttonUp", (skin.getRegion("button.up")), TextureRegion.class);
+        skin.add("buttonDown", (skin.getRegion("button.down")), TextureRegion.class);
+
         //add a font for the button
         skin.add("default", new BitmapFont());
-        
 
         //configure what the button looks like in each of these cases:
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.newDrawable("buttonUp", Color.DARK_GRAY);
-//        textButtonStyle.down = skin.newDrawable("button", Color.DARK_GRAY);
-//        textButtonStyle.checked = skin.newDrawable("button", Color.BLUE);
-//        textButtonStyle.over = skin.newDrawable("button", Color.LIGHT_GRAY);
+        textButtonStyle.up = skin.newDrawable("buttonUp");
+        textButtonStyle.down = skin.newDrawable("buttonDown");
+        textButtonStyle.checked = skin.newDrawable("buttonDown", Color.DARK_GRAY);
+        textButtonStyle.over = skin.newDrawable("buttonUp", Color.DARK_GRAY);
         textButtonStyle.font = skin.getFont("default");
         skin.add("default", textButtonStyle);
 
         // Create a table that fills the screen, the buttons, etc go into this table
         Table table = new Table();
-        table.setBounds(0, 0, MyGdxGame.WIDTH / 2, MyGdxGame.HEIGHT / 2);
+        table.setFillParent(true);
+        table.align(Align.topLeft);
         stage.addActor(table);
 
         //create a button for the button picure
-        final TextButton button = new TextButton("Click here, noob", skin, "default");
-        table.add(button);
+        final TextButton button = new TextButton("Click here", skin);
+        table.add(button).pad(5, 5, 5, 5);
 
         //taken from the internet:
         // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
@@ -93,8 +83,7 @@ public class GameMenu extends MyScreen {
         // revert the checked state.
         button.addListener(new ChangeListener() {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                System.out.println("click, click, " + button.isChecked());
-                button.setText("Good job!");
+                background.colour = Color.RED;
             }
         });
     }
@@ -106,9 +95,9 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void processInput() {
-        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-        }
+//        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+//            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+//        }
     }
 
     @Override
@@ -122,7 +111,11 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void render(float delta) {
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        batch.begin();
+        background.show();
+        batch.end();
+
+        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
     }
 

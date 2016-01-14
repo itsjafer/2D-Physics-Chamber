@@ -6,20 +6,14 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.model.GameWorld;
@@ -39,6 +33,8 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
+    public Color colour;
+
     /**
      * Creates a UI object
      *
@@ -63,13 +59,14 @@ public class GameScreen extends MyScreen {
         batch.end();
 
         shapeRenderer.setAutoShapeType(true);
+        shapeRenderer.setColor(colour);
+        System.out.println(colour);
         shapeRenderer.begin();
         for (int i = 0; i < potentialPolygon.size(); i++) {
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
         }
 
-        
         for (Polygon polygon : world.getPolygons()) {
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
                 System.out.println("Mouse is in a polygon");
@@ -128,7 +125,6 @@ public class GameScreen extends MyScreen {
 //        }
 //        
 //        shapeRenderer.end();
-
     }
 
     @Override
@@ -139,7 +135,7 @@ public class GameScreen extends MyScreen {
         viewport.apply(true);
 
         shapeRenderer = new ShapeRenderer();
-
+        colour = Color.WHITE;
         world = new GameWorld();
         potentialPolygon = new ArrayList();
     }
@@ -196,6 +192,7 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void show() {
+        this.render(Gdx.graphics.getDeltaTime());
     }
 
     @Override
