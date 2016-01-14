@@ -59,10 +59,6 @@ public class ScreenManager {
             case MAIN_MENU:
                 currentGameState = new MainMenuScreen(this);
                 break;
-            case GAME_MENU:
-                System.out.println("hey");
-                currentGameState = new GameMenu(this);
-                break;
         }
         
         currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);

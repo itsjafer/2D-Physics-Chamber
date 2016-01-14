@@ -6,6 +6,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
@@ -33,7 +34,10 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-    public Color colour;
+    InputMultiplexer im;
+    
+    // UI & Menu
+    GameMenu menu;
 
     /**
      * Creates a UI object
@@ -59,8 +63,6 @@ public class GameScreen extends MyScreen {
         batch.end();
 
         shapeRenderer.setAutoShapeType(true);
-        shapeRenderer.setColor(colour);
-        System.out.println(colour);
         shapeRenderer.begin();
         for (int i = 0; i < potentialPolygon.size(); i++) {
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
@@ -87,7 +89,11 @@ public class GameScreen extends MyScreen {
             }
         }
         shapeRenderer.end();
-
+        
+        //render the menu
+//        menu.render(deltaTime);
+        
+        
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -133,11 +139,16 @@ public class GameScreen extends MyScreen {
         camera = new OrthographicCamera();
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
-
+        
         shapeRenderer = new ShapeRenderer();
-        colour = Color.WHITE;
         world = new GameWorld();
         potentialPolygon = new ArrayList();
+        //create menu
+        menu = new GameMenu();
+        menu.create();
+        //initialize input multiplexer. ensures that menu is above gamescreen, so that menu gets priority
+        im = new InputMultiplexer(menu.stage, MyGdxGame.gameInput);
+        Gdx.input.setInputProcessor(im);
     }
 
     @Override
@@ -152,8 +163,8 @@ public class GameScreen extends MyScreen {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
-            gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
+        if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+                    menu.render(Gdx.graphics.getDeltaTime());
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
@@ -192,7 +203,6 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void show() {
-        this.render(Gdx.graphics.getDeltaTime());
     }
 
     @Override

@@ -27,25 +27,18 @@ import com.mygdx.game.input.GameInputs;
  *
  * @author branc2347
  */
-public class GameMenu extends MyScreen {
+public class GameMenu {
 
     Skin skin;
     Stage stage;
     SpriteBatch batch;
     TextureAtlas atlas;
-    GameScreen background;
 
-    public GameMenu(ScreenManager gameStateManager) {
-        super(gameStateManager);
-    }
-
-    @Override
-    public void init() {
+    public void create() {
         batch = new SpriteBatch();
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         atlas = new TextureAtlas("ui/atlas.pack");
-        background = new GameScreen(gameStateManager);
 
         //initialize skin
         skin = new Skin(atlas);
@@ -83,55 +76,38 @@ public class GameMenu extends MyScreen {
         // revert the checked state.
         button.addListener(new ChangeListener() {
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                background.colour = Color.RED;
             }
         });
     }
 
-    @Override
     public void update(float deltaTime) {
         processInput();
     }
 
-    @Override
     public void processInput() {
-//        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-//            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-//        }
     }
 
-    @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
-    @Override
     public void show() {
     }
 
-    @Override
     public void render(float delta) {
-        batch.begin();
-        background.show();
-        batch.end();
-
-        stage.act(Gdx.graphics.getDeltaTime());
+        stage.act(delta);
         stage.draw();
     }
 
-    @Override
     public void pause() {
     }
 
-    @Override
     public void resume() {
     }
 
-    @Override
     public void hide() {
     }
 
-    @Override
     public void dispose() {
         stage.dispose();
         skin.dispose();
