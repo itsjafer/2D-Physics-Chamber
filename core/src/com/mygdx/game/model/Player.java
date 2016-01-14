@@ -15,7 +15,7 @@ public class Player extends Polygon {
 
     public Player(Vector2[] vertices, float friction) {
         super(vertices, friction);
-        velocity = new Vector2(0, -5);
+        velocity = new Vector2();
     }
     
     public void move(float deltaTime)
@@ -40,6 +40,10 @@ public class Player extends Polygon {
         }
     }
     
+    public void setVelocity(Vector2 velocity)
+    {
+        this.velocity.add(velocity);
+    }
     public void collideWithPolygons(ArrayList<Polygon> polygons)
     {
         // The player's normals
