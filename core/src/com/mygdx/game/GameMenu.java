@@ -5,6 +5,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -27,37 +28,53 @@ import com.mygdx.game.input.GameInputs;
  *
  * @author branc2347
  */
-public class GameMenu {
-
+public class GameMenu extends MyScreen {
+    
     Skin skin;
     Stage stage;
     SpriteBatch batch;
     TextureAtlas atlas;
-
-    public void create() {
+    GameScreen background;
+    InputMultiplexer im;
+    
+    public GameMenu(ScreenManager gameStateManager, GameScreen background) {
+        super(gameStateManager);
+        this.background = background;
+    }
+    
+    @Override
+    public void init() {
         batch = new SpriteBatch();
         stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
+        
+        //Input multiplexer, giving priority to stage over gameinput
+        im = new InputMultiplexer(this.stage, MyGdxGame.gameInput);
+        // set the input multiplexer as the input processor
+        Gdx.input.setInputProcessor(im);
+        
+        //initialize the atlas containing button textures
         atlas = new TextureAtlas("ui/atlas.pack");
 
-        //initialize skin
+        //initialize skin by imlpementing atlas
         skin = new Skin(atlas);
 
-        //add the images for the first button
+        //add the images for the first button and its various states
         skin.add("buttonUp", (skin.getRegion("button.up")), TextureRegion.class);
         skin.add("buttonDown", (skin.getRegion("button.down")), TextureRegion.class);
 
-        //add a font for the button
+        //add a font to be used by objects that use skin
         skin.add("default", new BitmapFont());
 
-        //configure what the button looks like in each of these cases:
+        //configure what the default button looks like (button style) :
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.up = skin.newDrawable("buttonUp");
         textButtonStyle.down = skin.newDrawable("buttonDown");
         textButtonStyle.checked = skin.newDrawable("buttonDown", Color.DARK_GRAY);
         textButtonStyle.over = skin.newDrawable("buttonUp", Color.DARK_GRAY);
         textButtonStyle.font = skin.getFont("default");
-        skin.add("default", textButtonStyle);
+        
+        //add the button style defined above to 'skin' under the name "default" (it doesn't interfere with font)
+        skin.add("defaultButton", textButtonStyle);
 
         // Create a table that fills the screen, the buttons, etc go into this table
         Table table = new Table();
@@ -66,7 +83,7 @@ public class GameMenu {
         stage.addActor(table);
 
         //create a button for the button picure
-        final TextButton button = new TextButton("Click here", skin);
+        final TextButton button = new TextButton("Click here", skin, "defaultButton");
         table.add(button).pad(5, 5, 5, 5);
 
         //taken from the internet:
@@ -75,41 +92,60 @@ public class GameMenu {
         // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
         // revert the checked state.
         button.addListener(new ChangeListener() {
+            @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                
+                button.setText("Good job!");
             }
         });
+        
     }
-
+    
+    @Override
     public void update(float deltaTime) {
         processInput();
     }
-
-    public void processInput() {
-    }
-
+    
+    @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
-
+    
+    @Override
     public void show() {
     }
-
+    
+    @Override
     public void render(float delta) {
+        
+        background.render(delta);
+        
         stage.act(delta);
         stage.draw();
     }
-
+    
+    @Override
     public void pause() {
     }
-
+    
+    @Override
     public void resume() {
     }
-
+    
+    @Override
     public void hide() {
     }
-
+    
+    @Override
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+    
+    @Override
+    public void processInput() {
+        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
     }
 }

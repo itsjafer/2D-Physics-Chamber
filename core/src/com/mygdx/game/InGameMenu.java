@@ -77,7 +77,6 @@ public class InGameMenu {
             public void changed(ChangeEvent event, Actor actor) {
                 System.out.println("Clicked! Is checked: " + button.isChecked());
                 button.setText("Good job!");
-                Gdx.input.setInputProcessor(MyGdxGame.gameInput);
             }
         });
 

@@ -34,11 +34,7 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-    InputMultiplexer im;
     
-    // UI & Menu
-    GameMenu menu;
-
     /**
      * Creates a UI object
      *
@@ -143,12 +139,6 @@ public class GameScreen extends MyScreen {
         shapeRenderer = new ShapeRenderer();
         world = new GameWorld();
         potentialPolygon = new ArrayList();
-        //create menu
-        menu = new GameMenu();
-        menu.create();
-        //initialize input multiplexer. ensures that menu is above gamescreen, so that menu gets priority
-        im = new InputMultiplexer(menu.stage, MyGdxGame.gameInput);
-        Gdx.input.setInputProcessor(im);
     }
 
     @Override
@@ -164,7 +154,7 @@ public class GameScreen extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
         if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-                    menu.render(Gdx.graphics.getDeltaTime());
+                    gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
