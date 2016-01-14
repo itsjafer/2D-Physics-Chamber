@@ -35,7 +35,6 @@ public class GameScreen extends MyScreen {
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
     InputMultiplexer im;
-    
     // UI & Menu
     GameMenu menu;
 
@@ -89,11 +88,11 @@ public class GameScreen extends MyScreen {
             }
         }
         shapeRenderer.end();
-        
+
         //render the menu
 //        menu.render(deltaTime);
-        
-        
+
+
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -139,7 +138,7 @@ public class GameScreen extends MyScreen {
         camera = new OrthographicCamera();
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
-        
+
         shapeRenderer = new ShapeRenderer();
         world = new GameWorld();
         potentialPolygon = new ArrayList();
@@ -160,11 +159,23 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void processInput() {
+        if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
+            world.getPlayer().setVelocity(new Vector2(0, 20));
+        }
+        if (GameInputs.isKeyDown(GameInputs.Keys.A)) {
+            world.getPlayer().setVelocity(new Vector2(-20, 0));
+        }
+        if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
+            world.getPlayer().setVelocity(new Vector2(0, -20));
+        }
+        if (GameInputs.isKeyDown(GameInputs.Keys.D)) {
+            world.getPlayer().setVelocity(new Vector2(20, 0));
+        }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
         if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-                    menu.render(Gdx.graphics.getDeltaTime());
+            menu.render(Gdx.graphics.getDeltaTime());
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());

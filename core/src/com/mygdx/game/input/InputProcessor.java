@@ -31,8 +31,20 @@ public class InputProcessor extends InputAdapter {
             case Input.Keys.P:
                 GameInputs.setKey(GameInputs.Keys.P, true);
                 break;
-                 case Input.Keys.TAB:
+            case Input.Keys.TAB:
                 GameInputs.setKey(GameInputs.Keys.TAB, true);
+                break;
+            case Input.Keys.W:
+                GameInputs.setKey(GameInputs.Keys.W, true);
+                break;
+            case Input.Keys.A:
+                GameInputs.setKey(GameInputs.Keys.A, true);
+                break;
+            case Input.Keys.S:
+                GameInputs.setKey(GameInputs.Keys.S, true);
+                break;
+            case Input.Keys.D:
+                GameInputs.setKey(GameInputs.Keys.D, true);
                 break;
         }
         return true;
@@ -55,8 +67,20 @@ public class InputProcessor extends InputAdapter {
             case Input.Keys.P:
                 GameInputs.setKey(GameInputs.Keys.P, false);
                 break;
-                case Input.Keys.TAB:
+            case Input.Keys.TAB:
                 GameInputs.setKey(GameInputs.Keys.TAB, false);
+                break;
+            case Input.Keys.W:
+                GameInputs.setKey(GameInputs.Keys.W, false);
+                break;
+            case Input.Keys.A:
+                GameInputs.setKey(GameInputs.Keys.A, false);
+                break;
+            case Input.Keys.S:
+                GameInputs.setKey(GameInputs.Keys.S, false);
+                break;
+            case Input.Keys.D:
+                GameInputs.setKey(GameInputs.Keys.D, false);
                 break;
         }
         return true;

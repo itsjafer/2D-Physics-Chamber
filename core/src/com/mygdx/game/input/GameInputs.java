@@ -20,7 +20,7 @@ public class GameInputs {
     // The valid keys
     public static enum Keys {
 
-        UP, ENTER, ESCAPE, P, TAB;
+        UP, ENTER, ESCAPE, P, TAB, W, A, S, D;
     }
 
     public static enum MouseButtons {
