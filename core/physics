@@ -1,4 +1,12 @@
-MOVEMENT:
+acceleration = 0;
+acceleration += (0, -9.8);
 
-d += v + (0, 4.9)
-v += (0, 4.9)
+movement = v + acceleration/2
+
+d += movement;
+
+IF COLLIDE:
+    movement -= intersect;
+    v += sqrt(v^2 + a*d)
+ELSE:
+    v += acceleration

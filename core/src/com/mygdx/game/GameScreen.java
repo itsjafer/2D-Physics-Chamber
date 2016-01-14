@@ -159,18 +159,7 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void processInput() {
-        if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
-            world.getPlayer().setVelocity(new Vector2(0, 20));
-        }
-        if (GameInputs.isKeyDown(GameInputs.Keys.A)) {
-            world.getPlayer().setVelocity(new Vector2(-20, 0));
-        }
-        if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
-            world.getPlayer().setVelocity(new Vector2(0, -20));
-        }
-        if (GameInputs.isKeyDown(GameInputs.Keys.D)) {
-            world.getPlayer().setVelocity(new Vector2(20, 0));
-        }
+        
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }

@@ -13,16 +13,24 @@ import java.util.ArrayList;
  */
 public class Player extends Polygon {
 
+    private Vector2 acceleration;
+    
     public Player(Vector2[] vertices, float friction) {
         super(vertices, friction);
         velocity = new Vector2();
+        acceleration = new Vector2();
     }
     
     public void move(float deltaTime)
     {
-        // Each vertex is moved by the velocity
+//        Vector2 movement = velocity.cpy().add(acceleration.cpy().scl(0.5f));
+        Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f*deltaTime*deltaTime));
+        velocity.add(acceleration);
+        System.out.println(movement);
+        
+//         Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
-            vertex.add(velocity.cpy().scl(deltaTime));
+            vertex.add(movement);
         }
         updateCenter();
     }
@@ -40,10 +48,21 @@ public class Player extends Polygon {
         }
     }
     
+    public void update()
+    {
+        acceleration.set(Vector2.Zero);
+    }
+    
+    public void applyAcceleration(Vector2 acceleration)
+    {
+        this.acceleration.add(acceleration);
+    }
+    
     public void setVelocity(Vector2 velocity)
     {
         this.velocity.add(velocity);
     }
+    
     public void collideWithPolygons(ArrayList<Polygon> polygons)
     {
         // The player's normals

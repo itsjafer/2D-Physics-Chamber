@@ -7,7 +7,6 @@
 package com.mygdx.game.model;
 
 import com.badlogic.gdx.math.Vector2;
-import java.util.ArrayList;
 
 /**
  * For now lets not extends shape cause I'm not exactly sure how that's going to be structured

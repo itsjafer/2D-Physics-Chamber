@@ -16,18 +16,23 @@ public class GameWorld {
     private ArrayList<Vector2> potentialPolygon;
     private ArrayList<Polygon> polygons;
     private Player player;
+    
+    private Vector2 gravity;
 
     public GameWorld() {
         potentialPolygon = new ArrayList();
         polygons = new ArrayList();
+        gravity = new Vector2(0, -9.8f);
     }
 
     public void update(float deltaTime) {
         if (player != null) {
+            player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
                 player.collideWithPolygons(polygons);
             }
+            player.update();
         }
     }
 
