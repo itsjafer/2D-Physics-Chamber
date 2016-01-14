@@ -7,7 +7,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
@@ -159,7 +158,23 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void processInput() {
-        
+
+        if (GameInputs.isKeyDown(GameInputs.Keys.W))
+        {
+            world.getPlayer().applyAcceleration(new Vector2(0, 19.6f));
+        }
+        if (GameInputs.isKeyDown(GameInputs.Keys.S))
+        {
+            world.getPlayer().applyAcceleration(new Vector2(0, -19.6f));
+        }
+        if (GameInputs.isKeyDown(GameInputs.Keys.A))
+        {
+            world.getPlayer().applyAcceleration(new Vector2(-19.6f, 0));
+        }
+        if (GameInputs.isKeyDown(GameInputs.Keys.D))
+        {
+            world.getPlayer().applyAcceleration(new Vector2(19.6f, 0));
+        }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
