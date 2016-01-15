@@ -208,6 +208,11 @@ public class GameScreen extends MyScreen {
         }
     }
 
+    public void resetPlayer(Player player){
+            
+            player.goHome(5);
+                
+    }
     @Override
     public void show() {
     }
