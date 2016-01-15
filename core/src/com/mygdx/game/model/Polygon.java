@@ -9,8 +9,9 @@ package com.mygdx.game.model;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * For now lets not extends shape cause I'm not exactly sure how that's going to be structured
- *  ^^ still need to fool around with circles before we can decide
+ * For now lets not extends shape cause I'm not exactly sure how that's going to
+ * be structured ^^ still need to fool around with circles before we can decide
+ *
  * @author Dmitry
  */
 public class Polygon {
@@ -21,30 +22,31 @@ public class Polygon {
     protected Vector2 velocity;
     // The polygon's center
     protected Vector2 center;
-    
+
     // FRICTION ... TO BE ADDED LATER, JUST IGNORE FOR NOW
     protected float friction;
     //////////////////////////////////////////////////
-    
+
     // The polygon's center when its position was last saved
-    private Vector2 startPos = null;
+    protected Vector2 startPos = null;
 
     /**
      * Creates a polygon.
+     *
      * @param vertices an array of Vector2.
      * @param friction NOT USED ATM
      */
     public Polygon(Vector2[] vertices, float friction) {
-        
+
         /// UNUSED///////
         this.friction = friction;
-        
+
         // Initializes position info
         this.vertices = vertices;
         updateCenter();
         // The Polygon's startPos is initially set as its spawn location
         savePosition();
-        
+
         // The polygon starts stationary
         velocity = new Vector2(0, 0);
     }
@@ -61,13 +63,13 @@ public class Polygon {
      * Moves the polygon in the direction of its velocity
      */
     public void move() {
-        
+
         // Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
             vertex.add(velocity);
         }
         updateCenter();
-        
+
         /// UNUSED //////
         velocity.scl(friction);
         if (velocity.len() <= 0.01) {
@@ -77,12 +79,21 @@ public class Polygon {
 
     /**
      * OLD FEATURE
-     * @param speedFactor 
+     *
+     * @param speedFactor
      */
     public void goHome(float speedFactor) {
-        velocity.x = (startPos.x - vertices[0].x) * speedFactor;
-        velocity.y = (startPos.y - vertices[0].y) * speedFactor;
-        move();
+        while (true) {
+
+            if (velocity.x == 0 && velocity.y == 0) {
+                break;
+            }
+
+            velocity.x = (startPos.x - vertices[0].x) * speedFactor;
+            velocity.y = (startPos.y - vertices[0].y) * speedFactor;
+            move();
+
+        }
     }
 
     /**
@@ -91,27 +102,24 @@ public class Polygon {
     public void savePosition() {
         startPos = center.cpy();
     }
-    
+
     /**
      * Recalculates the polygon's center
      */
-    public void updateCenter()
-    {
-        if (center == null)
-        {
+    public void updateCenter() {
+        if (center == null) {
             center = new Vector2();
         }
-        
+
         // The center is the average of the x and y coordinates of all the vertices
         float x = 0, y = 0;
-        for (Vector2 vertex: vertices)
-        {
+        for (Vector2 vertex : vertices) {
             x += vertex.x;
             y += vertex.y;
         }
         x /= vertices.length;
         y /= vertices.length;
-        
+
         center.set(x, y);
     }
 
@@ -121,20 +129,22 @@ public class Polygon {
 
     /**
      * WE SHOULD CONSIDER MOVING THIS OUT OF THE CLASS
+     *
      * @param v1 the vector to be projected
      * @param v2 the vector being projected on
      * @return the scalar projection of v1 onto v2
      */
     public static float scalarProject(Vector2 v1, Vector2 v2) {
-        
+
         float dotProduct = v1.dot(v2);
-        float scalarProjection = dotProduct/v2.len();
-        
+        float scalarProjection = dotProduct / v2.len();
+
         return scalarProjection;
     }
 
     /**
      * CONSIDER MOVING THIS OUT OF THE CLASS
+     *
      * @param axis the Axis onto which the polygon is to be projected.
      * @return the polygon's projection onto the axis.
      */
@@ -156,7 +166,7 @@ public class Polygon {
                 max = dot;
             }
         }
-        
+
         // Now that the max and min dot product have been calculated, they can be converted into vector projections, thereby providing the bounds of the polygon's projection the given axis
         return new Vector2(min / axis.len(), max / axis.len());
     }
@@ -175,22 +185,19 @@ public class Polygon {
         }
         return normals;
     }
-    
-    public boolean containsPoint(Vector2 point)
-    {
+
+    public boolean containsPoint(Vector2 point) {
         Vector2[] normals;
-        
+
         Vector2 polyProjection;
         float pointProjection;
-        
+
         normals = getNormals();
-        for (Vector2 normal: normals)
-        {
+        for (Vector2 normal : normals) {
             polyProjection = projectPolygon(normal);
             pointProjection = scalarProject(point, normal);
-            
-            if (polyProjection.x > pointProjection || polyProjection.y < pointProjection)
-            {
+
+            if (polyProjection.x > pointProjection || polyProjection.y < pointProjection) {
                 return false;
             }
         }
