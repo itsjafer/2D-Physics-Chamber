@@ -27,7 +27,11 @@ public class GameInputs {
 
         LEFT, RIGHT;
     }
+    
+    private static boolean mouseMoved;
+    
     private static Vector2 mousePosition;
+    private static Vector2 oldMousePosition;
     // boolean values corresponding to each key's pressed state
     private static HashMap<Keys, Boolean> keysDown;
     // boolean values corresponding to each key's long-pressed state
@@ -42,6 +46,7 @@ public class GameInputs {
      */
     static {
         mousePosition = new Vector2();
+        mouseMoved = false;
         // set each key state to false
         keysDown = new HashMap();
         for (Keys key : Keys.values()) {
@@ -71,8 +76,13 @@ public class GameInputs {
             // If the mouse button's value is true, it has now been held down for two cycles, therefore it can be considered to be held down
             mouseButtonsHeldDown.put(mouseButton, mouseButtonsDown.get(mouseButton));
         }
-
+        oldMousePosition = mousePosition.cpy();
         mousePosition.set(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
+        
+        if (mousePosition.x != oldMousePosition.x || mousePosition.y != oldMousePosition.y)
+            mouseMoved = true;
+        else
+            mouseMoved = false;
     }
 
     /**
@@ -120,6 +130,9 @@ public class GameInputs {
         // The mouse button should be currently pressed (as the pressed state is updated before the long-pressed state)
         // The button's long-pressed state should not be true
         return mouseButtonsDown.get(button) && !mouseButtonsHeldDown.get(button);
+    }
+    public static boolean isMouseButtonJustReleased(MouseButtons button) {
+        return !mouseButtonsDown.get(button) && mouseButtonsHeldDown.get(button);
     }
 
     /**

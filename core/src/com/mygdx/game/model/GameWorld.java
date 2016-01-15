@@ -17,13 +17,11 @@ import java.util.ArrayList;
  */
 public class GameWorld {
 
-    private ArrayList<Vector2> potentialPolygon;
     private ArrayList<Polygon> polygons;
     private Player player;
     private Vector2 gravity;
 
     public GameWorld() {
-        potentialPolygon = new ArrayList();
         polygons = new ArrayList();
         gravity = new Vector2(0, -9.8f);
     }
@@ -39,10 +37,6 @@ public class GameWorld {
             }
             player.update();
         }
-    }
-
-    public void setPotentialPolygon(ArrayList<Vector2> potentialPolygon) {
-        this.potentialPolygon = potentialPolygon;
     }
 
     /**
@@ -84,10 +78,8 @@ public class GameWorld {
     public void saveLevel() {
         //save polygon vertices 
         //save player vertices
-        for (Polygon polygon: polygons)
-        {
-            for (Vector2 vertice: polygon.getVertices())
-            {
+        for (Polygon polygon : polygons) {
+            for (Vector2 vertice : polygon.getVertices()) {
                 System.out.println(vertice);
             }
         }

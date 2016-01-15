@@ -33,6 +33,7 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
+    boolean addingPoint;
 
     /**
      * Creates a UI object
@@ -59,9 +60,18 @@ public class GameScreen extends MyScreen {
 
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
+        
+        if (addingPoint) {
+            if (potentialPolygon.size() > 0)
+                shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
+            else
+                shapeRenderer.circle(GameInputs.getMousePosition().x, GameInputs.getMousePosition().y, 1);
+        }
         for (int i = 0; i < potentialPolygon.size(); i++) {
+
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
+
         }
 
         for (Polygon polygon : world.getPolygons()) {
@@ -134,7 +144,7 @@ public class GameScreen extends MyScreen {
         camera = new OrthographicCamera();
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
-
+        addingPoint = false;
         shapeRenderer = new ShapeRenderer();
         world = new GameWorld();
         potentialPolygon = new ArrayList();
@@ -175,30 +185,38 @@ public class GameScreen extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-            Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
-            if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()])).containsPoint(newPoint))) {
-                if (GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
-                    if (potentialPolygon.get(0).y != newPoint.y && !potentialPolygon.isEmpty()) {
-                        newPoint.y = potentialPolygon.get(0).y;
-                    }
-                }
-                potentialPolygon.add(newPoint);
-                world.setPotentialPolygon(potentialPolygon);
-            } else if (potentialPolygon.size() <= 2) {
-                if (GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
-                    if (potentialPolygon.get(0).y != newPoint.y && !potentialPolygon.isEmpty()) {
-                        newPoint.y = potentialPolygon.get(0).y;
-                    }
-                }
-                potentialPolygon.add(newPoint);
-                world.setPotentialPolygon(potentialPolygon);
-            }
+            
+            addingPoint = true;
+            System.out.println("hi");
+        }
+        if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT) && addingPoint) {
+            potentialPolygon.add(GameInputs.getMousePosition());
+            addingPoint = false;
+            System.out.println("RELEAsed");
+//            Vector2 newPoint = GameInputs.getMousePosition();
+//
+//            if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()])).containsPoint(newPoint))) {
+//                if (GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
+//                    if (potentialPolygon.get(0).y != newPoint.y && !potentialPolygon.isEmpty()) {
+//                        newPoint.y = potentialPolygon.get(0).y;
+//                    }
+//                }
+//                potentialPolygon.add(newPoint);
+//                world.setPotentialPolygon(potentialPolygon);
+//            } else if (potentialPolygon.size() <= 2) {
+//                if (GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
+//                    if (potentialPolygon.get(0).y != newPoint.y && !potentialPolygon.isEmpty()) {
+//                        newPoint.y = potentialPolygon.get(0).y;
+//                    }
+//                }
+//                potentialPolygon.add(newPoint);
+//                world.setPotentialPolygon(potentialPolygon);
+//            }
         }
 
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
             if (potentialPolygon.size() > 0) {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
-                world.setPotentialPolygon(potentialPolygon);
             }
         }
 
