@@ -7,6 +7,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.mygdx.game.input.GameInputs;
 
 public class MyGdxGame extends Game {
 
@@ -18,7 +19,7 @@ public class MyGdxGame extends Game {
     public static InputProcessor gameInput;
     // screen width and height
     public static int WIDTH, HEIGHT;
-
+    
     /**
      * Creates the game
      */
@@ -39,6 +40,7 @@ public class MyGdxGame extends Game {
      */
     @Override
     public void render() {
+        
         // Clear the screen
         Gdx.gl20.glClearColor(0, 0, 0, 1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);

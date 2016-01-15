@@ -5,6 +5,7 @@
 package com.mygdx.game.model;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.input.GameInputs;
 import java.util.ArrayList;
 
 /**
@@ -22,11 +23,14 @@ public class GameWorld {
     public GameWorld() {
         potentialPolygon = new ArrayList();
         polygons = new ArrayList();
-        gravity = new Vector2(0, -9.8f);
+        gravity = new Vector2(9.8f, 0);
     }
 
     public void update(float deltaTime) {
-        if (player != null) {
+        
+//        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
+        if (player != null)
+        {
             player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
@@ -45,7 +49,7 @@ public class GameWorld {
      * @param polygon arraylist of vertices of the polygon
      */
     public void createPolygon(ArrayList<Vector2> polygon) {
-        polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()]), 0));
+        polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()])));
     }
 
     /**
@@ -61,7 +65,7 @@ public class GameWorld {
      * @param playerPolygon arraylist of vertices
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon) {
-        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), 0);
+        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]));
     }
 
     /**

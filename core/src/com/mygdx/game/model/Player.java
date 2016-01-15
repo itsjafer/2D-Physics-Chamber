@@ -14,19 +14,28 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 
     private Vector2 acceleration;
+    private float friction = 0.1f;
+    private float restitution = 0.5f;
+    private boolean jumping = false;
     
-    public Player(Vector2[] vertices, float friction) {
-        super(vertices, friction);
+    public Player(Vector2[] vertices) {
+        super(vertices);
         velocity = new Vector2();
         acceleration = new Vector2();
     }
     
+    public void jump()
+    {
+        jumping = true;
+    }
+    
     public void move(float deltaTime)
     {
+        if (jumping)
+            velocity.y = 200f;
 //        Vector2 movement = velocity.cpy().add(acceleration.cpy().scl(0.5f));
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f*deltaTime*deltaTime));
         velocity.add(acceleration);
-        System.out.println(movement);
         
 //         Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
@@ -35,9 +44,29 @@ public class Player extends Polygon {
         updateCenter();
     }
     
+    public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
+    {
+        System.out.println("Current Velocity: " + velocity);
+        float velBeforePenetration = (float)Math.sqrt(velocity.len()*velocity.len() - 2f*acceleration.len()*collisionDepth);
+        velocity.scl(1f/velocity.len());
+        velocity.scl(velBeforePenetration);
+        System.out.println("Previous vel: " + velocity);
+        
+        Vector2 displacement = getNormal(collidingAxis).scl(1f/collidingAxis.len()).scl(-collisionDepth);
+        bump(displacement);
+        
+        Vector2 parallelComponent = vectorProject(velocity, collidingAxis);
+        parallelComponent.scl(1f-friction);
+//        
+        Vector2 perpendicularComponent = vectorProject(velocity, getNormal(collidingAxis));
+        perpendicularComponent.scl(-restitution);
+        System.out.println("PERPENDICULAR REBOUND: " + perpendicularComponent);
+//        
+        velocity = parallelComponent.add(perpendicularComponent);
+    }
+    
     /**
      * Instantly moves the polygon to a new position by a fixed amount
-     * @param deltaTime the time it took to render the last frame
      * @param displacement the amount to move the player and the direction
      */
     public void bump(Vector2 displacement)
@@ -51,6 +80,7 @@ public class Player extends Polygon {
     public void update()
     {
         acceleration.set(Vector2.Zero);
+        jumping = false;
     }
     
     public void applyAcceleration(Vector2 acceleration)
@@ -75,7 +105,7 @@ public class Player extends Polygon {
         Vector2 projection2;
         
         float collisionDepth = Float.MAX_VALUE;
-        Vector2 movementAxis = null;
+        Vector2 collidingAxis = null;
         
         // Iterate through all the polygons and check for a collision on a 1 to 1 basis
         for (Polygon otherPoly: polygons)
@@ -111,7 +141,7 @@ public class Player extends Polygon {
                 if (Math.abs(intersection) < Math.abs(collisionDepth))
                 {
                     collisionDepth = intersection;
-                    movementAxis = normal;
+                    collidingAxis = getNormal(normal);
                 }
             }   
             
@@ -146,7 +176,7 @@ public class Player extends Polygon {
                 if (Math.abs(intersection) < Math.abs(collisionDepth))
                 {
                     collisionDepth = intersection;
-                    movementAxis = normal;
+                    collidingAxis = getNormal(normal);
                 }
             }
             if (collided)
@@ -157,12 +187,8 @@ public class Player extends Polygon {
 //                System.out.println("Rebounding axis: " + movementAxis);
                 
                 // Moves the player instantly by the intersection magnitude
-                    // Get the unit vector of movement axis
-                movementAxis.scl(1f/movementAxis.len());
-                    // Multiply that unit vector by the displacement depth
-                movementAxis.scl(collisionDepth);
-                    // Apply this displacement vector to the player's current position
-                bump(movementAxis);
+                collidePhysics(collidingAxis, collisionDepth);
+                
                 return;
             }
         }

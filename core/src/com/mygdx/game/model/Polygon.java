@@ -22,10 +22,6 @@ public class Polygon {
     // The polygon's center
     protected Vector2 center;
     
-    // FRICTION ... TO BE ADDED LATER, JUST IGNORE FOR NOW
-    protected float friction;
-    //////////////////////////////////////////////////
-    
     // The polygon's center when its position was last saved
     private Vector2 startPos = null;
 
@@ -34,10 +30,7 @@ public class Polygon {
      * @param vertices an array of Vector2.
      * @param friction NOT USED ATM
      */
-    public Polygon(Vector2[] vertices, float friction) {
-        
-        /// UNUSED///////
-        this.friction = friction;
+    public Polygon(Vector2[] vertices) {
         
         // Initializes position info
         this.vertices = vertices;
@@ -47,14 +40,6 @@ public class Polygon {
         
         // The polygon starts stationary
         velocity = new Vector2(0, 0);
-    }
-
-    public void setVelocity(float velX, float velY) {
-        velocity.set(velX, velY);
-    }
-
-    public void setFriction(float newFriction) {
-        this.friction = newFriction;
     }
 
     /**
@@ -67,12 +52,6 @@ public class Polygon {
             vertex.add(velocity);
         }
         updateCenter();
-        
-        /// UNUSED //////
-        velocity.scl(friction);
-        if (velocity.len() <= 0.01) {
-            velocity.set(0, 0);
-        }
     }
 
     /**
@@ -127,10 +106,19 @@ public class Polygon {
      */
     public static float scalarProject(Vector2 v1, Vector2 v2) {
         
-        float dotProduct = v1.dot(v2);
+        float dotProduct = v1.cpy().dot(v2);
         float scalarProjection = dotProduct/v2.len();
         
         return scalarProjection;
+    }
+    
+    public static Vector2 vectorProject(Vector2 v1, Vector2 v2) {
+        
+        float dotProduct = v1.cpy().dot(v2);
+        float scalarProjection = dotProduct/v2.len();
+        Vector2 vectorProjection = v2.cpy().scl(1f/v2.len()).scl(scalarProjection);
+        
+        return vectorProjection;
     }
 
     /**
@@ -161,6 +149,11 @@ public class Polygon {
         return new Vector2(min / axis.len(), max / axis.len());
     }
 
+    public Vector2 getNormal(Vector2 axis)
+    {
+        return new Vector2(-axis.y, axis.x);
+    }
+    
     /**
      * @return an array of normals for each axis on the polygon
      */
@@ -171,7 +164,7 @@ public class Polygon {
             // getting an edge between two vertices
             axis = vertices[i].cpy().sub(vertices[i + 1 == vertices.length ? 0 : i + 1]);
             // the normal is the negative reciprocal of the slope
-            normals[i] = new Vector2(-axis.y, axis.x);
+            normals[i] = getNormal(axis);
         }
         return normals;
     }

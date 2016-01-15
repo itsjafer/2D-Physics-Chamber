@@ -152,7 +152,8 @@ public class GameScreen extends MyScreen {
 
         if (GameInputs.isKeyDown(GameInputs.Keys.W))
         {
-            world.getPlayer().applyAcceleration(new Vector2(0, 19.6f));
+//            world.getPlayer().applyAcceleration(new Vector2(0, 19.6f));
+            world.getPlayer().jump();
         }
         if (GameInputs.isKeyDown(GameInputs.Keys.S))
         {
@@ -174,7 +175,7 @@ public class GameScreen extends MyScreen {
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
-            if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()]), 0).containsPoint(newPoint))) {
+            if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()])).containsPoint(newPoint))) {
                 potentialPolygon.add(newPoint);
                 world.setPotentialPolygon(potentialPolygon);
 
