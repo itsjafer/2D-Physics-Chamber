@@ -15,7 +15,7 @@ public class Player extends Polygon {
 
     private Vector2 acceleration;
     private float friction = 0.1f;
-    private float restitution = 0.5f;
+    private float restitution = 1f;
     private boolean jumping = false;
     
     public Player(Vector2[] vertices) {
@@ -46,23 +46,35 @@ public class Player extends Polygon {
     
     public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
     {
-        System.out.println("Current Velocity: " + velocity);
-        float velBeforePenetration = (float)Math.sqrt(velocity.len()*velocity.len() - 2f*acceleration.len()*collisionDepth);
-        velocity.scl(1f/velocity.len());
-        velocity.scl(velBeforePenetration);
-        System.out.println("Previous vel: " + velocity);
+//        bump(new Vector2(0, 10000));
         
+        System.out.println("Col depth: " + collisionDepth);
+//        System.out.println("VELOCITY PENETRATED: " + velocity);
+//        
+//        float velBeforePenetration = (float)Math.sqrt(velocity.len()*velocity.len() - 2f*acceleration.len()*(Math.abs(collisionDepth)));
+//        velocity.scl(1f/velocity.len());
+//        velocity.scl(velBeforePenetration);
+//        
+//        System.out.println("ADJUSTED VELOCITY FOR OUT OF PENETRATION (" + collisionDepth + "): " + velocity);
+//        
         Vector2 displacement = getNormal(collidingAxis).scl(1f/collidingAxis.len()).scl(-collisionDepth);
-        bump(displacement);
-        
-        Vector2 parallelComponent = vectorProject(velocity, collidingAxis);
-        parallelComponent.scl(1f-friction);
+        System.out.println("coll Axis: " + collidingAxis);
+        System.out.println("normal:  " + getNormal(collidingAxis));
+        System.out.println("Unit vector: " + getNormal(collidingAxis).scl(1f/collidingAxis.len()));
+        System.out.println("Collision deptH: " + collisionDepth);
+        System.out.println("Displacement vector: " + getNormal(collidingAxis).scl(1f/collidingAxis.len()).scl(collisionDepth));
+        bump(new Vector2(0, 111));
+//        bump(displacement);
+//        System.out.println("WOW: " + (displacement.len()-collisionDepth));
 //        
-        Vector2 perpendicularComponent = vectorProject(velocity, getNormal(collidingAxis));
-        perpendicularComponent.scl(-restitution);
-        System.out.println("PERPENDICULAR REBOUND: " + perpendicularComponent);
-//        
-        velocity = parallelComponent.add(perpendicularComponent);
+//        Vector2 parallelComponent = vectorProject(velocity, collidingAxis);
+//        parallelComponent.scl(1f-friction);
+////        
+//        Vector2 perpendicularComponent = vectorProject(velocity, getNormal(collidingAxis));
+//        perpendicularComponent.scl(-restitution);
+////        
+//        velocity = parallelComponent.add(perpendicularComponent);
+//        System.out.println("NEW VELOCITY AFTER COLLISION: " + velocity);
     }
     
     /**

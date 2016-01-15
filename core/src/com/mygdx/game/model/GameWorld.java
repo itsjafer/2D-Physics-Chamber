@@ -23,7 +23,7 @@ public class GameWorld {
     public GameWorld() {
         potentialPolygon = new ArrayList();
         polygons = new ArrayList();
-        gravity = new Vector2(9.8f, 0);
+        gravity = new Vector2(0, -9.8f);
     }
 
     public void update(float deltaTime) {
