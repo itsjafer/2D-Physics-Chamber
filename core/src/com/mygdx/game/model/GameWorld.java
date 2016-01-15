@@ -17,20 +17,18 @@ public class GameWorld {
     private ArrayList<Vector2> potentialPolygon;
     private ArrayList<Polygon> polygons;
     private Player player;
-    
     private Vector2 gravity;
 
     public GameWorld() {
         potentialPolygon = new ArrayList();
         polygons = new ArrayList();
-        gravity = new Vector2(9.8f, 0);
+        gravity = new Vector2(0, -9.8f);
     }
 
     public void update(float deltaTime) {
-        
+
 //        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
-        if (player != null)
-        {
+        if (player != null) {
             player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
@@ -46,6 +44,7 @@ public class GameWorld {
 
     /**
      * Creates a polygon based on the vectors passed in
+     *
      * @param polygon arraylist of vertices of the polygon
      */
     public void createPolygon(ArrayList<Vector2> polygon) {
@@ -54,7 +53,8 @@ public class GameWorld {
 
     /**
      * Getter method for the polygons arraylist
-     * @return 
+     *
+     * @return
      */
     public ArrayList<Polygon> getPolygons() {
         return polygons;
@@ -62,6 +62,7 @@ public class GameWorld {
 
     /**
      * Creates the player based on the vectors passed in
+     *
      * @param playerPolygon arraylist of vertices
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon) {
@@ -70,7 +71,8 @@ public class GameWorld {
 
     /**
      * Getter method for the player polygon
-     * @return 
+     *
+     * @return
      */
     public Player getPlayer() {
         return player;

@@ -89,8 +89,7 @@ public class GameMenu extends MyScreen {
         final TextButton bResetShapes = new TextButton("Reset Player", skin, "defaultButton");
 
         //add the buttons to the table
-        table.add(bResetPlayer).pad(5, 5, 5, 5);
-        table.add(bResetShapes);
+        table.add(bResetPlayer);
 
         //taken from the internet:
         //        // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
@@ -101,7 +100,8 @@ public class GameMenu extends MyScreen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                background.resetPlayer(background.world.getPlayer());
+                System.out.println("hey");
+                background.resetPlayer();
             }
 
         });
