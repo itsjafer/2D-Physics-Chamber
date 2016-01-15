@@ -56,24 +56,7 @@ public class Polygon {
         updateCenter();
     }
 
-    /**
-     * OLD FEATURE
-     *
-     * @param speedFactor
-     */
-    public void goHome(float speedFactor) {
-        while (true) {
-
-            if (velocity.x == 0 && velocity.y == 0) {
-                break;
-            }
-
-            velocity.x = (startPos.x - vertices[0].x) * speedFactor;
-            velocity.y = (startPos.y - vertices[0].y) * speedFactor;
-            move();
-
-        }
-    }
+   
 
     /**
      * Updates the polygon's startPos to its center

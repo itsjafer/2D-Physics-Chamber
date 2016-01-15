@@ -33,7 +33,7 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-    
+
     /**
      * Creates a UI object
      *
@@ -150,34 +150,37 @@ public class GameScreen extends MyScreen {
     @Override
     public void processInput() {
 
-        if (GameInputs.isKeyDown(GameInputs.Keys.W))
-        {
+        if (world.getPlayer() != null) {
+            if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
 //            world.getPlayer().applyAcceleration(new Vector2(0, 19.6f));
-            world.getPlayer().jump();
+                world.getPlayer().jump();
+            }
+            if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
+                world.getPlayer().applyAcceleration(new Vector2(0, -19.6f));
+            }
+            if (GameInputs.isKeyDown(GameInputs.Keys.A)) {
+                world.getPlayer().applyAcceleration(new Vector2(-19.6f, 0));
+            }
+            if (GameInputs.isKeyDown(GameInputs.Keys.D)) {
+                world.getPlayer().applyAcceleration(new Vector2(19.6f, 0));
+            }
         }
-        if (GameInputs.isKeyDown(GameInputs.Keys.S))
-        {
-            world.getPlayer().applyAcceleration(new Vector2(0, -19.6f));
-        }
-        if (GameInputs.isKeyDown(GameInputs.Keys.A))
-        {
-            world.getPlayer().applyAcceleration(new Vector2(-19.6f, 0));
-        }
-        if (GameInputs.isKeyDown(GameInputs.Keys.D))
-        {
-            world.getPlayer().applyAcceleration(new Vector2(19.6f, 0));
-        }
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
+                world.saveLevel();
+            }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
         if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-                    gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
             if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()])).containsPoint(newPoint))) {
+                if()
                 potentialPolygon.add(newPoint);
                 world.setPotentialPolygon(potentialPolygon);
+                
 
             } else if (potentialPolygon.size() <= 2) {
                 potentialPolygon.add(newPoint);
@@ -208,11 +211,13 @@ public class GameScreen extends MyScreen {
         }
     }
 
-    public void resetPlayer(Player player){
-            
-            player.goHome(5);
-                
+    /**
+     * Reset player position
+     */
+    public void resetPlayer() {
+        world.getPlayer().goHome();
     }
+
     @Override
     public void show() {
     }

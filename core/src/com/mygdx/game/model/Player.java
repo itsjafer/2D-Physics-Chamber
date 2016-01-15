@@ -17,26 +17,25 @@ public class Player extends Polygon {
     private float friction = 0.1f;
     private float restitution = 1f;
     private boolean jumping = false;
-    
+
     public Player(Vector2[] vertices) {
         super(vertices);
         velocity = new Vector2();
         acceleration = new Vector2();
     }
-    
-    public void jump()
-    {
+
+    public void jump() {
         jumping = true;
     }
-    
-    public void move(float deltaTime)
-    {
-        if (jumping)
+
+    public void move(float deltaTime) {
+        if (jumping) {
             velocity.y = 200f;
+        }
 //        Vector2 movement = velocity.cpy().add(acceleration.cpy().scl(0.5f));
-        Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f*deltaTime*deltaTime));
+        Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
         velocity.add(acceleration);
-        
+
 //         Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
             vertex.add(movement);
@@ -66,47 +65,41 @@ public class Player extends Polygon {
         bump(new Vector2(0, 111));
 //        bump(displacement);
 //        System.out.println("WOW: " + (displacement.len()-collisionDepth));
-//        
-//        Vector2 parallelComponent = vectorProject(velocity, collidingAxis);
-//        parallelComponent.scl(1f-friction);
-////        
-//        Vector2 perpendicularComponent = vectorProject(velocity, getNormal(collidingAxis));
-//        perpendicularComponent.scl(-restitution);
-////        
-//        velocity = parallelComponent.add(perpendicularComponent);
-//        System.out.println("NEW VELOCITY AFTER COLLISION: " + velocity);
     }
-    
+    /**
+     * Resets the player's position to the initial creation position. Also
+     * resets momentum
+     */
+    public void goHome() {
+        bump(startPos.cpy().sub(center));
+        velocity.set(new Vector2(0, 0));
+    }
+
     /**
      * Instantly moves the polygon to a new position by a fixed amount
+     *
      * @param displacement the amount to move the player and the direction
      */
-    public void bump(Vector2 displacement)
-    {
-        for (Vector2 vertex: vertices)
-        {
+    public void bump(Vector2 displacement) {
+        for (Vector2 vertex : vertices) {
             vertex.add(displacement);
         }
     }
-    
-    public void update()
-    {
+
+    public void update() {
         acceleration.set(Vector2.Zero);
         jumping = false;
     }
-    
-    public void applyAcceleration(Vector2 acceleration)
-    {
+
+    public void applyAcceleration(Vector2 acceleration) {
         this.acceleration.add(acceleration);
     }
-    
-    public void setVelocity(Vector2 velocity)
-    {
+
+    public void setVelocity(Vector2 velocity) {
         this.velocity.add(velocity);
     }
-    
-    public void collideWithPolygons(ArrayList<Polygon> polygons)
-    {
+
+    public void collideWithPolygons(ArrayList<Polygon> polygons) {
         // The player's normals
         Vector2[] normals1 = getNormals();
         // The other polygon's normals
@@ -115,92 +108,78 @@ public class Player extends Polygon {
         Vector2 projection1;
         // The other polygon's projection
         Vector2 projection2;
-        
+
         float collisionDepth = Float.MAX_VALUE;
         Vector2 collidingAxis = null;
-        
+
         // Iterate through all the polygons and check for a collision on a 1 to 1 basis
-        for (Polygon otherPoly: polygons)
-        {
+        for (Polygon otherPoly : polygons) {
             boolean collided = true;
             // Check all of the player's normals
-            for (Vector2 normal: normals1)
-            {
+            for (Vector2 normal : normals1) {
                 projection1 = this.projectPolygon(normal);
                 projection2 = otherPoly.projectPolygon(normal);
-                
+
                 // If one normal doesn't contain a collision, then no collision occurs at all
-                if (projection1.x > projection2.y || projection1.y < projection2.x)
-                {
+                if (projection1.x > projection2.y || projection1.y < projection2.x) {
                     collided = false;
                     break;
                     // Execution below this point indicates an intersection has occured
                 }
                 // the intersection depth for the current intersection
                 float intersection;
-                
+
                 // Check the two possible intersection lengths and pick the smaller one
-                if (Math.abs(projection2.y-projection1.x) < Math.abs(projection2.x-projection1.y))
-                {
-                    intersection = projection2.y-projection1.x;
+                if (Math.abs(projection2.y - projection1.x) < Math.abs(projection2.x - projection1.y)) {
+                    intersection = projection2.y - projection1.x;
+                } else {
+                    intersection = projection2.x - projection1.y;
                 }
-                else
-                {
-                    intersection = projection2.x-projection1.y;
-                }
-                
+
                 // If the current intersection depth is smaller than the overall intersection depth, udpate the overall intersection depth and the overall intersection axis
-                if (Math.abs(intersection) < Math.abs(collisionDepth))
-                {
-                    collisionDepth = intersection;
-                    collidingAxis = getNormal(normal);
-                }
-            }   
-            
-            // Check all of the other polygon's normals
-            normals2 = otherPoly.getNormals();
-            for (Vector2 normal: normals2)
-            {
-                projection1 = this.projectPolygon(normal);
-                projection2 = otherPoly.projectPolygon(normal);
-                
-                // If one normal doesn't contain a collision, then no collision occurs at all
-                if (projection1.x > projection2.y || projection1.y < projection2.x)
-                {
-                    collided = false;
-                    break;
-                    // Execution below this point indicates an intersection has occured
-                }
-                // the intersection depth for the current intersection
-                float intersection;
-                
-                // Check the two possible intersection lengths and pick the smaller one
-                if (Math.abs(projection2.y-projection1.x) < Math.abs(projection2.x-projection1.y))
-                {
-                    intersection = projection2.y-projection1.x;
-                }
-                else
-                {
-                    intersection = projection2.x-projection1.y;
-                }
-                
-                // If the current intersection depth is smaller than the overall intersection depth, udpate the overall intersection depth and the overall intersection axis
-                if (Math.abs(intersection) < Math.abs(collisionDepth))
-                {
+                if (Math.abs(intersection) < Math.abs(collisionDepth)) {
                     collisionDepth = intersection;
                     collidingAxis = getNormal(normal);
                 }
             }
-            if (collided)
-            {
+
+            // Check all of the other polygon's normals
+            normals2 = otherPoly.getNormals();
+            for (Vector2 normal : normals2) {
+                projection1 = this.projectPolygon(normal);
+                projection2 = otherPoly.projectPolygon(normal);
+
+                // If one normal doesn't contain a collision, then no collision occurs at all
+                if (projection1.x > projection2.y || projection1.y < projection2.x) {
+                    collided = false;
+                    break;
+                    // Execution below this point indicates an intersection has occured
+                }
+                // the intersection depth for the current intersection
+                float intersection;
+
+                // Check the two possible intersection lengths and pick the smaller one
+                if (Math.abs(projection2.y - projection1.x) < Math.abs(projection2.x - projection1.y)) {
+                    intersection = projection2.y - projection1.x;
+                } else {
+                    intersection = projection2.x - projection1.y;
+                }
+
+                // If the current intersection depth is smaller than the overall intersection depth, udpate the overall intersection depth and the overall intersection axis
+                if (Math.abs(intersection) < Math.abs(collisionDepth)) {
+                    collisionDepth = intersection;
+                    collidingAxis = getNormal(normal);
+                }
+            }
+            if (collided) {
                 // TESTING
 //                System.out.println("COLLIDED");
 //                System.out.println("Collision depth: " + collisionDepth);
 //                System.out.println("Rebounding axis: " + movementAxis);
-                
+
                 // Moves the player instantly by the intersection magnitude
                 collidePhysics(collidingAxis, collisionDepth);
-                
+
                 return;
             }
         }
