@@ -165,7 +165,7 @@ public class GameScreen extends MyScreen {
                 world.getPlayer().applyAcceleration(new Vector2(19.6f, 0));
             }
         }
-        if (GameInputs.isKeyDown(GameInputs.Keys.CTRL)) {
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
                 world.saveLevel();
             }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
@@ -177,8 +177,10 @@ public class GameScreen extends MyScreen {
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             Vector2 newPoint = new Vector2(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
             if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()])).containsPoint(newPoint))) {
+                if()
                 potentialPolygon.add(newPoint);
                 world.setPotentialPolygon(potentialPolygon);
+                
 
             } else if (potentialPolygon.size() <= 2) {
                 potentialPolygon.add(newPoint);
