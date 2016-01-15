@@ -6,6 +6,9 @@ package com.mygdx.game.model;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.input.GameInputs;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +20,6 @@ public class GameWorld {
     private ArrayList<Vector2> potentialPolygon;
     private ArrayList<Polygon> polygons;
     private Player player;
-    
     private Vector2 gravity;
 
     public GameWorld() {
@@ -27,10 +29,9 @@ public class GameWorld {
     }
 
     public void update(float deltaTime) {
-        
+
 //        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
-        if (player != null)
-        {
+        if (player != null) {
             player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
@@ -46,6 +47,7 @@ public class GameWorld {
 
     /**
      * Creates a polygon based on the vectors passed in
+     *
      * @param polygon arraylist of vertices of the polygon
      */
     public void createPolygon(ArrayList<Vector2> polygon) {
@@ -54,7 +56,8 @@ public class GameWorld {
 
     /**
      * Getter method for the polygons arraylist
-     * @return 
+     *
+     * @return
      */
     public ArrayList<Polygon> getPolygons() {
         return polygons;
@@ -62,6 +65,7 @@ public class GameWorld {
 
     /**
      * Creates the player based on the vectors passed in
+     *
      * @param playerPolygon arraylist of vertices
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon) {
@@ -70,9 +74,30 @@ public class GameWorld {
 
     /**
      * Getter method for the player polygon
-     * @return 
+     *
+     * @return
      */
     public Player getPlayer() {
         return player;
+    }
+
+    public void saveLevel() {
+        //save polygon vertices 
+        //save player vertices
+        for (Polygon polygon: polygons)
+        {
+            for (Vector2 vertice: polygon.getVertices())
+            {
+                System.out.println(vertice);
+            }
+        }
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter("level.txt"));
+            for (int i = 0; i < 4; i++) {
+                out.write("test " + "\n");
+            }
+            out.close();
+        } catch (IOException e) {
+        }
     }
 }
