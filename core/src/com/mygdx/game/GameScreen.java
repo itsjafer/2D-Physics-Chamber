@@ -5,8 +5,6 @@
  */
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
@@ -60,28 +58,21 @@ public class GameScreen extends MyScreen {
 
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
-        
-        for (int i = 0; i < potentialPolygon.size()-1; i++) {
+
+        for (int i = 0; i < potentialPolygon.size() - 1; i++) {
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
         }
         if (addingPoint) {
-            if (potentialPolygon.size() > 0)
-            {
+            if (potentialPolygon.size() > 0) {
                 shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
                 shapeRenderer.line(GameInputs.getMousePosition(), potentialPolygon.get(0));
-            }
-            else
-            {
+            } else {
                 shapeRenderer.circle(GameInputs.getMousePosition().x, GameInputs.getMousePosition().y, 1);
             }
-        }
-        else if (potentialPolygon.size() > 1)
-        {
-            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size()-1), potentialPolygon.get(0));
-        }
-        else if (potentialPolygon.size() == 1)
-        {
+        } else if (potentialPolygon.size() > 1) {
+            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), potentialPolygon.get(0));
+        } else if (potentialPolygon.size() == 1) {
             shapeRenderer.circle(potentialPolygon.get(0).x, potentialPolygon.get(0).y, 1);
         }
 
@@ -103,15 +94,13 @@ public class GameScreen extends MyScreen {
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
-            
+
             shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
         shapeRenderer.end();
 
         //render the menu
 //        menu.render(deltaTime);
-
-
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -198,14 +187,18 @@ public class GameScreen extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-            
+            if (potentialPolygon.isEmpty()) {
+                potentialPolygon.add(GameInputs.getMousePosition().cpy());
+            }
             addingPoint = true;
-            System.out.println("DDING");
+            System.out.println("justClick");
         }
         if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT) && addingPoint) {
             potentialPolygon.add(GameInputs.getMousePosition().cpy());
             addingPoint = false;
             System.out.println("RELEAsed");
+        }
+
 //            Vector2 newPoint = GameInputs.getMousePosition();
 //
 //            if (potentialPolygon.size() > 2 && !(new Polygon(potentialPolygon.toArray(new Vector2[potentialPolygon.size()])).containsPoint(newPoint))) {
@@ -225,8 +218,6 @@ public class GameScreen extends MyScreen {
 //                potentialPolygon.add(newPoint);
 //                world.setPotentialPolygon(potentialPolygon);
 //            }
-        }
-
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
             if (potentialPolygon.size() > 0) {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
