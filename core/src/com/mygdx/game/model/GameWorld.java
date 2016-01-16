@@ -120,6 +120,9 @@ public class GameWorld {
      */
     public void loadLevel() {
 
+        //delete any existing polygons from the level
+        polygons.clear();
+        
         //loading the file to be read from
         FileReader file = null;
         try {

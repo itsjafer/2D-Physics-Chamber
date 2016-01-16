@@ -189,7 +189,7 @@ public class GameScreen extends MyScreen {
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
-            world.saveLevel();
+            world.loadLevel();
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
