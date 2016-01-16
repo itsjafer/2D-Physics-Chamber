@@ -94,8 +94,8 @@ public class GameScreen extends MyScreen {
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
-
-            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
+            
+//            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
         shapeRenderer.end();
 
@@ -164,21 +164,23 @@ public class GameScreen extends MyScreen {
 
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
-//            world.getPlayer().applyAcceleration(new Vector2(0, 19.6f));
-                world.getPlayer().jump();
+            world.getPlayer().applyAcceleration(new Vector2(0, 1000));
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
-                world.getPlayer().applyAcceleration(new Vector2(0, -19.6f));
+                world.getPlayer().applyAcceleration(new Vector2(0, -1000));
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.A)) {
-                world.getPlayer().applyAcceleration(new Vector2(-19.6f, 0));
+                world.getPlayer().applyAcceleration(new Vector2(-1000, 0));
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.D)) {
-                world.getPlayer().applyAcceleration(new Vector2(19.6f, 0));
+                world.getPlayer().applyAcceleration(new Vector2(1000, 0));
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
             world.loadLevel();
+        }
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
+            world.saveLevel();
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
