@@ -35,8 +35,6 @@ public class MyGdxGame extends Game {
         // The game input processor is gonna distribute all of the input for the game
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);
-        
-        System.out.println(Polygon.vectorProject(new Vector2(0.0f, -20.765337f), new Vector2(25.0f, -0.0f)));
     }
 
     /**

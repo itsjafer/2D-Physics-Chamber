@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 
     private Vector2 acceleration;
-    private float friction = 0f;
-    private float restitution = 0f;
+    private float friction = 0.07f;
+    private float restitution = 0.5f;
     private boolean jumping = false;
     
     float delF;
@@ -41,6 +41,12 @@ public class Player extends Polygon {
     }
 
     public void move(float deltaTime) {
+        
+//        if (Float.isNaN(velocity.x))
+//            velocity.x = 0;
+//        if (Float.isNaN(velocity.y))
+//            velocity.y = 0;
+        
         delF += deltaTime;
         if (jumping) {
             velocity.y = 200f;
@@ -54,56 +60,55 @@ public class Player extends Polygon {
             vertex.add(movement);
         }
         updateCenter();
-        
-        System.out.println(movement);
     }
     
     public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
     {
-        
-        System.out.println("Collision depth: " + collisionDepth);
+//        System.out.println("COLLLLLLLIDDDEE");
+//        System.out.println("Collision depth: " + collisionDepth);
         Vector2 collidingNormal = getNormal(collidingAxis);
         
         collidingNormal.nor().scl(-collisionDepth);
-        System.out.println("Colliding normal vector: " + collidingNormal);
-        System.out.println("colliding normal length (should be same as collision depth): " + collidingNormal.len());
+//        System.out.println("Colliding normal vector: " + collidingNormal);
+//        System.out.println("colliding normal length (should be same as collision depth): " + collidingNormal.len());
         
         // LOL no
         // magnitude of displacement vector = |collidingNormal|^2|vel|/collidingNormal.vel
-        float displacementMag = collidingNormal.cpy().dot(collidingNormal) * velocity.len() / collidingNormal.cpy().dot(velocity);
+        float displacementMag = collidingNormal.cpy().dot(collidingNormal) * velocity.len() / (collidingNormal.cpy().dot(velocity));
+//        System.out.println("displacement mag: " + displacementMag);
         Vector2 displacement = velocity.cpy().nor().scl(displacementMag);
-        System.out.println("DISPLACEMENT: " + displacement);
+//        System.out.println("DISPLACEMENT: " + displacement);
         
         bump(displacement);
         
-        System.out.println("INITIAL VEL: " + velocity + "    DELTAT " + delF);
+//        System.out.println("INITIAL VEL: " + velocity + "    DELTAT " + delF);
 //        System.out.println("IN THE SQR ROOT" + (velocity.len()*velocity.len()-2*acceleration.len()*displacement.len()));
-        System.out.println("VELOCITY LEN: " + velocity.len() + " VEL SQ " + velocity.len()*velocity.len() + " ACCEL: " + acceleration.len() + " DISPL " + displacement.len());
+//        System.out.println("VELOCITY LEN: " + velocity.len() + " VEL SQ " + velocity.len()*velocity.len() + " ACCEL: " + acceleration.len() + " DISPL " + displacement.len());
 //        System.out.println("DISPLACED VEL: " + velocity);
         
-        System.out.println("LOL WHAT: " + (velocity.len()*velocity.len()-2*acceleration.len()*displacement.len()));
+//        System.out.println("LOL WHAT: " + (velocity.len()*velocity.len()-2*acceleration.len()*displacement.len()));
         
 //        velocity.nor().scl((float)Math.sqrt((velocity.len()*velocity.len()-2*acceleration.len()*displacement.len())));
         
-        float adjustVelMag = (float)(Math.sqrt(velocity.len()*velocity.len()-2*acceleration.len()*displacement.len()));
+        float adjustVelMag = (float)(Math.sqrt(Math.abs(velocity.len()*velocity.len()-2*acceleration.len()*displacement.len())));
         velocity.nor().scl(adjustVelMag);
         
-        System.out.println("ATTTEMPTINT TO PROJECT VEL: " + velocity + " COLL AXIS " + collidingAxis + " ->>> " + vectorProject(velocity, collidingAxis));
+//        System.out.println("ATTTEMPTINT TO PROJECT VEL: " + velocity + " COLL AXIS " + collidingAxis + " ->>> " + vectorProject(velocity, collidingAxis));
         // FRICTION:
         Vector2 horizontalComponent = vectorProject(velocity, collidingAxis);
         horizontalComponent.scl(1f-friction);
         
-        System.out.println("FRICTION: " + horizontalComponent + "   " + vectorProject(velocity, collidingAxis));
+//        System.out.println("FRICTION: " + horizontalComponent + "   " + vectorProject(velocity, collidingAxis));
         
         // RESTITUTION:
         Vector2 verticalComponent = vectorProject(velocity, getNormal(collidingAxis));
         verticalComponent.scl(-restitution);
         
-        System.out.println("RESTITUTION: " + verticalComponent + "    " + vectorProject(velocity, getNormal(collidingAxis)));
+//        System.out.println("RESTITUTION: " + verticalComponent + "    " + vectorProject(velocity, getNormal(collidingAxis)));
         
         velocity = horizontalComponent.add(verticalComponent);
         
-        System.out.println("NEW VELOCITy: " + velocity);
+//        System.out.println("NEW VELOCITy: " + velocity);
     }
     /**
      * Resets the player's position to the initial creation position. Also
@@ -160,7 +165,7 @@ public class Player extends Polygon {
                 projection2 = otherPoly.projectPolygon(normal);
 
                 // If one normal doesn't contain a collision, then no collision occurs at all
-                if (projection1.x > projection2.y || projection1.y < projection2.x) {
+                if (projection1.x >= projection2.y || projection1.y <= projection2.x) {
                     collided = false;
                     break;
                     // Execution below this point indicates an intersection has occured
@@ -189,7 +194,7 @@ public class Player extends Polygon {
                 projection2 = otherPoly.projectPolygon(normal);
 
                 // If one normal doesn't contain a collision, then no collision occurs at all
-                if (projection1.x > projection2.y || projection1.y < projection2.x) {
+                if (projection1.x >= projection2.y || projection1.y <= projection2.x) {
                     collided = false;
                     break;
                     // Execution below this point indicates an intersection has occured
@@ -210,7 +215,7 @@ public class Player extends Polygon {
                     collidingAxis = getNormal(normal);
                 }
             }
-            if (collided)
+            if (collided && Math.abs(collisionDepth) > 1e-4)
             {
                 // TESTING
 //                System.out.println("COLLIDED");
