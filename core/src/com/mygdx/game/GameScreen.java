@@ -103,6 +103,8 @@ public class GameScreen extends MyScreen {
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
+            
+            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
         shapeRenderer.end();
 
@@ -225,11 +227,11 @@ public class GameScreen extends MyScreen {
 //            }
         }
 
-//        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
-//            if (potentialPolygon.size() > 0) {
-//                potentialPolygon.remove(potentialPolygon.size() - 1);
-//            }
-//        }
+        if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
+            if (potentialPolygon.size() > 0) {
+                potentialPolygon.remove(potentialPolygon.size() - 1);
+            }
+        }
 
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
             if (potentialPolygon.size() > 2) {

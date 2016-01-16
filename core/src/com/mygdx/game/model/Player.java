@@ -14,14 +14,26 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 
     private Vector2 acceleration;
-    private float friction = 0.1f;
-    private float restitution = 1f;
+    private float friction = 0f;
+    private float restitution = 0f;
     private boolean jumping = false;
+    
+    float delF;
+    
+    public float HIGHEST = Float.MIN_VALUE;
 
     public Player(Vector2[] vertices) {
         super(vertices);
         velocity = new Vector2();
         acceleration = new Vector2();
+        
+        for (Vector2 vertex: vertices)
+        {
+            if (vertex.y > HIGHEST)
+            {
+                HIGHEST = vertex.y;
+            }
+        }
     }
 
     public void jump() {
@@ -29,42 +41,69 @@ public class Player extends Polygon {
     }
 
     public void move(float deltaTime) {
+        delF += deltaTime;
         if (jumping) {
             velocity.y = 200f;
         }
 //        Vector2 movement = velocity.cpy().add(acceleration.cpy().scl(0.5f));
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
-        velocity.add(acceleration);
+        velocity.add(acceleration.cpy().scl(deltaTime));
 
 //         Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
             vertex.add(movement);
         }
         updateCenter();
+        
+        System.out.println(movement);
     }
     
     public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
     {
-//        bump(new Vector2(0, 10000));
         
-        System.out.println("Col depth: " + collisionDepth);
-//        System.out.println("VELOCITY PENETRATED: " + velocity);
-//        
-//        float velBeforePenetration = (float)Math.sqrt(velocity.len()*velocity.len() - 2f*acceleration.len()*(Math.abs(collisionDepth)));
-//        velocity.scl(1f/velocity.len());
-//        velocity.scl(velBeforePenetration);
-//        
-//        System.out.println("ADJUSTED VELOCITY FOR OUT OF PENETRATION (" + collisionDepth + "): " + velocity);
-//        
-        Vector2 displacement = getNormal(collidingAxis).scl(1f/collidingAxis.len()).scl(-collisionDepth);
-        System.out.println("coll Axis: " + collidingAxis);
-        System.out.println("normal:  " + getNormal(collidingAxis));
-        System.out.println("Unit vector: " + getNormal(collidingAxis).scl(1f/collidingAxis.len()));
-        System.out.println("Collision deptH: " + collisionDepth);
-        System.out.println("Displacement vector: " + getNormal(collidingAxis).scl(1f/collidingAxis.len()).scl(collisionDepth));
-        bump(new Vector2(0, 111));
-//        bump(displacement);
-//        System.out.println("WOW: " + (displacement.len()-collisionDepth));
+        System.out.println("Collision depth: " + collisionDepth);
+        Vector2 collidingNormal = getNormal(collidingAxis);
+        
+        collidingNormal.nor().scl(-collisionDepth);
+        System.out.println("Colliding normal vector: " + collidingNormal);
+        System.out.println("colliding normal length (should be same as collision depth): " + collidingNormal.len());
+        
+        // LOL no
+        // magnitude of displacement vector = |collidingNormal|^2|vel|/collidingNormal.vel
+        float displacementMag = collidingNormal.cpy().dot(collidingNormal) * velocity.len() / collidingNormal.cpy().dot(velocity);
+        Vector2 displacement = velocity.cpy().nor().scl(displacementMag);
+        System.out.println("DISPLACEMENT: " + displacement);
+        
+        bump(displacement);
+        
+        System.out.println("INITIAL VEL: " + velocity + "    DELTAT " + delF);
+//        System.out.println("IN THE SQR ROOT" + (velocity.len()*velocity.len()-2*acceleration.len()*displacement.len()));
+        System.out.println("VELOCITY LEN: " + velocity.len() + " VEL SQ " + velocity.len()*velocity.len() + " ACCEL: " + acceleration.len() + " DISPL " + displacement.len());
+//        System.out.println("DISPLACED VEL: " + velocity);
+        
+        System.out.println("LOL WHAT: " + (velocity.len()*velocity.len()-2*acceleration.len()*displacement.len()));
+        
+//        velocity.nor().scl((float)Math.sqrt((velocity.len()*velocity.len()-2*acceleration.len()*displacement.len())));
+        
+        float adjustVelMag = (float)(Math.sqrt(velocity.len()*velocity.len()-2*acceleration.len()*displacement.len()));
+        velocity.nor().scl(adjustVelMag);
+        
+        System.out.println("ATTTEMPTINT TO PROJECT VEL: " + velocity + " COLL AXIS " + collidingAxis + " ->>> " + vectorProject(velocity, collidingAxis));
+        // FRICTION:
+        Vector2 horizontalComponent = vectorProject(velocity, collidingAxis);
+        horizontalComponent.scl(1f-friction);
+        
+        System.out.println("FRICTION: " + horizontalComponent + "   " + vectorProject(velocity, collidingAxis));
+        
+        // RESTITUTION:
+        Vector2 verticalComponent = vectorProject(velocity, getNormal(collidingAxis));
+        verticalComponent.scl(-restitution);
+        
+        System.out.println("RESTITUTION: " + verticalComponent + "    " + vectorProject(velocity, getNormal(collidingAxis)));
+        
+        velocity = horizontalComponent.add(verticalComponent);
+        
+        System.out.println("NEW VELOCITy: " + velocity);
     }
     /**
      * Resets the player's position to the initial creation position. Also
@@ -99,7 +138,7 @@ public class Player extends Polygon {
         this.velocity.add(velocity);
     }
 
-    public void collideWithPolygons(ArrayList<Polygon> polygons) {
+    public boolean collideWithPolygons(ArrayList<Polygon> polygons) {
         // The player's normals
         Vector2[] normals1 = getNormals();
         // The other polygon's normals
@@ -171,7 +210,8 @@ public class Player extends Polygon {
                     collidingAxis = getNormal(normal);
                 }
             }
-            if (collided) {
+            if (collided)
+            {
                 // TESTING
 //                System.out.println("COLLIDED");
 //                System.out.println("Collision depth: " + collisionDepth);
@@ -180,8 +220,9 @@ public class Player extends Polygon {
                 // Moves the player instantly by the intersection magnitude
                 collidePhysics(collidingAxis, collisionDepth);
 
-                return;
+                return true;
             }
         }
+        return false;
     }
 }

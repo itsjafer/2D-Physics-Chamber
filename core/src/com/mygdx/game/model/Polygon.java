@@ -106,9 +106,8 @@ public class Polygon {
     
     public static Vector2 vectorProject(Vector2 v1, Vector2 v2) {
         
-        float dotProduct = v1.cpy().dot(v2);
-        float scalarProjection = dotProduct/v2.len();
-        Vector2 vectorProjection = v2.cpy().scl(1f/v2.len()).scl(scalarProjection);
+        float scalarProjection = scalarProject(v1, v2);
+        Vector2 vectorProjection = v2.cpy().nor().scl(scalarProjection);
         
         return vectorProjection;
     }

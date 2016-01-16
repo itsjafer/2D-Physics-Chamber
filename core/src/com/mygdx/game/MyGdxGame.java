@@ -7,7 +7,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.input.GameInputs;
+import com.mygdx.game.model.Polygon;
 
 public class MyGdxGame extends Game {
 
@@ -33,6 +35,8 @@ public class MyGdxGame extends Game {
         // The game input processor is gonna distribute all of the input for the game
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);
+        
+        System.out.println(Polygon.vectorProject(new Vector2(0.0f, -20.765337f), new Vector2(25.0f, -0.0f)));
     }
 
     /**

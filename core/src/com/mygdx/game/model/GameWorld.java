@@ -23,7 +23,7 @@ public class GameWorld {
 
     public GameWorld() {
         polygons = new ArrayList();
-        gravity = new Vector2(0, -9.8f);
+        gravity = new Vector2(0, -1000f);
     }
 
     public void update(float deltaTime) {
@@ -33,6 +33,7 @@ public class GameWorld {
             player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
+//                while (player.collideWithPolygons(polygons));
                 player.collideWithPolygons(polygons);
             }
             player.update();
