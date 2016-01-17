@@ -11,6 +11,7 @@ import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -94,13 +95,11 @@ public class GameScreen extends MyScreen {
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
-            
+
 //            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
         shapeRenderer.end();
 
-        //render the menu
-//        menu.render(deltaTime);
 ////        shapeRenderer.setProjectionMatrix(camera.combined);
 //        
 //        shapeRenderer.begin(ShapeType.Line);
@@ -164,7 +163,7 @@ public class GameScreen extends MyScreen {
 
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
-            world.getPlayer().applyAcceleration(new Vector2(0, 1000));
+                world.getPlayer().applyAcceleration(new Vector2(0, 1000));
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
                 world.getPlayer().applyAcceleration(new Vector2(0, -1000));
@@ -190,15 +189,13 @@ public class GameScreen extends MyScreen {
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
             if (potentialPolygon.isEmpty()) {
-                potentialPolygon.add(GameInputs.getMousePosition().cpy());
+                drawStraight();
             }
             addingPoint = true;
-            System.out.println("justClick");
         }
         if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT) && addingPoint) {
-            potentialPolygon.add(GameInputs.getMousePosition().cpy());
+            drawStraight();
             addingPoint = false;
-            System.out.println("RELEAsed");
         }
 
 //            Vector2 newPoint = GameInputs.getMousePosition();
@@ -247,6 +244,32 @@ public class GameScreen extends MyScreen {
      */
     public void resetPlayer() {
         world.getPlayer().goHome();
+    }
+
+    public void drawStraight() {
+
+        Vector2 newPoint = GameInputs.getMousePosition();
+
+        if (GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
+            if (!potentialPolygon.isEmpty()) {
+                if (Math.abs(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint)) <= 45) {
+                    newPoint.y = potentialPolygon.get(potentialPolygon.size() - 1).y;
+                } else {
+                    newPoint.x = potentialPolygon.get(potentialPolygon.size() - 1).x;
+                }
+            }
+        }
+        potentialPolygon.add(newPoint.cpy());
+    }
+
+    public float getAngle(Vector2 pos1, Vector2 pos2) {
+        float xVal = pos2.x - pos1.x;
+        float yVal = pos2.y - pos1.y;
+
+        float theta = MathUtils.atan2(yVal, xVal);
+
+        System.out.println(MathUtils.radiansToDegrees * theta);
+        return MathUtils.radiansToDegrees * theta;
     }
 
     @Override
