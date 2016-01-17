@@ -60,22 +60,7 @@ public class GameScreen extends MyScreen {
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
 
-        for (int i = 0; i < potentialPolygon.size() - 1; i++) {
-            shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
-            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
-        }
-        if (addingPoint) {
-            if (potentialPolygon.size() > 0) {
-                shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
-                shapeRenderer.line(GameInputs.getMousePosition(), potentialPolygon.get(0));
-            } else {
-                shapeRenderer.circle(GameInputs.getMousePosition().x, GameInputs.getMousePosition().y, 1);
-            }
-        } else if (potentialPolygon.size() > 1) {
-            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), potentialPolygon.get(0));
-        } else if (potentialPolygon.size() == 1) {
-            shapeRenderer.circle(potentialPolygon.get(0).x, potentialPolygon.get(0).y, 1);
-        }
+        drawLines();
 
         for (Polygon polygon : world.getPolygons()) {
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
@@ -246,21 +231,41 @@ public class GameScreen extends MyScreen {
         world.getPlayer().goHome();
     }
 
+    public void drawLines() {
+        for (int i = 0; i < potentialPolygon.size() - 1; i++) {
+            shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
+            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
+        }
+        if (addingPoint) {
+            if (potentialPolygon.size() > 0) {
+                shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
+                shapeRenderer.line(GameInputs.getMousePosition(), potentialPolygon.get(0));
+            } else {
+                shapeRenderer.circle(GameInputs.getMousePosition().x, GameInputs.getMousePosition().y, 1);
+            }
+        } else if (potentialPolygon.size() > 1) {
+            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), potentialPolygon.get(0));
+        } else if (potentialPolygon.size() == 1) {
+            shapeRenderer.circle(potentialPolygon.get(0).x, potentialPolygon.get(0).y, 1);
+        }
+    }
+
+    public void drawShapes(ShapeRenderer.ShapeType type) {
+        shapeRenderer.set(type);
+
+    }
+
     public void drawStraight() {
 
         Vector2 newPoint = GameInputs.getMousePosition();
-
-        if (GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
-            if (!potentialPolygon.isEmpty()) {
-                if (Math.abs(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint)) <= 45
-                        || Math.abs(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint)) >= 135) {
-                    newPoint.y = potentialPolygon.get(potentialPolygon.size() - 1).y;
-                } else {
-                    newPoint.x = potentialPolygon.get(potentialPolygon.size() - 1).x;
-                }
-            }
+        float newAngle = 0;
+        if (potentialPolygon.size() > 0) {
+            newAngle = 45 * Math.round(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint) / 45);
+            newPoint = getCoords(newPoint, newAngle).cpy();
         }
+
         potentialPolygon.add(newPoint.cpy());
+
     }
 
     public float getAngle(Vector2 pos1, Vector2 pos2) {
@@ -269,8 +274,14 @@ public class GameScreen extends MyScreen {
 
         float theta = MathUtils.atan2(yVal, xVal);
 
-        System.out.println(MathUtils.radiansToDegrees * theta);
         return MathUtils.radiansToDegrees * theta;
+    }
+
+    public Vector2 getCoords(Vector2 pos1, float angle) {
+        float newX = (float) (pos1.len() * Math.cos(angle));
+        float newY = (float) (pos1.len() * Math.sin(angle));
+
+        return new Vector2(newX, newY);
     }
 
     @Override
