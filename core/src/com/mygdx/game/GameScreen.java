@@ -252,7 +252,8 @@ public class GameScreen extends MyScreen {
 
         if (GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
             if (!potentialPolygon.isEmpty()) {
-                if (Math.abs(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint)) <= 45) {
+                if (Math.abs(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint)) <= 45
+                        || Math.abs(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint)) >= 135) {
                     newPoint.y = potentialPolygon.get(potentialPolygon.size() - 1).y;
                 } else {
                     newPoint.x = potentialPolygon.get(potentialPolygon.size() - 1).x;
