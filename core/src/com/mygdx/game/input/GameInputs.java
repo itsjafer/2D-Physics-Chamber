@@ -158,6 +158,6 @@ public class GameInputs {
     }
 
     public static Vector2 getMousePosition() {
-        return mousePosition;
+        return mousePosition.cpy();
     }
 }
