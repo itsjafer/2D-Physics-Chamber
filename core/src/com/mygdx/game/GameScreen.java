@@ -259,9 +259,10 @@ public class GameScreen extends MyScreen {
 
         Vector2 newPoint = GameInputs.getMousePosition();
         float newAngle = 0;
-        if (potentialPolygon.size() > 0) {
-            newAngle = 45 * Math.round(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint) / 45);
-            newPoint = getCoords(newPoint, newAngle).cpy();
+        if (potentialPolygon.size() > 0 && GameInputs.isKeyDown(GameInputs.Keys.SHIFT)) {
+            newAngle = 45 * Math.round(getAngle(potentialPolygon.get(potentialPolygon.size() - 1), newPoint.cpy()) / 45);
+            newPoint = getCoords(potentialPolygon.get(potentialPolygon.size() - 1), newPoint.cpy(), MathUtils.degreesToRadians * newAngle).cpy();
+        
         }
 
         potentialPolygon.add(newPoint.cpy());
@@ -277,10 +278,10 @@ public class GameScreen extends MyScreen {
         return MathUtils.radiansToDegrees * theta;
     }
 
-    public Vector2 getCoords(Vector2 pos1, float angle) {
-        float newX = (float) (pos1.len() * Math.cos(angle));
-        float newY = (float) (pos1.len() * Math.sin(angle));
+    public Vector2 getCoords(Vector2 pos1, Vector2 pos2, float angle) {
 
+        float newX = pos1.x + (pos2.x - pos1.x) * (float) Math.cos(angle);
+        float newY = pos1.y + (pos2.y - pos1.y) * (float) Math.sin(angle);
         return new Vector2(newX, newY);
     }
 
