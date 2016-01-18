@@ -85,6 +85,7 @@ public class GameWorld {
      * Saves the position of the polygons and the player
      */
     public void saveLevel() {
+        System.out.println("SAVINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG1");
         try {
             //loading up the text file with the infomration
             BufferedWriter out = new BufferedWriter(new FileWriter("levels.txt"));
@@ -122,7 +123,7 @@ public class GameWorld {
      * Loads the level based on the information in levels.txt
      */
     public void loadLevel() {
-
+        System.out.println("LOADINGGGGGGGGGGGGGGGGGG1");
         //delete any existing polygons from the level
         polygons.clear();
         

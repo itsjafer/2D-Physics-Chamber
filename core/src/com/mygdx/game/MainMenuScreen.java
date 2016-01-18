@@ -125,14 +125,14 @@ public class MainMenuScreen extends MyScreen {
         saveGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                startGame.setChecked(false);
+                saveGame.setChecked(false);
                 gameScreen.world.saveLevel();
             }
         });
         loadGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                startGame.setChecked(false);
+                loadGame.setChecked(false);
                 gameScreen.world.loadLevel();
             }
         });
