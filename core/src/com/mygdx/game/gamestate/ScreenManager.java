@@ -18,13 +18,12 @@ import java.util.HashMap;
  */
 public class ScreenManager {
     
-    HashMap<GameScreens, MyScreen> activeScreens;
-    // the MyScreen currently being shown on screen
-    private MyScreen currentGameState;
     // a "permanent" instance of the main game so that the game doesn't restart every time this gameinstance is activated
     /// Another approach to thsi would be to store all fo the game states in a hashmpa here in this class and then IF we want it to rest
     //// (like the main menu), we just switch to it and call "init()"
-    private GameScreen gameScreenInstance;
+    HashMap<GameScreens, MyScreen> activeScreens;
+    // the MyScreen currently being shown on screen
+    private MyScreen currentGameState;
     
     // All of the game screens
     public static enum GameScreens{
@@ -48,27 +47,40 @@ public class ScreenManager {
         //// we might not need this
         // Dispose of the current game state as it is going to be switched
         if (currentGameState != null)
+        {
             currentGameState.dispose();
-        if(activeScreens.containsKey(gameState)){
-            
+            System.out.println("hi");
         }
         // Since the gameState variable is an enum, identify the target game state and initialize it separately
         switch(gameState)
         {
-            case MAIN_GAME:
-                // To avoid restarting the game, only create a new instance if it hasn't yet been created.
-                if (gameScreenInstance == null)
-                    gameScreenInstance = new GameScreen(this);
-                currentGameState = gameScreenInstance;
-                break;
             case MAIN_MENU:
-                currentGameState = new MainMenuScreen(this);
+                // To avoid restarting the game, only create a new instance if it hasn't yet been created.
+                if (!activeScreens.containsKey(gameState))
+                {
+                    System.out.println("can't find MAIN MENU");
+                    activeScreens.put(gameState, new MainMenuScreen(this));
+                }
+                currentGameState = activeScreens.get(gameState);
                 break;
-                case GAME_MENU:
-                currentGameState = new GameMenu(this, gameScreenInstance);
+            case GAME_MENU:
+                if (!activeScreens.containsKey(gameState))
+                {
+                    System.out.println("can't find GAME MENU");
+                    activeScreens.put(gameState, new GameMenu(this, (GameScreen)activeScreens.get(GameScreens.MAIN_GAME)));
+                }
+                currentGameState = activeScreens.get(gameState);
+                break;
+            case MAIN_GAME:
+                if (!activeScreens.containsKey(gameState))
+                {
+                    System.out.println("can't find MAIN GAME");
+                    activeScreens.put(gameState, new GameScreen(this));
+                }
+                currentGameState = activeScreens.get(gameState);
                 break;
         }
-        
+        System.out.println(currentGameState);
         currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
     }
     /**
