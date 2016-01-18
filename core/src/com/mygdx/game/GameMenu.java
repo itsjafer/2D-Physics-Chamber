@@ -95,13 +95,13 @@ public class GameMenu extends MyScreen {
         //        // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
         //        // revert the checked state.
         bResetPlayer.addListener(new ClickListener() {
-
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("hey");
-                background.resetPlayer();
+                //if the player exists, reset the location of the player
+                if (background.world.getPlayer() != null) {
+                    background.resetPlayer();
+                }
             }
-
         });
 
     }
