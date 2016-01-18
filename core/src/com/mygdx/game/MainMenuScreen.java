@@ -102,11 +102,6 @@ public class MainMenuScreen extends MyScreen {
         table.add(saveGame).pad(20, 20, 20, 20);
         table.row();
         table.add(loadGame).pad(20, 20, 20, 20);
-        //taken from the internet:
-        //        // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
-        //        // Button#setChecked() is called, via a key press, etc. If the event.cancel() is called, the checked state will be reverted.
-        //        // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
-        //        // revert the checked state.
     }
 
     @Override
