@@ -141,8 +141,6 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void dispose() {
-        stage.dispose();
-        skin.dispose();
     }
 
     @Override
