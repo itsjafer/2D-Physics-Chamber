@@ -33,7 +33,6 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-
     // Whether the line being drawn is to be straightened
     boolean straight;
     // The angle multiple to which to snap
@@ -68,7 +67,8 @@ public class GameScreen extends MyScreen {
         shapeRenderer.begin();
 
         if (!potentialPolygon.isEmpty()) {
-            drawPotentialPolygon();
+            //drawPotentialPolygon();
+            drawRectangle();
         }
 
         for (Polygon polygon : world.getPolygons()) {
@@ -258,9 +258,37 @@ public class GameScreen extends MyScreen {
      *
      * @param type
      */
-    public void drawShapes(ShapeRenderer.ShapeType type) {
-        shapeRenderer.set(type);
+    public void drawRectangle() {
 
+        ArrayList<Vector2> potentialRectangle = new ArrayList();
+
+        shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
+
+        //making the 
+        Vector2 vertical = new Vector2(potentialPolygon.get(0).x, mouseDrawPos.y);
+        Vector2 horizontal = new Vector2(mouseDrawPos.x, potentialPolygon.get(0).y);
+
+        potentialRectangle.add(potentialPolygon.get(0));
+        potentialRectangle.add(horizontal);
+        potentialRectangle.add(mouseDrawPos);
+        potentialRectangle.add(vertical);
+
+        for (int i = 0; i < potentialRectangle.size(); i++) {
+            // Draw a dot at every point
+            shapeRenderer.circle(potentialRectangle.get(i).x, potentialRectangle.get(i).y, 1);
+            // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
+
+            shapeRenderer.setColor(Color.BLUE);
+
+            shapeRenderer.line(potentialRectangle.get(i), potentialRectangle.get(i + 1 == potentialRectangle.size() ? 0 : i + 1));
+
+            // reset the color to white for the next loop of drawing points
+            shapeRenderer.setColor((Color.WHITE));
+        }
+//        if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
+//        {
+//            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
+//        }
     }
 
     /**
