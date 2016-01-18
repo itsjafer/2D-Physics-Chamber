@@ -67,8 +67,8 @@ public class GameScreen extends MyScreen {
         shapeRenderer.begin();
 
         if (!potentialPolygon.isEmpty()) {
-            //drawPotentialPolygon();
-            drawRectangle();
+            drawPotentialPolygon();
+            // drawRectangle();
         }
 
         for (Polygon polygon : world.getPolygons()) {
@@ -252,41 +252,6 @@ public class GameScreen extends MyScreen {
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
-    }
-
-    /**
-     * lolwut
-     *
-     * @param type
-     */
-    public void drawRectangle() {
-
-        shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
-        //making the 
-        Vector2 vertical = new Vector2(potentialPolygon.get(0).x, mouseDrawPos.y);
-        Vector2 horizontal = new Vector2(mouseDrawPos.x, potentialPolygon.get(0).y);
-
-        potentialPolygon.add(potentialPolygon.get(0));
-        potentialPolygon.add(horizontal);
-        potentialPolygon.add(mouseDrawPos);
-        potentialPolygon.add(vertical);
-
-        for (int i = 0; i < potentialPolygon.size(); i++) {
-            // Draw a dot at every point
-            shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
-            // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
-
-            shapeRenderer.setColor(Color.BLUE);
-
-            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
-
-            // reset the color to white for the next loop of drawing points
-            shapeRenderer.setColor((Color.WHITE));
-        }
-//        if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
-//        {
-//            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
-//        }
     }
 
     /**
