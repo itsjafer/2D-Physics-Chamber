@@ -35,12 +35,11 @@ public class GameMenu extends MyScreen {
 
     Skin skin;
     Stage stage;
-    TextureAtlas atlas;
     GameScreen background;
     InputMultiplexer im;
     TextButton bResetPlayer, bResetShape;
     Slider gravitySlider;
-    
+
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
         super(gameStateManager);
         this.background = background;
@@ -54,30 +53,11 @@ public class GameMenu extends MyScreen {
         im = new InputMultiplexer(this.stage, MyGdxGame.gameInput);
         // set the input multiplexer as the input processor
         Gdx.input.setInputProcessor(im);
+        //initialize skin by imlpementing the json file that implements the atlas
+        // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
+        skin = new Skin(Gdx.files.internal("data/menuSkin.json"));
 
-        //initialize the atlas containing button textures
-        atlas = new TextureAtlas("ui/atlas.pack");
-
-        //initialize skin by imlpementing atlas
-        skin = new Skin(atlas);
-
-        //add the images for the default button and its various states
-        skin.add("buttonUp", (skin.getRegion("button.up")), TextureRegion.class);
-        skin.add("buttonDown", (skin.getRegion("button.down")), TextureRegion.class);
-
-        //add a font to be used by objects that use skin
-        skin.add("default", new BitmapFont());
-
-        //configure what the default button looks like (button style) :
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.newDrawable("buttonUp");
-//        textButtonStyle.down = skin.newDrawable("buttonDown");
-        textButtonStyle.checked = skin.newDrawable("buttonDown", Color.DARK_GRAY);
-        textButtonStyle.over = skin.newDrawable("buttonUp", Color.DARK_GRAY);
-        textButtonStyle.font = skin.getFont("default");
-
-        //add the button style defined above to 'skin' under the name "default" (it doesn't interfere with font)
-        skin.add("defaultButton", textButtonStyle);
+        gravitySlider = new Slider(-30, 150, 5, true, skin);
 
         // Create a table that fills the screen, the buttons, etc go into this table
         Table table = new Table();
@@ -97,8 +77,6 @@ public class GameMenu extends MyScreen {
         //        // Button#setChecked() is called, via a key press, etc. If the event.cancel() is called, the checked state will be reverted.
         //        // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
         //        // revert the checked state.
-
-
     }
 
     @Override
@@ -138,11 +116,9 @@ public class GameMenu extends MyScreen {
     public void dispose() {
     }
 
-    @Override
-    public void processInput() {
-        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-        }
+    //to avoid the clutter of code
+
+    public void addInputs() {
         bResetPlayer.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -162,5 +138,12 @@ public class GameMenu extends MyScreen {
             }
         });
 
+    }
+
+    @Override
+    public void processInput() {
+        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
     }
 }

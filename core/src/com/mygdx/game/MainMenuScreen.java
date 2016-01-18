@@ -31,7 +31,7 @@ import com.badlogic.gdx.utils.Align;
  * @author Dmitry
  */
 public class MainMenuScreen extends MyScreen {
-    
+
     Skin skin;
     Stage stage;
     Table table;
@@ -39,53 +39,34 @@ public class MainMenuScreen extends MyScreen {
     InputMultiplexer im;
     TextButton startGame, saveGame, loadGame;
     GameScreen gameScreen;
-    
+
     public MainMenuScreen(ScreenManager gameStateManager, GameScreen gameScreen) {
         super(gameStateManager);
         this.gameScreen = gameScreen;
     }
-    
+
     @Override
     public void show() {
     }
-    
+
     @Override
     public void render(float delta) {
         stage.act(delta);
         stage.draw();
     }
-    
+
     @Override
     public void init() {
         stage = new Stage();
+        
         //Input multiplexer, giving priority to stage over gameinput
         im = new InputMultiplexer(stage, MyGdxGame.gameInput);
         // set the input multiplexer as the input processor
         Gdx.input.setInputProcessor(im);
-
-        //initialize the atlas containing button textures
-        atlas = new TextureAtlas("ui/atlas.pack");
-
-        //initialize skin by imlpementing atlas
-        skin = new Skin(atlas);
-
-        //add the images for the default button and its various states
-        skin.add("buttonUp", (skin.getRegion("button.up")), TextureRegion.class);
-        skin.add("buttonDown", (skin.getRegion("button.down")), TextureRegion.class);
-
-        //add a font to be used by objects that use skin
-        skin.add("default", new BitmapFont());
-
-        //configure what the default button looks like (button style) :
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.newDrawable("buttonUp");
-        textButtonStyle.down = skin.newDrawable("buttonDown");
-        textButtonStyle.checked = skin.newDrawable("buttonDown", Color.DARK_GRAY);
-        textButtonStyle.over = skin.newDrawable("buttonUp", Color.DARK_GRAY);
-        textButtonStyle.font = skin.getFont("default");
-
-        //add the button style defined above to 'skin' under the name "default" (it doesn't interfere with font)
-        skin.add("defaultButton", textButtonStyle);
+        
+        //initialize skin by imlpementing the json file that implements the atlas
+        // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
+        skin = new Skin(Gdx.files.internal("ui-data/uiskin.json"));
 
         // Create a table that fills the screen, the buttons, etc go into this table
         table = new Table();
@@ -94,9 +75,9 @@ public class MainMenuScreen extends MyScreen {
         stage.addActor(table);
 
         //create the buttons... b for button:
-        startGame = new TextButton("Start Game", skin, "defaultButton");
-        saveGame = new TextButton("Save Game", skin, "defaultButton");
-        loadGame = new TextButton("Load Game", skin, "defaultButton");
+        startGame = new TextButton("Start Game", skin, "default");
+        saveGame = new TextButton("Save Game", skin, "default");
+        loadGame = new TextButton("Load Game", skin, "default");
         //add the buttons to the table
         table.add(startGame).pad(MyGdxGame.HEIGHT / 3, 20, 20, 20);
         table.row();
@@ -108,19 +89,19 @@ public class MainMenuScreen extends MyScreen {
         //to make the code clearer
         addInputs();
     }
-    
+
     @Override
     public void update(float deltaTime) {
         processInput();
     }
-    
+
     @Override
     public void processInput() {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
     }
-    
+
     public void addInputs() {
         startGame.addListener(new ClickListener() {
             @Override
@@ -128,7 +109,7 @@ public class MainMenuScreen extends MyScreen {
                 startGame.setText("Resume Game");
                 startGame.setChecked(false);
                 gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-                
+
             }
         });
         saveGame.addListener(new ClickListener() {
@@ -149,24 +130,24 @@ public class MainMenuScreen extends MyScreen {
             }
         });
     }
-    
+
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
-    
+
     @Override
     public void pause() {
     }
-    
+
     @Override
     public void resume() {
     }
-    
+
     @Override
     public void hide() {
     }
-    
+
     @Override
     public void dispose() {
     }

@@ -25,7 +25,6 @@ public class ScreenManager {
     HashMap<GameScreens, MyScreen> activeScreens;
     // the MyScreen currently being shown on screen
     private MyScreen currentGameState;
-    private GameScreen gameScreen;
 
     // All of the game screens
     public static enum GameScreens {
@@ -41,7 +40,6 @@ public class ScreenManager {
     public ScreenManager(GameScreens startingGameState) {
         activeScreens = new HashMap<GameScreens, MyScreen>();
         setGameScreen(startingGameState);
-        gameScreen = new GameScreen(this);
     }
 
     /**
