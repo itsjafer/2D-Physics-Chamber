@@ -10,13 +10,15 @@ import com.mygdx.game.GameMenu;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.MainMenuScreen;
 import com.mygdx.game.MyGdxGame;
+import java.util.HashMap;
 
 /**
  * Controls the GameScreens for the entire game. It basically mimics the screen managing functions of the badlogic Game class
  * @author Dmitry
  */
 public class ScreenManager {
-
+    
+    HashMap<GameScreens, MyScreen> activeScreens;
     // the MyScreen currently being shown on screen
     private MyScreen currentGameState;
     // a "permanent" instance of the main game so that the game doesn't restart every time this gameinstance is activated
@@ -34,6 +36,7 @@ public class ScreenManager {
      */
     public ScreenManager(GameScreens startingGameState)
     {
+        activeScreens= new HashMap<GameScreens, MyScreen>();
         setGameScreen(startingGameState);
     }
     /**
@@ -46,7 +49,9 @@ public class ScreenManager {
         // Dispose of the current game state as it is going to be switched
         if (currentGameState != null)
             currentGameState.dispose();
-        
+        if(activeScreens.containsKey(gameState)){
+            
+        }
         // Since the gameState variable is an enum, identify the target game state and initialize it separately
         switch(gameState)
         {

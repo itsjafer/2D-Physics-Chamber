@@ -34,7 +34,6 @@ public class GameMenu extends MyScreen {
 
     Skin skin;
     Stage stage;
-    SpriteBatch batch;
     TextureAtlas atlas;
     GameScreen background;
     InputMultiplexer im;
@@ -46,7 +45,6 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void init() {
-        batch = new SpriteBatch();
         stage = new Stage();
 
         //Input multiplexer, giving priority to stage over gameinput
@@ -123,11 +121,9 @@ public class GameMenu extends MyScreen {
     }
 
     @Override
-    public void render(float delta) {
-
-        background.render(delta);
-
-        stage.act(delta);
+    public void render(float deltaTime) {
+        background.render(deltaTime);
+        stage.act(deltaTime);
         stage.draw();
     }
 

@@ -33,11 +33,11 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-    
+
     // Whether the line being drawn is to be straightened
     boolean straight;
     // The angle multiple to which to snap
-    final float SNAP_ANGLE = (float)Math.toRadians(45);
+    final float SNAP_ANGLE = (float) Math.toRadians(45);
     // The position at which the next point should be added
     Vector2 mouseDrawPos;
 
@@ -67,8 +67,7 @@ public class GameScreen extends MyScreen {
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
 
-        if (!potentialPolygon.isEmpty())
-        {
+        if (!potentialPolygon.isEmpty()) {
             drawPotentialPolygon();
         }
 
@@ -105,7 +104,7 @@ public class GameScreen extends MyScreen {
         shapeRenderer = new ShapeRenderer();
         world = new GameWorld();
         potentialPolygon = new ArrayList();
-        
+
         straight = false;
         mouseDrawPos = new Vector2();
     }
@@ -114,15 +113,12 @@ public class GameScreen extends MyScreen {
     public void update(float deltaTime) {
         processInput();
 
-        if (straight && !potentialPolygon.isEmpty())
-        {
-            straightenMouse(potentialPolygon.get(potentialPolygon.size()-1), GameInputs.getMousePosition());
-        }
-        else
-        {
+        if (straight && !potentialPolygon.isEmpty()) {
+            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
+        } else {
             mouseDrawPos = GameInputs.getMousePosition();
         }
-        
+
         world.update(deltaTime);
     }
 
@@ -144,10 +140,8 @@ public class GameScreen extends MyScreen {
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
-            world.loadLevel();
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
-            world.saveLevel();
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
@@ -159,15 +153,12 @@ public class GameScreen extends MyScreen {
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
             boolean validPos = true;
-            for (Vector2 vertex: potentialPolygon)
-            {
-                if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y)
-                {
+            for (Vector2 vertex : potentialPolygon) {
+                if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y) {
                     validPos = false;
                 }
             }
-            if (validPos)
-            {
+            if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());
             }
@@ -218,52 +209,54 @@ public class GameScreen extends MyScreen {
 
     /**
      * Rounds a specified angle up or down to the nearest specified multiple
+     *
      * @param angle the angle to be adjusted
      * @param multiple the multiple to which the angle should be added
      * @return the angle rounded up or down to the nearest multiple
      */
-    private float adjustAngle(float angle, float multiple)
-    {
-        return multiple*Math.round(angle/multiple);
+    private float adjustAngle(float angle, float multiple) {
+        return multiple * Math.round(angle / multiple);
     }
-    
+
     /**
      * Reset player position
      */
     public void resetPlayer() {
         world.getPlayer().goHome();
     }
-    
+
     /**
-     * Draws the potential polygon. It must be ensured that the potential polygon size is greater than 0
+     * Draws the potential polygon. It must be ensured that the potential
+     * polygon size is greater than 0
      */
     public void drawPotentialPolygon() {
-        
+
         // First loop through all the points except the last one (we don't want the polygon to wrap around
-        for (int i = 0; i < potentialPolygon.size(); i ++)
-        {
+        for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
-            if (potentialPolygon.size() >= 3)
+            if (potentialPolygon.size() >= 3) {
                 shapeRenderer.setColor(Color.RED);
-            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i+1 == potentialPolygon.size() ? 0: i+1));
-            
+            }
+            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
+
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor((Color.WHITE));
         }
-        
+
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
         if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
         {
-            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size()-1), mouseDrawPos);
+            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
     }
 
     /**
      * lolwut
-     * @param type 
+     *
+     * @param type
      */
     public void drawShapes(ShapeRenderer.ShapeType type) {
         shapeRenderer.set(type);
@@ -272,38 +265,41 @@ public class GameScreen extends MyScreen {
 
     /**
      * Straightens the mouse for the snap to angle option
+     *
      * @param point the point around which the mouse position should be adjusted
      * @param curMousePos the mouse's unadjusted position
      */
-    public void straightenMouse(Vector2 point, Vector2 curMousePos)
-    {
+    public void straightenMouse(Vector2 point, Vector2 curMousePos) {
         // Gets the angle between the point and the mouse
         float angle = getAngle(point, curMousePos);
         // Adjusts the angle to the global snap angle
         angle = adjustAngle(angle, SNAP_ANGLE);
         // Take the "radius" between the two points
         Vector2 diff = curMousePos.cpy().sub(point);
-        
+
         // Apply the new angle transformations on the mouse point
-        float newX = point.x + diff.len()*(MathUtils.cos(angle));
-        float newY = point.y + diff.len()*(MathUtils.sin(angle));
+        float newX = point.x + diff.len() * (MathUtils.cos(angle));
+        float newY = point.y + diff.len() * (MathUtils.sin(angle));
         // The mouse drawing position is now updated with the adjusted position
         mouseDrawPos.set(newX, newY);
     }
 
     /**
      * Finds the angle between two points relative to the x-axis
+     *
      * @param origin the point around which the angle is to be measured
-     * @param pos2 the point whose angle is to be measured relative to the origin
-     * @return the angle measured from pos2 to the origin point, relative to the x-axis (horizontal)
+     * @param pos2 the point whose angle is to be measured relative to the
+     * origin
+     * @return the angle measured from pos2 to the origin point, relative to the
+     * x-axis (horizontal)
      */
     public float getAngle(Vector2 origin, Vector2 pos2) {
         // Using the tangent in a right triangle:
         float xVal = pos2.x - origin.x;
         float yVal = pos2.y - origin.y;
-        
+
         float theta = MathUtils.atan2(yVal, xVal);
-        
+
         return theta;
     }
 
