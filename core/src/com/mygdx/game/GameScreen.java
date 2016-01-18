@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Dmitry
+ * @author DmitryJaferCaius
  */
 public class GameScreen extends MyScreen {
 
@@ -230,7 +230,6 @@ public class GameScreen extends MyScreen {
      * polygon size is greater than 0
      */
     public void drawPotentialPolygon() {
-
         // First loop through all the points except the last one (we don't want the polygon to wrap around
         for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
@@ -251,25 +250,31 @@ public class GameScreen extends MyScreen {
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
+
     }
 
     /**
-     * lolwut
-     *
-     * @param type
+     * Draws a based based on two points
      */
     public void drawRectangle() {
-
+        //store the original point to begin the rectangle from
+        Vector2 mouseClick = potentialPolygon.get(0);
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
-        //making the 
+
+        //recreate the polygon using only the first vertice
+        potentialPolygon.clear();
+        potentialPolygon.add(mouseClick);
+
+        //create the vertical and horizontal components of the rectangle
         Vector2 vertical = new Vector2(potentialPolygon.get(0).x, mouseDrawPos.y);
         Vector2 horizontal = new Vector2(mouseDrawPos.x, potentialPolygon.get(0).y);
 
-        potentialPolygon.add(potentialPolygon.get(0));
+        //add rectangle vertices to potentialPolygon 
         potentialPolygon.add(horizontal);
         potentialPolygon.add(mouseDrawPos);
         potentialPolygon.add(vertical);
 
+        //draw the rectangle
         for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
@@ -282,10 +287,8 @@ public class GameScreen extends MyScreen {
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor((Color.WHITE));
         }
-//        if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
-//        {
-//            shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
-//        }
+
+
     }
 
     /**
