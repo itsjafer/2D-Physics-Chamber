@@ -21,7 +21,7 @@ public class MyGdxGame extends Game {
     public static InputProcessor gameInput;
     // screen width and height
     public static int WIDTH, HEIGHT;
-    
+
     /**
      * Creates the game
      */
@@ -30,11 +30,11 @@ public class MyGdxGame extends Game {
         // initialize width and height
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
-        // The game state manager starts out showing the menu screen
-        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
         // The game input processor is gonna distribute all of the input for the game
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);
+        // The game state manager starts out showing the menu screen
+        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
     }
 
     /**
@@ -42,7 +42,7 @@ public class MyGdxGame extends Game {
      */
     @Override
     public void render() {
-        
+
         // Clear the screen
         Gdx.gl20.glClearColor(0, 0, 0, 1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);

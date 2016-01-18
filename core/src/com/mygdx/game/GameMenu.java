@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -37,7 +38,9 @@ public class GameMenu extends MyScreen {
     TextureAtlas atlas;
     GameScreen background;
     InputMultiplexer im;
-
+    TextButton bResetPlayer, bResetShape;
+    Slider gravitySlider;
+    
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
         super(gameStateManager);
         this.background = background;
@@ -83,26 +86,18 @@ public class GameMenu extends MyScreen {
         stage.addActor(table);
 
         //create the buttons... b for button:
-        final TextButton bResetPlayer = new TextButton("Click here", skin, "defaultButton");
-        final TextButton bResetShapes = new TextButton("Reset Player", skin, "defaultButton");
-
+        bResetPlayer = new TextButton("Reset Player", skin, "defaultButton");
+        bResetShape = new TextButton("Reset Shapes", skin, "defaultButton");
         //add the buttons to the table
-        table.add(bResetPlayer);
+        table.add(bResetPlayer).pad(5, 5, 5, 5);
+        table.add(bResetShape).pad(5, 0, 5, 5);
 
         //taken from the internet:
         //        // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
         //        // Button#setChecked() is called, via a key press, etc. If the event.cancel() is called, the checked state will be reverted.
         //        // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
         //        // revert the checked state.
-        bResetPlayer.addListener(new ClickListener() {
 
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("hey");
-                background.resetPlayer();
-            }
-
-        });
 
     }
 
@@ -148,5 +143,24 @@ public class GameMenu extends MyScreen {
         if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
+        bResetPlayer.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //if the player exists, reset the location of the player
+                if (background.world.getPlayer() != null) {
+                    background.resetPlayer();
+                }
+            }
+        });
+        bResetShape.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //if the player exists, reset the location of the player
+                if (background.world.getPlayer() != null) {
+                    background.resetPlayer();
+                }
+            }
+        });
+
     }
 }

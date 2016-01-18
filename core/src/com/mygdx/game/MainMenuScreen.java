@@ -58,7 +58,7 @@ public class MainMenuScreen extends MyScreen {
         gameScreen = new GameScreen(gameStateManager);
 
         //Input multiplexer, giving priority to stage over gameinput
-        im = new InputMultiplexer(this.stage, MyGdxGame.gameInput);
+        im = new InputMultiplexer(stage, MyGdxGame.gameInput);
         // set the input multiplexer as the input processor
         Gdx.input.setInputProcessor(im);
 
@@ -102,11 +102,6 @@ public class MainMenuScreen extends MyScreen {
         table.add(saveGame).pad(20, 20, 20, 20);
         table.row();
         table.add(loadGame).pad(20, 20, 20, 20);
-        //taken from the internet:
-        //        // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
-        //        // Button#setChecked() is called, via a key press, etc. If the event.cancel() is called, the checked state will be reverted.
-        //        // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
-        //        // revert the checked state.
     }
 
     @Override
@@ -131,29 +126,17 @@ public class MainMenuScreen extends MyScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 startGame.setChecked(false);
+                gameScreen.world.saveLevel();
             }
         });
         loadGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 startGame.setChecked(false);
+                gameScreen.world.loadLevel();
             }
         });
     }
-//    private void drawCenteredString(float xPos, float yPos, String text) {
-//        //create a GlyphLayout, which is a new way to measure font metrics based on BitmapFont
-//        GlyphLayout layout = new GlyphLayout();
-//
-//        //set the text based on the font and text to be centered
-//        layout.setText(font, text);
-//
-//        //get the metrics of the String
-//        float layoutWidth = layout.width;
-//        float layoutHeight = layout.height;
-//
-//        //draw the centered string
-//        font.draw(spriteBatch, text, (xPos - layoutWidth) / 2, (MyGdxGame.HEIGHT + layoutHeight) / 2);
-//    }
 
     @Override
     public void resize(int width, int height) {
