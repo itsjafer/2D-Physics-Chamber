@@ -49,7 +49,6 @@ public class ScreenManager {
         if (currentGameState != null)
         {
             currentGameState.dispose();
-            System.out.println("hi");
         }
         // Since the gameState variable is an enum, identify the target game state and initialize it separately
         switch(gameState)
@@ -58,7 +57,6 @@ public class ScreenManager {
                 // To avoid restarting the game, only create a new instance if it hasn't yet been created.
                 if (!activeScreens.containsKey(gameState))
                 {
-                    System.out.println("can't find MAIN MENU");
                     activeScreens.put(gameState, new MainMenuScreen(this));
                 }
                 currentGameState = activeScreens.get(gameState);
@@ -66,7 +64,6 @@ public class ScreenManager {
             case GAME_MENU:
                 if (!activeScreens.containsKey(gameState))
                 {
-                    System.out.println("can't find GAME MENU");
                     activeScreens.put(gameState, new GameMenu(this, (GameScreen)activeScreens.get(GameScreens.MAIN_GAME)));
                 }
                 currentGameState = activeScreens.get(gameState);
@@ -74,7 +71,6 @@ public class ScreenManager {
             case MAIN_GAME:
                 if (!activeScreens.containsKey(gameState))
                 {
-                    System.out.println("can't find MAIN GAME");
                     activeScreens.put(gameState, new GameScreen(this));
                 }
                 currentGameState = activeScreens.get(gameState);
