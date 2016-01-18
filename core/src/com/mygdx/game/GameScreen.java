@@ -140,6 +140,7 @@ public class GameScreen extends MyScreen {
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
+            System.out.println(world);
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
         }
