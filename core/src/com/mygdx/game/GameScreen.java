@@ -260,27 +260,24 @@ public class GameScreen extends MyScreen {
      */
     public void drawRectangle() {
 
-        ArrayList<Vector2> potentialRectangle = new ArrayList();
-
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
-
         //making the 
         Vector2 vertical = new Vector2(potentialPolygon.get(0).x, mouseDrawPos.y);
         Vector2 horizontal = new Vector2(mouseDrawPos.x, potentialPolygon.get(0).y);
 
-        potentialRectangle.add(potentialPolygon.get(0));
-        potentialRectangle.add(horizontal);
-        potentialRectangle.add(mouseDrawPos);
-        potentialRectangle.add(vertical);
+        potentialPolygon.add(potentialPolygon.get(0));
+        potentialPolygon.add(horizontal);
+        potentialPolygon.add(mouseDrawPos);
+        potentialPolygon.add(vertical);
 
-        for (int i = 0; i < potentialRectangle.size(); i++) {
+        for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
-            shapeRenderer.circle(potentialRectangle.get(i).x, potentialRectangle.get(i).y, 1);
+            shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
 
             shapeRenderer.setColor(Color.BLUE);
 
-            shapeRenderer.line(potentialRectangle.get(i), potentialRectangle.get(i + 1 == potentialRectangle.size() ? 0 : i + 1));
+            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
 
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor((Color.WHITE));
