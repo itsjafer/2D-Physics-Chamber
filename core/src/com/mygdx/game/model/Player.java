@@ -5,6 +5,7 @@
 package com.mygdx.game.model;
 
 import com.badlogic.gdx.math.Vector2;
+import static com.mygdx.game.model.Polygon.vectorProject;
 import java.util.ArrayList;
 
 /**
@@ -14,8 +15,8 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 
     private Vector2 acceleration;
-    private float friction = 0.07f;
-    private float restitution = 0.5f;
+    private float friction = 0f;
+    private float restitution = 0f;
     private boolean jumping = false;
     
     float delF;
@@ -90,24 +91,40 @@ public class Player extends Polygon {
         
 //        velocity.nor().scl((float)Math.sqrt((velocity.len()*velocity.len()-2*acceleration.len()*displacement.len())));
         
-        float adjustVelMag = (float)(Math.sqrt(Math.abs(velocity.len()*velocity.len()-2*acceleration.len()*displacement.len())));
-        velocity.nor().scl(adjustVelMag);
-        
 //        System.out.println("ATTTEMPTINT TO PROJECT VEL: " + velocity + " COLL AXIS " + collidingAxis + " ->>> " + vectorProject(velocity, collidingAxis));
         // FRICTION:
-        Vector2 horizontalComponent = vectorProject(velocity, collidingAxis);
-        horizontalComponent.scl(1f-friction);
+//        System.out.println("Velocity in penetration: " + velocity);
+        
+        float adjustedSpeed = 0f;
+        Vector2 parallelComponent = vectorProject(velocity, collidingAxis);
+        
+//        System.out.println("parallel velocity: " + parallelComponent);
+        
+        adjustedSpeed = (float)(Math.sqrt(Math.abs(parallelComponent.len()*parallelComponent.len()-2*vectorProject(acceleration, collidingAxis).len()*vectorProject(displacement, collidingAxis).len())));
+        parallelComponent.nor().scl(adjustedSpeed);
+        parallelComponent.scl(1f-friction);
+//        System.out.println(horizontalComponent);
+        
+//        System.out.println("completed parallel velocity: " + parallelComponent);
         
 //        System.out.println("FRICTION: " + horizontalComponent + "   " + vectorProject(velocity, collidingAxis));
         
         // RESTITUTION:
-        Vector2 verticalComponent = vectorProject(velocity, getNormal(collidingAxis));
-        verticalComponent.scl(-restitution);
+        Vector2 normal = getNormal(collidingAxis);
+        Vector2 normalComponent = vectorProject(velocity, normal);
         
+//        System.out.println("normal velocity: " + normalComponent);
+        
+        adjustedSpeed = (float)(Math.sqrt(Math.abs(normalComponent.len()*normalComponent.len()-2*vectorProject(acceleration, normal).len()*vectorProject(displacement, normal).len())));
+        normalComponent.nor().scl(adjustedSpeed);
+        normalComponent.scl(restitution);
+        
+//        System.out.println("completed normal velocity: "  + normalComponent);
 //        System.out.println("RESTITUTION: " + verticalComponent + "    " + vectorProject(velocity, getNormal(collidingAxis)));
         
-        velocity = horizontalComponent.add(verticalComponent);
+        velocity = parallelComponent.add(normalComponent);
         
+//        System.out.println("completed velocity: " + velocity);
 //        System.out.println("NEW VELOCITy: " + velocity);
     }
     /**

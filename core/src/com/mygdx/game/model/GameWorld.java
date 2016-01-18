@@ -25,7 +25,7 @@ public class GameWorld {
 
     public GameWorld() {
         polygons = new ArrayList();
-        gravity = new Vector2(0, -30f);
+        gravity = new Vector2(0, -100f);
     }
 
     public void update(float deltaTime) {
@@ -37,7 +37,12 @@ public class GameWorld {
             if (!polygons.isEmpty()) {
 //                while (player.collideWithPolygons(polygons));
 //                System.out.println("delta: " + deltaTime);
-                while (player.collideWithPolygons(polygons));
+                int collideTimes = 0;
+                while (player.collideWithPolygons(polygons))
+                {
+                    collideTimes ++;
+                }
+//                System.out.println(collideTimes);
 //                System.out.println("1" + player.collideWithPolygons(polygons));
 //                System.out.println("problem"  + player.collideWithPolygons(polygons));
             }
