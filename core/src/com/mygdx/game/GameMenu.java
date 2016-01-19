@@ -17,6 +17,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -45,6 +46,7 @@ public class GameMenu extends MyScreen {
     TextButton bResetPlayer, bResetLevel;
     Slider gravitySliderY, gravitySliderX;
     Label labelSliderY, labelSliderX;
+    CheckBox snapToGrid;
 
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
         super(gameStateManager);
@@ -76,10 +78,12 @@ public class GameMenu extends MyScreen {
         //create the buttons for table 1
         bResetPlayer = new TextButton("Reset Player", skin, "default");
         bResetLevel = new TextButton("Reset Shapes", skin, "default");
+        snapToGrid = new CheckBox("Snap to grid", skin);
 
         //add objects to table1
         table1.add(bResetPlayer).pad(4, 4, 4, 4);
         table1.add(bResetLevel).pad(4, 0, 4, 4);
+        table1.add(snapToGrid);
 
         //table 2 LAYOUT
         table2.setFillParent(true);
@@ -176,6 +180,17 @@ public class GameMenu extends MyScreen {
                 System.out.println(gravitySliderX.getVisualValue());
                 background.world.setGravity(new Vector2(gravitySliderX.getVisualValue(), background.world.getGravity().y));
                 labelSliderX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
+            }
+        });
+        snapToGrid.addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+                if (snapToGrid.isChecked()) {
+                    background.snapToGrid = true;
+                } else if (!snapToGrid.isChecked()) {
+                    background.snapToGrid = false;
+                }
             }
         });
     }

@@ -13,6 +13,7 @@ import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -35,6 +36,8 @@ public class GameScreen extends MyScreen {
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
+    ArrayList<GridPoint2> gridLayout;
+    float gridSize;
     // Whether the line being drawn is to be straightened
     boolean straight;
     // The angle multiple to which to snap
@@ -42,6 +45,7 @@ public class GameScreen extends MyScreen {
     // The position at which the next point should be added
     Vector2 mouseDrawPos;
     boolean rectangleMode = false;
+    boolean snapToGrid;
 
     /**
      * Creates a UI object
@@ -68,7 +72,12 @@ public class GameScreen extends MyScreen {
 
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
-
+        if (snapToGrid) {
+            for (GridPoint2 point : gridLayout) {
+                shapeRenderer.circle(point.x, point.y, 1);
+            }
+            
+        }
         if (!potentialPolygon.isEmpty()) {
             if (rectangleMode) {
                 drawRectangle();
@@ -114,7 +123,15 @@ public class GameScreen extends MyScreen {
         shapeRenderer = new ShapeRenderer();
         world = new GameWorld();
         potentialPolygon = new ArrayList();
-
+        gridLayout = new ArrayList();
+        gridSize = 10;
+        //spawn the grid
+        for (int i = 0; i <= MyGdxGame.HEIGHT; i += MyGdxGame.HEIGHT / gridSize) {
+            for (int j = 0; j <= MyGdxGame.WIDTH; j += MyGdxGame.HEIGHT / gridSize) {
+                gridLayout.add(new GridPoint2(j, i));
+            }
+        }
+        snapToGrid = false;
         straight = false;
         mouseDrawPos = new Vector2();
     }
