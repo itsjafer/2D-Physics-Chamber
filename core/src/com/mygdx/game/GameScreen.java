@@ -44,11 +44,12 @@ public class GameScreen extends MyScreen {
     final float SNAP_ANGLE = (float) Math.toRadians(45);
     // The position at which the next point should be added
     Vector2 mouseDrawPos;
-    boolean rectangleMode = false;
+    boolean rectangleMode;
     boolean snapToGrid;
     boolean validPos;
     boolean clickedInsidePolygon;
     Vector2 oldMousePos;
+    Boolean finishMode;
     Color drawColour;
 
     /**
@@ -141,6 +142,8 @@ public class GameScreen extends MyScreen {
         clickedInsidePolygon = false;
         oldMousePos = null;
         mouseDrawPos = new Vector2();
+        rectangleMode = false;
+        finishMode = false;
     }
 
     @Override
@@ -195,6 +198,9 @@ public class GameScreen extends MyScreen {
             if (rectangleMode && potentialPolygon.size() == 4) {
                 rectangleMode = false;
             }
+            if (finishMode) {
+                finishMode = false;
+            }
             for (Vector2 vertex : potentialPolygon) {
                 if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y) {
                     validPos = false;
@@ -222,7 +228,7 @@ public class GameScreen extends MyScreen {
 
         }
         if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
-            if (clickedInsidePolygon) {
+            if (clickedInsidePolygon && !lastPolygonMoved.isEmpty()) {
                 Vector2 displacement = mouseDrawPos.cpy().sub(oldMousePos);
                 lastPolygonMoved.get(0).bump(displacement);
                 oldMousePos = mouseDrawPos;
@@ -262,6 +268,10 @@ public class GameScreen extends MyScreen {
         }
 
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
+            if (finishMode) {
+                world.createFinish(potentialPolygon);
+                finishMode = false;
+            }
             if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
                 lastPolygonMoved.add(0, world.getPolygons().get(world.getPolygons().size() - 1));
@@ -331,18 +341,14 @@ public class GameScreen extends MyScreen {
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor(drawColour);
         }
-
-        //temporarily add point to check for concavity
-        if (validPos) {
-            potentialPolygon.add(mouseDrawPos.cpy());
-        }
-        //change colour based on the the concavity of the polygon
+        potentialPolygon.add(mouseDrawPos.cpy());
         if (!isConvex(potentialPolygon)) {
             shapeRenderer.setColor(Color.RED);
         } else {
             shapeRenderer.setColor(Color.GREEN);
         }
         potentialPolygon.remove(potentialPolygon.size() - 1);
+        potentialPolygon.trimToSize();
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
         if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
@@ -367,12 +373,14 @@ public class GameScreen extends MyScreen {
         int n = potentialConvexPolygon.size();
         for (int i = 0; i < potentialConvexPolygon.size(); i++) {
 
-            //fiaa
+            //use the gift-wrapping algorithm to determine if a polygon is complex
             double dx1 = potentialConvexPolygon.get((i + 2) % n).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy1 = potentialConvexPolygon.get((i + 2) % n).y - potentialConvexPolygon.get((i + 1) % n).y;
             double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy2 = potentialConvexPolygon.get(i).y - potentialConvexPolygon.get((i + 1) % n).y;
             double zcrossproduct = dx1 * dy2 - dy1 * dx2;
+
+            //return concavity based on the sign of the cross product
             if (zcrossproduct == 0) {
                 return false;
             }

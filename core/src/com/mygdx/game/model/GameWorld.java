@@ -22,6 +22,7 @@ public class GameWorld {
     private ArrayList<Polygon> polygons;
     private Player player;
     private Vector2 gravity;
+    private Polygon finish;
 
     public GameWorld() {
         polygons = new ArrayList();
@@ -32,15 +33,13 @@ public class GameWorld {
 
 //        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
 //        if (player != null && GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
-        if (player != null)
-        {
+        if (player != null) {
             player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
                 Vector2 collidingAxis = new Vector2();
                 Vector2 prevCollidingAxis = null;;
-                do
-                {
+                do {
                     prevCollidingAxis = collidingAxis.cpy();
                     collidingAxis = player.collideWithPolygons(polygons, prevCollidingAxis);
                 } while (collidingAxis != null && collidingAxis.x != prevCollidingAxis.x && collidingAxis.y != prevCollidingAxis.y);
@@ -115,12 +114,12 @@ public class GameWorld {
         try {
             //loading up the text file with the infomration
             BufferedWriter out = new BufferedWriter(new FileWriter("levels.txt"));
-            
+
             //saving the gravity
             out.write("Gravity:");
             out.write("\n" + gravity.x);
             out.write("\n" + gravity.y + "\n");
-            
+
             //Writing player information to file
             if (getPlayer() != null) {
                 out.write("Player: " + "\n");
@@ -165,11 +164,11 @@ public class GameWorld {
             System.out.println(e);
         }
         Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
-        
+
         //setting the Gravity
         input.nextLine();
         setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
-        
+
         //reading the information for a player
         if (input.nextLine().contains("Player")) {
             ArrayList<Vector2> playerVertices = new ArrayList();
@@ -185,7 +184,7 @@ public class GameWorld {
             //create the player
             createPlayer(playerVertices);
         }
-        
+
         //if there is information about the polygons, use it to create them
         if (input.hasNext()) {
             input.nextLine();
@@ -206,5 +205,9 @@ public class GameWorld {
                 createPolygon(polygonVertices);
             } while (nextWord.equals("Polygon"));
         }
+    }
+
+    public void createFinish(ArrayList<Vector2> vertices) {
+        finish = new Polygon(vertices.toArray(new Vector2[vertices.size()]));
     }
 }
