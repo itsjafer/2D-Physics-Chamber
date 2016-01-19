@@ -36,6 +36,7 @@ public class GameScreen extends MyScreen {
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
     ArrayList<GridPoint2> gridLayout;
+    ArrayList<Polygon> lastPolygonMoved;
     float gridSize;
     // Whether the line being drawn is to be straightened
     boolean straight;
@@ -46,7 +47,7 @@ public class GameScreen extends MyScreen {
     boolean rectangleMode = false;
     boolean snapToGrid;
     boolean validPos;
-    boolean mouseDrag;
+    boolean clickedInsidePolygon;
     Vector2 oldMousePos;
 
     /**
@@ -124,6 +125,7 @@ public class GameScreen extends MyScreen {
         world = new GameWorld();
         potentialPolygon = new ArrayList();
         gridLayout = new ArrayList();
+        lastPolygonMoved = new ArrayList();
         gridSize = 20;
         //spawn the grid
         for (int i = 0; i <= MyGdxGame.HEIGHT; i += gridSize) {
@@ -133,7 +135,7 @@ public class GameScreen extends MyScreen {
         }
         snapToGrid = false;
         straight = false;
-        mouseDrag = false;
+        clickedInsidePolygon = false;
         oldMousePos = null;
         mouseDrawPos = new Vector2();
     }
@@ -187,7 +189,6 @@ public class GameScreen extends MyScreen {
 
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
-
             if (rectangleMode && potentialPolygon.size() == 4) {
                 rectangleMode = false;
             }
@@ -207,23 +208,24 @@ public class GameScreen extends MyScreen {
             }
 
         }
-        if (GameInputs.isMouseButtonDown(GameInputs.MouseButtons.LEFT)) {
-            if (!mouseDrag) {
-                oldMousePos = mouseDrawPos;
-            }
-            mouseDrag = true;
-            if (!validPos) {
-                System.out.println("test");
-
+        if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
+            if (clickedInsidePolygon) {
                 Vector2 displacement = mouseDrawPos.cpy().sub(oldMousePos);
-                for (Polygon polygon : world.getPolygons()) {
-                    polygon.bump(displacement);
-                    oldMousePos = mouseDrawPos;
+                for (Polygon polygon : lastPolygonMoved) {
+                    if (polygon.containsPoint(mouseDrawPos)) {
+                        lastPolygonMoved.remove(polygon);
+                        lastPolygonMoved.add(0, polygon);
+                        polygon.bump(displacement);
+                        oldMousePos = mouseDrawPos;
+                        break;
+                    }
                 }
             }
         }
+        if (GameInputs.isMouseButtonDown(GameInputs.MouseButtons.LEFT)) {
+        }
         if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT)) {
-            mouseDrag = false;
+            clickedInsidePolygon = false;
         }
         // straight should only be true while the SHIFT key is being HELD DOWN
         straight = GameInputs.isKeyDown(GameInputs.Keys.SHIFT);
@@ -256,6 +258,7 @@ public class GameScreen extends MyScreen {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
             if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
+                lastPolygonMoved.add(0, world.getPolygons().get(world.getPolygons().size() - 1));
                 potentialPolygon.clear();
                 System.out.println("Polygon made.");
             }
