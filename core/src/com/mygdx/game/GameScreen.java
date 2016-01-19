@@ -328,28 +328,19 @@ public class GameScreen extends MyScreen {
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor((Color.WHITE));
         }
-        
-        
-        if (potentialPolygon.size() > 2) {
-            //temporarily add point to check for concavity
-            if (validPos) {
-                potentialPolygon.add(mouseDrawPos.cpy());
-            }
-            //change colour based on the the concavity of the polygon
-            if (!isConvex(potentialPolygon)) {
-                shapeRenderer.setColor(Color.RED);
-            } else {
-                shapeRenderer.setColor(Color.WHITE);
-            }
-            potentialPolygon.remove(potentialPolygon.size() - 1);
+        potentialPolygon.add(mouseDrawPos.cpy());
+        if (!isConvex(potentialPolygon)) {
+            shapeRenderer.setColor(Color.RED);
         }
+        potentialPolygon.remove(potentialPolygon.size() - 1);
+        potentialPolygon.trimToSize();
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
         if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
-
+        shapeRenderer.setColor(Color.WHITE);
     }
 
     /**
@@ -373,7 +364,7 @@ public class GameScreen extends MyScreen {
             double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy2 = potentialConvexPolygon.get(i).y - potentialConvexPolygon.get((i + 1) % n).y;
             double zcrossproduct = dx1 * dy2 - dy1 * dx2;
-            
+
             //return concavity based on the sign of the cross product
             if (zcrossproduct == 0) {
                 return false;
