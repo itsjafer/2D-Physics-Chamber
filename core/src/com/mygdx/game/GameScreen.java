@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * @author DmitryJaferCaius
  */
 public class GameScreen extends MyScreen {
-    
+
     OrthographicCamera camera;
     Viewport viewport;
     SpriteBatch batch;
@@ -72,7 +72,7 @@ public class GameScreen extends MyScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.end();
-        
+
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
         if (snapToGrid) {
@@ -114,7 +114,7 @@ public class GameScreen extends MyScreen {
         }
         shapeRenderer.end();
     }
-    
+
     @Override
     public void init() {
         batch = new SpriteBatch();
@@ -139,7 +139,7 @@ public class GameScreen extends MyScreen {
         oldMousePos = null;
         mouseDrawPos = new Vector2();
     }
-    
+
     @Override
     public void update(float deltaTime) {
         processInput();
@@ -153,13 +153,13 @@ public class GameScreen extends MyScreen {
         } else if (snapToGrid) {
             snapMouseToGrid(mouseDrawPos);
         }
-        
+
         world.update(deltaTime);
     }
-    
+
     @Override
     public void processInput() {
-        
+
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
                 world.getPlayer().applyAcceleration(new Vector2(0, 1000));
@@ -216,7 +216,7 @@ public class GameScreen extends MyScreen {
                     }
                 }
             }
-            
+
         }
         if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
             if (clickedInsidePolygon) {
@@ -257,7 +257,7 @@ public class GameScreen extends MyScreen {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
         }
-        
+
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
             if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
@@ -266,7 +266,7 @@ public class GameScreen extends MyScreen {
                 System.out.println("Polygon made.");
             }
         }
-        
+
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
             if (world.getPlayer() == null && potentialPolygon.size() > 2) {
                 world.createPlayer(potentialPolygon);
@@ -283,10 +283,10 @@ public class GameScreen extends MyScreen {
      * @param curMousePos - position of current mouse
      */
     public void snapMouseToGrid(Vector2 curMousePos) {
-        
+
         float xPos = gridSize * Math.round(curMousePos.x / gridSize);
         float yPos = gridSize * Math.round(curMousePos.y / gridSize);
-        
+
         mouseDrawPos.set(xPos, yPos - 1);
     }
 
@@ -321,32 +321,35 @@ public class GameScreen extends MyScreen {
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
             if (potentialPolygon.size() >= 3) {
-                shapeRenderer.setColor(Color.RED);
+                shapeRenderer.setColor(Color.GREEN);
             }
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
 
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor((Color.WHITE));
         }
-
-        //temporarily add point to check for concavity
-        if (validPos) {
-            potentialPolygon.add(mouseDrawPos.cpy());
+        
+        
+        if (potentialPolygon.size() > 2) {
+            //temporarily add point to check for concavity
+            if (validPos) {
+                potentialPolygon.add(mouseDrawPos.cpy());
+            }
+            //change colour based on the the concavity of the polygon
+            if (!isConvex(potentialPolygon)) {
+                shapeRenderer.setColor(Color.RED);
+            } else {
+                shapeRenderer.setColor(Color.WHITE);
+            }
+            potentialPolygon.remove(potentialPolygon.size() - 1);
         }
-        //change colour based on the the concavity of the polygon
-        if (!isConvex(potentialPolygon)) {
-            shapeRenderer.setColor(Color.RED);
-        } else {
-            shapeRenderer.setColor(Color.WHITE);
-        }
-        potentialPolygon.remove(potentialPolygon.size() - 1);
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
         if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
-        
+
     }
 
     /**
@@ -422,13 +425,13 @@ public class GameScreen extends MyScreen {
             // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
 
             shapeRenderer.setColor(Color.BLUE);
-            
+
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
 
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor((Color.WHITE));
         }
-        
+
     }
 
     /**
@@ -465,32 +468,32 @@ public class GameScreen extends MyScreen {
         // Using the tangent in a right triangle:
         float xVal = pos2.x - origin.x;
         float yVal = pos2.y - origin.y;
-        
+
         float theta = MathUtils.atan2(yVal, xVal);
-        
+
         return theta;
     }
-    
+
     @Override
     public void show() {
     }
-    
+
     @Override
     public void pause() {
     }
-    
+
     @Override
     public void resume() {
     }
-    
+
     @Override
     public void hide() {
     }
-    
+
     @Override
     public void dispose() {
     }
-    
+
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
