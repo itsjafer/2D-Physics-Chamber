@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -34,7 +35,7 @@ import com.mygdx.game.input.GameInputs;
  * @author branc2347
  */
 public class GameMenu extends MyScreen {
-    
+
     Skin skin;
     Stage stage;
     GameScreen background;
@@ -46,7 +47,7 @@ public class GameMenu extends MyScreen {
         super(gameStateManager);
         this.background = background;
     }
-    
+
     @Override
     public void init() {
         stage = new Stage();
@@ -59,22 +60,25 @@ public class GameMenu extends MyScreen {
         //initialize skin by imlpementing the json file that implements the atlas
         // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
         skin = new Skin(Gdx.files.internal("ui-data/uiskin.json"));
-        
+
         gravitySliderY = new Slider(-100, 100, 10, true, skin);
 
-        // Create a table that fills the screen, the buttons, etc go into this table
-        Table table = new Table();
-        table.setFillParent(true);
-        table.align(Align.topLeft);
-        stage.addActor(table);
+        // Create a table1 that fills the screen, the buttons, etc go into this table1
+        Table table1 = new Table();
+        Table table2 = new Table();
+        //table 1 LAYOUT
+        table1.setFillParent(true);
+        table1.align(Align.topLeft);
+        stage.addActor(table1);
 
         //create the buttons... b for button:
         bResetPlayer = new TextButton("Reset Player", skin, "default");
         bResetShape = new TextButton("Reset Shapes", skin, "default");
-        //add the buttons to the table
-        table.add(bResetPlayer).pad(4, 4, 4, 4);
-        table.add(bResetShape).pad(4, 0, 4, 4);
-        table.add(gravitySliderY).align(Align.bottomRight);
+        //add the buttons to the table1
+        table1.debugAll();
+        table1.add(bResetPlayer).pad(4, 4, 4, 4);
+        table1.add(bResetShape).pad(4, 0, 4, 4);
+        table1.add(gravitySliderY);
 
         //taken from the internet:
         //        // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
@@ -83,7 +87,7 @@ public class GameMenu extends MyScreen {
         //        // revert the checked state.
         addInputs();
     }
-    
+
     @Override
     public void update(float deltaTime) {
         if (Gdx.input.getInputProcessor() != im) {
@@ -91,35 +95,35 @@ public class GameMenu extends MyScreen {
         }
         processInput();
     }
-    
+
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
-    
+
     @Override
     public void show() {
     }
-    
+
     @Override
     public void render(float deltaTime) {
         background.render(deltaTime);
         stage.act(deltaTime);
         stage.draw();
     }
-    
+
     @Override
     public void pause() {
     }
-    
+
     @Override
     public void resume() {
     }
-    
+
     @Override
     public void hide() {
     }
-    
+
     @Override
     public void dispose() {
     }
@@ -155,7 +159,7 @@ public class GameMenu extends MyScreen {
             }
         });
     }
-    
+
     @Override
     public void processInput() {
         if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
