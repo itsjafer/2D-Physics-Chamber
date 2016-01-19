@@ -4,8 +4,8 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.input.GameInputs;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -54,8 +54,8 @@ public class GameWorld {
      *
      * @param polygon arraylist of vertices of the polygon
      */
-    public void createPolygon(ArrayList<Vector2> polygon) {
-        polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()])));
+    public void createPolygon(ArrayList<Vector2> polygon, Color colour) {
+        polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()]), colour));
     }
 
     /**
@@ -90,8 +90,8 @@ public class GameWorld {
      *
      * @param playerPolygon arraylist of vertices
      */
-    public void createPlayer(ArrayList<Vector2> playerPolygon) {
-        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]));
+    public void createPlayer(ArrayList<Vector2> playerPolygon, Color colour) {
+        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour);
     }
 
     /**
@@ -153,61 +153,61 @@ public class GameWorld {
      * Loads the level based on the information in levels.txt
      */
     public void loadLevel() {
-        //delete any existing polygons from the level
-        polygons.clear();
-
-        //loading the file to be read from
-        FileReader file = null;
-        try {
-            file = new FileReader("levels.txt");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
-
-        //setting the Gravity
-        input.nextLine();
-        setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
-
-        //reading the information for a player
-        if (input.nextLine().contains("Player")) {
-            ArrayList<Vector2> playerVertices = new ArrayList();
-            String nextWord = input.next();
-
-            //Add vertices until a Polygon or the end of the file is reached
-            while (!nextWord.equals("Polygon") && !nextWord.equals("null")) {
-                Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), Float.parseFloat(input.next()));
-                System.out.println(tempVertice);
-                playerVertices.add(tempVertice);
-                nextWord = input.next();
-            }
-            //create the player
-            createPlayer(playerVertices);
-        }
-
-        //if there is information about the polygons, use it to create them
-        if (input.hasNext()) {
-            input.nextLine();
-            String nextWord = "";
-            //Read information for every polygon within the text file
-            do {
-                nextWord = input.next();
-                ArrayList<Vector2> polygonVertices = new ArrayList();
-                while (!nextWord.equals("Polygon") && !nextWord.equals("end")) {
-                    Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), input.nextFloat());
-                    polygonVertices.add(tempVertice);
-                    if (input.hasNext()) {
-                        nextWord = input.next();
-                    } else {
-                        break;
-                    }
-                }
-                createPolygon(polygonVertices);
-            } while (nextWord.equals("Polygon"));
-        }
+//        //delete any existing polygons from the level
+//        polygons.clear();
+//
+//        //loading the file to be read from
+//        FileReader file = null;
+//        try {
+//            file = new FileReader("levels.txt");
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//        Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
+//
+//        //setting the Gravity
+//        input.nextLine();
+//        setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
+//
+//        //reading the information for a player
+//        if (input.nextLine().contains("Player")) {
+//            ArrayList<Vector2> playerVertices = new ArrayList();
+//            String nextWord = input.next();
+//
+//            //Add vertices until a Polygon or the end of the file is reached
+//            while (!nextWord.equals("Polygon") && !nextWord.equals("null")) {
+//                Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), Float.parseFloat(input.next()));
+//                System.out.println(tempVertice);
+//                playerVertices.add(tempVertice);
+//                nextWord = input.next();
+//            }
+//            //create the player
+//            createPlayer(playerVertices);
+//        }
+//
+//        //if there is information about the polygons, use it to create them
+//        if (input.hasNext()) {
+//            input.nextLine();
+//            String nextWord = "";
+//            //Read information for every polygon within the text file
+//            do {
+//                nextWord = input.next();
+//                ArrayList<Vector2> polygonVertices = new ArrayList();
+//                while (!nextWord.equals("Polygon") && !nextWord.equals("end")) {
+//                    Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), input.nextFloat());
+//                    polygonVertices.add(tempVertice);
+//                    if (input.hasNext()) {
+//                        nextWord = input.next();
+//                    } else {
+//                        break;
+//                    }
+//                }
+//                createPolygon(polygonVertices);
+//            } while (nextWord.equals("Polygon"));
+//        }
     }
 
-    public void createFinish(ArrayList<Vector2> vertices) {
-        finish = new Polygon(vertices.toArray(new Vector2[vertices.size()]));
+    public void createFinish(ArrayList<Vector2> vertices, Color colour) {
+        finish = new Polygon(vertices.toArray(new Vector2[vertices.size()]), colour);
     }
 }

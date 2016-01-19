@@ -6,6 +6,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -22,7 +23,8 @@ public class Polygon {
     protected Vector2 velocity;
     // The polygon's center
     protected Vector2 center;
-
+    //the colour of the specific polygon
+    protected Color polygonColour;
     // The polygon's center when its position was last saved
     protected Vector2 startPos = null;
 
@@ -32,16 +34,22 @@ public class Polygon {
      * @param vertices an array of Vector2.
      * @param friction NOT USED ATM
      */
-    public Polygon(Vector2[] vertices) {
+    public Polygon(Vector2[] vertices, Color colour) {
 
         // Initializes position info
         this.vertices = vertices;
+        //get the colour set from the game by the game menu 
+        this.polygonColour = colour;
         updateCenter();
         // The Polygon's startPos is initially set as its spawn location
         savePosition();
 
         // The polygon starts stationary
         velocity = new Vector2(0, 0);
+    }
+
+    public Color getPolygonColour() {
+        return polygonColour;
     }
 
     /**
@@ -179,12 +187,11 @@ public class Polygon {
     public void setVelocity(Vector2 velocity) {
         this.velocity.add(velocity);
     }
-    
-    public Vector2 getCenter()
-    {
+
+    public Vector2 getCenter() {
         return this.center;
     }
-    
+
     /**
      * Instantly moves the polygon to a new position by a fixed amount
      *

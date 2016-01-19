@@ -95,7 +95,8 @@ public class GameScreen extends MyScreen {
                 validPos = false;
                 shapeRenderer.setColor(Color.GOLD);
             }
-            shapeRenderer.setColor(drawColour);
+            shapeRenderer.setColor(polygon.getPolygonColour());
+
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
@@ -108,7 +109,7 @@ public class GameScreen extends MyScreen {
                 shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] playerVertices = player.getVertices();
-            shapeRenderer.setColor(drawColour);
+            shapeRenderer.setColor(player.getPolygonColour());
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
@@ -269,11 +270,11 @@ public class GameScreen extends MyScreen {
 
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
             if (finishMode) {
-                world.createFinish(potentialPolygon);
+                world.createFinish(potentialPolygon, drawColour);
                 finishMode = false;
             }
             if (potentialPolygon.size() > 2) {
-                world.createPolygon(potentialPolygon);
+                world.createPolygon(potentialPolygon, drawColour);
                 lastPolygonMoved.add(0, world.getPolygons().get(world.getPolygons().size() - 1));
                 potentialPolygon.clear();
                 System.out.println("Polygon made.");
@@ -282,7 +283,7 @@ public class GameScreen extends MyScreen {
 
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
             if (world.getPlayer() == null && potentialPolygon.size() > 2) {
-                world.createPlayer(potentialPolygon);
+                world.createPlayer(potentialPolygon, drawColour);
                 potentialPolygon.clear();
                 System.out.println("Player made.");
             }

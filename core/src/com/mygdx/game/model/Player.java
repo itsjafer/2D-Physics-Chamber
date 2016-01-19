@@ -4,6 +4,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import static com.mygdx.game.model.Polygon.vectorProject;
 import java.util.ArrayList;
@@ -18,36 +19,35 @@ public class Player extends Polygon {
     private float friction = 0f;
     private float restitution = 0f;
     private boolean jumping = false;
-    
+
     float delF;
-    
+
     public float HIGHEST = Float.MIN_VALUE;
 
-    public Player(Vector2[] vertices) {
-        super(vertices);
+    public Player(Vector2[] vertices, Color colour) {
+        super(vertices, colour);
         velocity = new Vector2();
         acceleration = new Vector2();
-        
-        for (Vector2 vertex: vertices)
-        {
-            if (vertex.y > HIGHEST)
-            {
+
+        for (Vector2 vertex : vertices) {
+            if (vertex.y > HIGHEST) {
                 HIGHEST = vertex.y;
             }
         }
     }
-
+//    public Color getPlayerColour(){
+//        return ;
+//    }
     public void jump() {
         jumping = true;
     }
 
     public void move(float deltaTime) {
-        
+
 //        if (Float.isNaN(velocity.x))
 //            velocity.x = 0;
 //        if (Float.isNaN(velocity.y))
 //            velocity.y = 0;
-        
         delF += deltaTime;
         if (jumping) {
             velocity.y = 200f;
@@ -62,9 +62,8 @@ public class Player extends Polygon {
         }
         updateCenter();
     }
-    
-    public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
-    {
+
+    public void collidePhysics(Vector2 collidingAxis, float collisionDepth) {
 //        System.out.println("VELOCITY WITH WHICH IT COLLIDED!!: " + velocity);
 //        
 //        System.out.println("Collision depth: " + collisionDepth);
@@ -120,6 +119,7 @@ public class Player extends Polygon {
 //        
 //        System.out.println("NEW VELOCITy: " + velocity);
     }
+
     /**
      * Resets the player's position to the initial creation position. Also
      * resets momentum
@@ -128,8 +128,6 @@ public class Player extends Polygon {
         bump(startPos.cpy().sub(center));
         velocity.set(new Vector2(0, 0));
     }
-
-    
 
     public void update() {
         acceleration.set(Vector2.Zero);
@@ -216,10 +214,10 @@ public class Player extends Polygon {
                     collidingAxis = getNormal(normal);
                 }
             }
-            if (collided && !Float.isInfinite(collisionDepth) && collidingAxis != null)
-            {
-                if (collidingAxis.x == prev.x && collidingAxis.y == prev.y)
+            if (collided && !Float.isInfinite(collisionDepth) && collidingAxis != null) {
+                if (collidingAxis.x == prev.x && collidingAxis.y == prev.y) {
                     return prev;
+                }
                 collidePhysics(collidingAxis, collisionDepth);
             }
         }
