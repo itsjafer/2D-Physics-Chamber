@@ -200,6 +200,11 @@ public class GameScreen extends MyScreen {
             if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());
+
+                //remove the point if it results in a concave polygon
+                if (!isConvex(potentialPolygon)) {
+                    potentialPolygon.remove(potentialPolygon.size() - 1);
+                }
             }
 
         }
@@ -266,9 +271,6 @@ public class GameScreen extends MyScreen {
         }
     }
 
-    public void movePolygon(Polygon movedPoly) {
-    }
-
     /**
      * Snaps the mouse position drawing to the grid lines when grid lines are
      * activated
@@ -322,6 +324,18 @@ public class GameScreen extends MyScreen {
             shapeRenderer.setColor((Color.WHITE));
         }
 
+
+        //temporarily add point to check for concavity
+        if (validPos) {
+            potentialPolygon.add(mouseDrawPos.cpy());
+        }
+        //change colour based on the the concavity of the polygon
+        if (!isConvex(potentialPolygon)) {
+            shapeRenderer.setColor(Color.RED);
+        } else {
+            shapeRenderer.setColor(Color.WHITE);
+        }
+        potentialPolygon.remove(potentialPolygon.size() - 1);
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
         if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
@@ -329,6 +343,40 @@ public class GameScreen extends MyScreen {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
 
+    }
+
+    /**
+     * Checks the concavity of a polygon 
+     * @param potentialConvexPolygon an arraylist of vertices within the polygon
+     * @return whether the polygon is convex
+     */
+    public boolean isConvex(ArrayList<Vector2> potentialConvexPolygon) {
+        //the polygon cannot be concave with less than 3 vertices
+        if (potentialConvexPolygon.size() < 3) {
+            return true;
+        }
+        boolean sign = false;
+        int n = potentialConvexPolygon.size();
+        for (int i = 0; i < potentialConvexPolygon.size(); i++) {
+            
+            //fi
+            double dx1 = potentialConvexPolygon.get((i + 2) % n).x - potentialConvexPolygon.get((i + 1) % n).x;
+            double dy1 = potentialConvexPolygon.get((i + 2) % n).y - potentialConvexPolygon.get((i + 1) % n).y;
+            double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
+            double dy2 = potentialConvexPolygon.get(i).y - potentialConvexPolygon.get((i + 1) % n).y;
+            double zcrossproduct = dx1 * dy2 - dy1 * dx2;
+            if (zcrossproduct == 0) {
+                return false;
+            }
+            if (i == 0) {
+                sign = zcrossproduct > 0;
+            } else {
+                if (sign != (zcrossproduct > 0)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
