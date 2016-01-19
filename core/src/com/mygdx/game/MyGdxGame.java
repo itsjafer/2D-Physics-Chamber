@@ -36,7 +36,7 @@ public class MyGdxGame extends Game {
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);
         
-        System.out.println(new Vector2(0.0f,1.5258789E-5f).cpy().dot(new Vector2(0, -0.0013444f)));
+        System.out.println(new Vector2(2.1579126E-5f,-2.1579246E-5f).cpy().dot(new Vector2(38.651306f,-38.651093f)));
     }
 
     /**

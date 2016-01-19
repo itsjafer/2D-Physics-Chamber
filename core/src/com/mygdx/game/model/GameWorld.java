@@ -32,21 +32,12 @@ public class GameWorld {
 
 //        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
         if (player != null) {
-            player.applyAcceleration(gravity);
-            player.move(deltaTime);
-            if (!polygons.isEmpty()) {
-//                while (player.collideWithPolygons(polygons));
-//                System.out.println("delta: " + deltaTime);
-                int collideTimes = 0;
-                while (player.collideWithPolygons(polygons))
+                player.applyAcceleration(gravity);
+                do
                 {
-                    collideTimes ++;
-                }
-//                System.out.println(collideTimes);
-//                System.out.println("1" + player.collideWithPolygons(polygons));
-//                System.out.println("problem"  + player.collideWithPolygons(polygons));
-            }
-            player.update();
+                    player.move(deltaTime);
+                } while (player.collideWithPolygons(polygons));
+                player.update();
         }
     }
 

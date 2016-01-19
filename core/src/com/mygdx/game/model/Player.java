@@ -65,6 +65,7 @@ public class Player extends Polygon {
     
     public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
     {
+        System.out.println("veloooooooooocity: " + velocity);
         System.out.println("Collision depth: " + collisionDepth);
 //        System.out.println("COLLLLLLLIDDDEE");
 //        System.out.println("Collision depth: " + collisionDepth);
@@ -77,6 +78,11 @@ public class Player extends Polygon {
         System.out.println("Colliding normal dot: "  + collidingNormal.cpy().dot(collidingNormal));
         System.out.println("colliding normal unto velocity: " + collidingNormal.cpy().dot(velocity));
         System.out.println("VELOCITY PLS: " + velocity);
+//        if (collidingNormal.cpy().dot(velocity) == 0)
+//        {
+//            System.out.println("return");
+//            return;
+//        }
         
         // magnitude of displacement vector = |collidingNormal|^2|vel|/collidingNormal.vel
         float displacementMag = collidingNormal.cpy().dot(collidingNormal) * velocity.len() / (collidingNormal.cpy().dot(velocity));
