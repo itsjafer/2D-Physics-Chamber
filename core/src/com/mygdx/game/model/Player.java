@@ -113,16 +113,7 @@ public class Player extends Polygon {
 
     }
 
-    /**
-     * Instantly moves the polygon to a new position by a fixed amount
-     *
-     * @param displacement the amount to move the player and the direction
-     */
-    public void bump(Vector2 displacement) {
-        for (Vector2 vertex : vertices) {
-            vertex.add(displacement);
-        }
-    }
+    
 
     public void update() {
         acceleration.set(Vector2.Zero);

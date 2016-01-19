@@ -110,7 +110,12 @@ public class GameWorld {
         try {
             //loading up the text file with the infomration
             BufferedWriter out = new BufferedWriter(new FileWriter("levels.txt"));
-
+            
+            //saving the gravity
+            out.write("Gravity:");
+            out.write("\n" + gravity.x);
+            out.write("\n" + gravity.y + "\n");
+            
             //Writing player information to file
             if (getPlayer() != null) {
                 out.write("Player: " + "\n");
@@ -132,7 +137,7 @@ public class GameWorld {
                 }
                 out.write("\nend");
             } else {
-                out.write("null");
+                out.write("\nnull");
             }
             out.close();
         } catch (IOException e) {
@@ -155,7 +160,11 @@ public class GameWorld {
             System.out.println(e);
         }
         Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
-
+        
+        //setting the Gravity
+        input.nextLine();
+        setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
+        
         //reading the information for a player
         if (input.nextLine().contains("Player")) {
             ArrayList<Vector2> playerVertices = new ArrayList();
@@ -171,6 +180,7 @@ public class GameWorld {
             //create the player
             createPlayer(playerVertices);
         }
+        
         //if there is information about the polygons, use it to create them
         if (input.hasNext()) {
             input.nextLine();

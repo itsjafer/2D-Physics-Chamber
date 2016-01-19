@@ -46,6 +46,9 @@ public class GameScreen extends MyScreen {
     Vector2 mouseDrawPos;
     boolean rectangleMode = false;
     boolean snapToGrid;
+    boolean validPos;
+    boolean mouseDrag;
+    Vector2 oldMousePos;
 
     /**
      * Creates a UI object
@@ -76,7 +79,7 @@ public class GameScreen extends MyScreen {
             for (GridPoint2 point : gridLayout) {
                 shapeRenderer.circle(point.x, point.y, 1);
             }
-            
+
         }
         if (!potentialPolygon.isEmpty()) {
             if (rectangleMode) {
@@ -85,11 +88,11 @@ public class GameScreen extends MyScreen {
                 drawPotentialPolygon();
             }
         }
-
+        validPos = true;
         for (Polygon polygon : world.getPolygons()) {
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
-                System.out.println("Mouse is in a polygon");
                 movePolygon(polygon);
+                validPos = false;
                 shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] shapeVertices = polygon.getVertices();
@@ -133,6 +136,8 @@ public class GameScreen extends MyScreen {
         }
         snapToGrid = false;
         straight = false;
+        mouseDrag = false;
+        oldMousePos = null;
         mouseDrawPos = new Vector2();
     }
 
@@ -182,12 +187,12 @@ public class GameScreen extends MyScreen {
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
 
+            // Loop preventing the user from adding dupliate points to the potential polygon
+            // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
+
             if (rectangleMode && potentialPolygon.size() == 4) {
                 rectangleMode = false;
             }
-            // Loop preventing the user from adding dupliate points to the potential polygon
-            // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
-            boolean validPos = true;
             for (Vector2 vertex : potentialPolygon) {
                 if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y) {
                     validPos = false;
@@ -196,8 +201,26 @@ public class GameScreen extends MyScreen {
             if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());
-
             }
+
+        }
+        if (GameInputs.isMouseButtonDown(GameInputs.MouseButtons.LEFT)) {
+            if (!mouseDrag) {
+                oldMousePos = mouseDrawPos;
+            }
+            mouseDrag = true;
+            if (!validPos) {
+                System.out.println("test");
+
+                Vector2 displacement = mouseDrawPos.cpy().sub(oldMousePos);
+                for (Polygon polygon : world.getPolygons()) {
+                    polygon.bump(displacement);
+                    oldMousePos = mouseDrawPos;
+                }
+            }
+        }
+        if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT)) {
+            mouseDrag = false;
         }
         // straight should only be true while the SHIFT key is being HELD DOWN
         straight = GameInputs.isKeyDown(GameInputs.Keys.SHIFT);
@@ -245,7 +268,6 @@ public class GameScreen extends MyScreen {
     }
 
     public void movePolygon(Polygon movedPoly) {
-
     }
 
     /**
@@ -310,7 +332,6 @@ public class GameScreen extends MyScreen {
      * Draws a based based on two points
      */
     public void drawRectangle() {
-        System.out.println(potentialPolygon.size());
         //store the original point to begin the rectangle from
         Vector2 mouseClick = potentialPolygon.get(0);
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
