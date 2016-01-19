@@ -55,6 +55,24 @@ public class GameWorld {
     }
 
     /**
+     * Sets the gravity of the world, including direction and magnitude
+     *
+     * @param gravity - direction and magnitude
+     */
+    public void setGravity(Vector2 gravity) {
+        this.gravity = gravity;
+    }
+
+    /**
+     * Get the gravity of the world, including direction and magnitude
+     *
+     * @return gravity - direction and magnitude
+     */
+    public Vector2 getGravity() {
+        return this.gravity;
+    }
+
+    /**
      * Getter method for the polygons arraylist
      *
      * @return
@@ -79,6 +97,10 @@ public class GameWorld {
      */
     public Player getPlayer() {
         return player;
+    }
+
+    public void deletePlayer() {
+        player = null;
     }
 
     /**
@@ -122,10 +144,9 @@ public class GameWorld {
      * Loads the level based on the information in levels.txt
      */
     public void loadLevel() {
-
         //delete any existing polygons from the level
         polygons.clear();
-        
+
         //loading the file to be read from
         FileReader file = null;
         try {

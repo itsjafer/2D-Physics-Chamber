@@ -1,15 +1,12 @@
 package com.mygdx.game;
 
-import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.input.InputProcessor;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.input.GameInputs;
-import com.mygdx.game.model.Polygon;
 
 public class MyGdxGame extends Game {
 
@@ -34,7 +31,8 @@ public class MyGdxGame extends Game {
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);
         // The game state manager starts out showing the menu screen
-        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
+        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_GAME);
+        screenManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
     }
 
     /**
