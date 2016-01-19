@@ -18,11 +18,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -40,8 +42,9 @@ public class GameMenu extends MyScreen {
     Stage stage;
     GameScreen background;
     InputMultiplexer im;
-    TextButton bResetPlayer, bResetShape;
-    Slider gravitySliderY;
+    TextButton bResetPlayer, bResetLevel;
+    Slider gravitySliderY, gravitySliderX;
+    Label labelSliderY, labelSliderX;
 
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
         super(gameStateManager);
@@ -61,30 +64,42 @@ public class GameMenu extends MyScreen {
         // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
         skin = new Skin(Gdx.files.internal("ui-data/uiskin.json"));
 
-        gravitySliderY = new Slider(-100, 100, 10, true, skin);
-
         // Create a table1 that fills the screen, the buttons, etc go into this table1
         Table table1 = new Table();
         Table table2 = new Table();
+
         //table 1 LAYOUT
         table1.setFillParent(true);
         table1.align(Align.topLeft);
         stage.addActor(table1);
 
-        //create the buttons... b for button:
+        //create the buttons for table 1
         bResetPlayer = new TextButton("Reset Player", skin, "default");
-        bResetShape = new TextButton("Reset Shapes", skin, "default");
-        //add the buttons to the table1
-        table1.debugAll();
-        table1.add(bResetPlayer).pad(4, 4, 4, 4);
-        table1.add(bResetShape).pad(4, 0, 4, 4);
-        table1.add(gravitySliderY);
+        bResetLevel = new TextButton("Reset Shapes", skin, "default");
 
-        //taken from the internet:
-        //        // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
-        //        // Button#setChecked() is called, via a key press, etc. If the event.cancel() is called, the checked state will be reverted.
-        //        // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
-        //        // revert the checked state.
+        //add objects to table1
+        table1.add(bResetPlayer).pad(4, 4, 4, 4);
+        table1.add(bResetLevel).pad(4, 0, 4, 4);
+
+        //table 2 LAYOUT
+        table2.setFillParent(true);
+        table2.align(Align.bottomLeft);
+        stage.addActor(table2);
+
+        //create the objects for table 2
+        gravitySliderY = new Slider(-100, 100, 10, false, skin);
+        gravitySliderX = new Slider(-100, 100, 10, false, skin);
+        labelSliderY = new Label("Gravity y-dir: " + gravitySliderY.getVisualValue(), skin);
+        labelSliderX = new Label("Gravity x-dir: " + gravitySliderX.getVisualValue(), skin);
+
+        //add objects to table 2
+        table2.add(gravitySliderY).pad(4, 4, 4, 4);
+        table2.add(gravitySliderX).pad(4, 0, 4, 4);
+        table2.row();
+        table2.add(labelSliderY).pad(0, 4, 4, 4);
+        table2.add(labelSliderX).pad(0, 0, 4, 4);
+
+        //add the button/slider inputs
         addInputs();
     }
 
@@ -133,21 +148,16 @@ public class GameMenu extends MyScreen {
         bResetPlayer.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("test");
                 //if the player exists, reset the location of the player
-                if (background.world.getPlayer() != null) {
-                    background.resetPlayer();
-                    background.update(Gdx.graphics.getDeltaTime());
-                }
+                background.resetPlayer();
+                background.update(Gdx.graphics.getDeltaTime());
             }
         });
-        bResetShape.addListener(new ClickListener() {
+        bResetLevel.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //if the player exists, reset the location of the player
-                if (background.world.getPlayer() != null) {
-                    background.resetPlayer();
-                }
+                background.resetLevel();
             }
         });
         gravitySliderY.addListener(new ChangeListener() {
@@ -156,6 +166,16 @@ public class GameMenu extends MyScreen {
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
                 System.out.println(gravitySliderY.getVisualValue());
                 background.world.setGravity(new Vector2(background.world.getGravity().x, gravitySliderY.getVisualValue()));
+                labelSliderY.setText("Gravity y-dir: " + gravitySliderY.getVisualValue());
+            }
+        });
+        gravitySliderX.addListener(new ChangeListener() {
+
+            @Override
+            public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+                System.out.println(gravitySliderX.getVisualValue());
+                background.world.setGravity(new Vector2(gravitySliderX.getVisualValue(), background.world.getGravity().y));
+                labelSliderX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
             }
         });
     }

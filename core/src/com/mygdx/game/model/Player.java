@@ -107,14 +107,9 @@ public class Player extends Polygon {
      * resets momentum
      */
     public void goHome() {
-        if (!startPos.cpy().equals(center)) {
-            velocity.set(new Vector2(0, 0));
-            this.applyAcceleration(new Vector2(0, 0));
-            System.out.println(startPos.cpy().equals(center));
-            bump(startPos.cpy().sub(center));
-            velocity.set(new Vector2(0, 0));
-            this.applyAcceleration(new Vector2(0, 0));
-        }
+        bump(startPos.cpy().sub(center));
+        velocity.set(new Vector2(0, 0));
+        this.applyAcceleration(new Vector2(0, 0));
 
     }
 

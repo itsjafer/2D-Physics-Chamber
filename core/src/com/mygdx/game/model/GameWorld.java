@@ -99,6 +99,10 @@ public class GameWorld {
         return player;
     }
 
+    public void deletePlayer() {
+        player = null;
+    }
+
     /**
      * Saves the position of the polygons and the player
      */

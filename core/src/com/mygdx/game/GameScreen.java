@@ -123,7 +123,7 @@ public class GameScreen extends MyScreen {
     public void update(float deltaTime) {
         processInput();
         //check to make sure the correct processor is in use
-        if(Gdx.input.getInputProcessor() != MyGdxGame.gameInput){
+        if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
             Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
         if (straight && !potentialPolygon.isEmpty()) {
@@ -246,7 +246,9 @@ public class GameScreen extends MyScreen {
      * Reset player position and momentum
      */
     public void resetPlayer() {
-        world.getPlayer().goHome();
+        if (world.getPlayer() != null) {
+            world.getPlayer().goHome();
+        }
     }
 
     /**
@@ -284,7 +286,7 @@ public class GameScreen extends MyScreen {
     public void resetLevel() {
         potentialPolygon.clear();
         world.getPolygons().clear();
-        resetPlayer();
+        world.deletePlayer();
     }
 
     /**
