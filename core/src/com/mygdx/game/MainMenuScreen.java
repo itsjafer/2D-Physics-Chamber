@@ -58,12 +58,12 @@ public class MainMenuScreen extends MyScreen {
     @Override
     public void init() {
         stage = new Stage();
-        
+
         //Input multiplexer, giving priority to stage over gameinput
         im = new InputMultiplexer(stage, MyGdxGame.gameInput);
         // set the input multiplexer as the input processor
         Gdx.input.setInputProcessor(im);
-        
+
         //initialize skin by imlpementing the json file that implements the atlas
         // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
         skin = new Skin(Gdx.files.internal("ui-data/uiskin.json"));
@@ -92,6 +92,9 @@ public class MainMenuScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
+        if (Gdx.input.getInputProcessor() != im) {
+            Gdx.input.setInputProcessor(im);
+        }
         processInput();
     }
 

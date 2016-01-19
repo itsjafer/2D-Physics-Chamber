@@ -12,10 +12,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -32,19 +34,19 @@ import com.mygdx.game.input.GameInputs;
  * @author branc2347
  */
 public class GameMenu extends MyScreen {
-
+    
     Skin skin;
     Stage stage;
     GameScreen background;
     InputMultiplexer im;
     TextButton bResetPlayer, bResetShape;
-    Slider gravitySlider;
+    Slider gravitySliderY;
 
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
         super(gameStateManager);
         this.background = background;
     }
-
+    
     @Override
     public void init() {
         stage = new Stage();
@@ -53,11 +55,12 @@ public class GameMenu extends MyScreen {
         im = new InputMultiplexer(this.stage, MyGdxGame.gameInput);
         // set the input multiplexer as the input processor
         Gdx.input.setInputProcessor(im);
+
         //initialize skin by imlpementing the json file that implements the atlas
         // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
-        skin = new Skin(Gdx.files.internal("data/menuSkin.json"));
-
-        gravitySlider = new Slider(-30, 150, 5, true, skin);
+        skin = new Skin(Gdx.files.internal("ui-data/uiskin.json"));
+        
+        gravitySliderY = new Slider(-100, 100, 10, true, skin);
 
         // Create a table that fills the screen, the buttons, etc go into this table
         Table table = new Table();
@@ -66,65 +69,71 @@ public class GameMenu extends MyScreen {
         stage.addActor(table);
 
         //create the buttons... b for button:
-        bResetPlayer = new TextButton("Reset Player", skin, "defaultButton");
-        bResetShape = new TextButton("Reset Shapes", skin, "defaultButton");
+        bResetPlayer = new TextButton("Reset Player", skin, "default");
+        bResetShape = new TextButton("Reset Shapes", skin, "default");
         //add the buttons to the table
-        table.add(bResetPlayer).pad(5, 5, 5, 5);
-        table.add(bResetShape).pad(5, 0, 5, 5);
+        table.add(bResetPlayer).pad(4, 4, 4, 4);
+        table.add(bResetShape).pad(4, 0, 4, 4);
+        table.add(gravitySliderY).align(Align.bottomRight);
 
         //taken from the internet:
         //        // Add a listener to the button. ChangeListener is fired when the button's checked state changes, eg when clicked,
         //        // Button#setChecked() is called, via a key press, etc. If the event.cancel() is called, the checked state will be reverted.
         //        // ClickListener could have been used, but would only fire when clicked. Also, canceling a ClickListener event won't
         //        // revert the checked state.
+        addInputs();
     }
-
+    
     @Override
     public void update(float deltaTime) {
+        if (Gdx.input.getInputProcessor() != im) {
+            Gdx.input.setInputProcessor(im);
+        }
         processInput();
     }
-
+    
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
-
+    
     @Override
     public void show() {
     }
-
+    
     @Override
     public void render(float deltaTime) {
         background.render(deltaTime);
         stage.act(deltaTime);
         stage.draw();
     }
-
+    
     @Override
     public void pause() {
     }
-
+    
     @Override
     public void resume() {
     }
-
+    
     @Override
     public void hide() {
     }
-
+    
     @Override
     public void dispose() {
     }
 
     //to avoid the clutter of code
-
     public void addInputs() {
         bResetPlayer.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                System.out.println("test");
                 //if the player exists, reset the location of the player
                 if (background.world.getPlayer() != null) {
                     background.resetPlayer();
+                    background.update(Gdx.graphics.getDeltaTime());
                 }
             }
         });
@@ -137,9 +146,16 @@ public class GameMenu extends MyScreen {
                 }
             }
         });
+        gravitySliderY.addListener(new ChangeListener() {
 
+            @Override
+            public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+                System.out.println(gravitySliderY.getVisualValue());
+                background.world.setGravity(new Vector2(background.world.getGravity().x, gravitySliderY.getVisualValue()));
+            }
+        });
     }
-
+    
     @Override
     public void processInput() {
         if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {

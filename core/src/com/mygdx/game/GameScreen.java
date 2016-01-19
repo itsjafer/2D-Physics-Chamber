@@ -5,6 +5,7 @@
  */
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.input.InputProcessor;
 import com.mygdx.game.model.GameWorld;
 import com.mygdx.game.model.Player;
 import com.mygdx.game.model.Polygon;
@@ -120,7 +122,10 @@ public class GameScreen extends MyScreen {
     @Override
     public void update(float deltaTime) {
         processInput();
-
+        //check to make sure the correct processor is in use
+        if(Gdx.input.getInputProcessor() != MyGdxGame.gameInput){
+            Gdx.input.setInputProcessor(MyGdxGame.gameInput);
+        }
         if (straight && !potentialPolygon.isEmpty()) {
             straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
         } else {
@@ -242,8 +247,6 @@ public class GameScreen extends MyScreen {
      */
     public void resetPlayer() {
         world.getPlayer().goHome();
-        world.getPlayer().setVelocity(new Vector2(0, 0));
-        world.getPlayer().applyAcceleration(new Vector2(0, 0));
     }
 
     /**
