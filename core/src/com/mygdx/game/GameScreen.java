@@ -89,7 +89,6 @@ public class GameScreen extends MyScreen {
         validPos = true;
         for (Polygon polygon : world.getPolygons()) {
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
-                movePolygon(polygon);
                 validPos = false;
                 shapeRenderer.setColor(Color.GOLD);
             }
@@ -359,7 +358,7 @@ public class GameScreen extends MyScreen {
         int n = potentialConvexPolygon.size();
         for (int i = 0; i < potentialConvexPolygon.size(); i++) {
             
-            //fi
+            //fiaa
             double dx1 = potentialConvexPolygon.get((i + 2) % n).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy1 = potentialConvexPolygon.get((i + 2) % n).y - potentialConvexPolygon.get((i + 1) % n).y;
             double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
