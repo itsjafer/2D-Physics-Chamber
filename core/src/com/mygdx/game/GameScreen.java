@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * @author DmitryJaferCaius
  */
 public class GameScreen extends MyScreen {
-
+    
     OrthographicCamera camera;
     Viewport viewport;
     SpriteBatch batch;
@@ -44,11 +44,12 @@ public class GameScreen extends MyScreen {
     final float SNAP_ANGLE = (float) Math.toRadians(45);
     // The position at which the next point should be added
     Vector2 mouseDrawPos;
-    boolean rectangleMode = false;
+    boolean rectangleMode;
     boolean snapToGrid;
     boolean validPos;
     boolean clickedInsidePolygon;
     Vector2 oldMousePos;
+    Boolean finishMode;
 
     /**
      * Creates a UI object
@@ -72,7 +73,7 @@ public class GameScreen extends MyScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.end();
-
+        
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
         if (snapToGrid) {
@@ -114,7 +115,7 @@ public class GameScreen extends MyScreen {
         }
         shapeRenderer.end();
     }
-
+    
     @Override
     public void init() {
         batch = new SpriteBatch();
@@ -138,8 +139,10 @@ public class GameScreen extends MyScreen {
         clickedInsidePolygon = false;
         oldMousePos = null;
         mouseDrawPos = new Vector2();
+        rectangleMode = false;
+        finishMode = false;
     }
-
+    
     @Override
     public void update(float deltaTime) {
         processInput();
@@ -153,13 +156,13 @@ public class GameScreen extends MyScreen {
         } else if (snapToGrid) {
             snapMouseToGrid(mouseDrawPos);
         }
-
+        
         world.update(deltaTime);
     }
-
+    
     @Override
     public void processInput() {
-
+        
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
                 world.getPlayer().applyAcceleration(new Vector2(0, 1000));
@@ -192,6 +195,9 @@ public class GameScreen extends MyScreen {
             if (rectangleMode && potentialPolygon.size() == 4) {
                 rectangleMode = false;
             }
+            if (finishMode) {
+                finishMode = false;
+            }
             for (Vector2 vertex : potentialPolygon) {
                 if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y) {
                     validPos = false;
@@ -216,10 +222,10 @@ public class GameScreen extends MyScreen {
                     }
                 }
             }
-
+            
         }
         if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
-            if (clickedInsidePolygon) {
+            if (clickedInsidePolygon && !lastPolygonMoved.isEmpty()) {
                 Vector2 displacement = mouseDrawPos.cpy().sub(oldMousePos);
                 lastPolygonMoved.get(0).bump(displacement);
                 oldMousePos = mouseDrawPos;
@@ -257,8 +263,12 @@ public class GameScreen extends MyScreen {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
         }
-
+        
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
+            if (finishMode) {
+                world.createFinish(potentialPolygon);
+                finishMode = false;
+            }
             if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
                 lastPolygonMoved.add(0, world.getPolygons().get(world.getPolygons().size() - 1));
@@ -266,7 +276,7 @@ public class GameScreen extends MyScreen {
                 System.out.println("Polygon made.");
             }
         }
-
+        
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
             if (world.getPlayer() == null && potentialPolygon.size() > 2) {
                 world.createPlayer(potentialPolygon);
@@ -283,10 +293,10 @@ public class GameScreen extends MyScreen {
      * @param curMousePos - position of current mouse
      */
     public void snapMouseToGrid(Vector2 curMousePos) {
-
+        
         float xPos = gridSize * Math.round(curMousePos.x / gridSize);
         float yPos = gridSize * Math.round(curMousePos.y / gridSize);
-
+        
         mouseDrawPos.set(xPos, yPos - 1);
     }
 
@@ -418,13 +428,13 @@ public class GameScreen extends MyScreen {
             // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
 
             shapeRenderer.setColor(Color.BLUE);
-
+            
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
 
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor((Color.WHITE));
         }
-
+        
     }
 
     /**
@@ -461,32 +471,32 @@ public class GameScreen extends MyScreen {
         // Using the tangent in a right triangle:
         float xVal = pos2.x - origin.x;
         float yVal = pos2.y - origin.y;
-
+        
         float theta = MathUtils.atan2(yVal, xVal);
-
+        
         return theta;
     }
-
+    
     @Override
     public void show() {
     }
-
+    
     @Override
     public void pause() {
     }
-
+    
     @Override
     public void resume() {
     }
-
+    
     @Override
     public void hide() {
     }
-
+    
     @Override
     public void dispose() {
     }
-
+    
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
