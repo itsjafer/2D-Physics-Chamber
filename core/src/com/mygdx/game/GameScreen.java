@@ -367,12 +367,14 @@ public class GameScreen extends MyScreen {
         int n = potentialConvexPolygon.size();
         for (int i = 0; i < potentialConvexPolygon.size(); i++) {
 
-            //fiaa
+            //use the gift-wrapping algorithm to determine if a polygon is complex
             double dx1 = potentialConvexPolygon.get((i + 2) % n).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy1 = potentialConvexPolygon.get((i + 2) % n).y - potentialConvexPolygon.get((i + 1) % n).y;
             double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy2 = potentialConvexPolygon.get(i).y - potentialConvexPolygon.get((i + 1) % n).y;
             double zcrossproduct = dx1 * dy2 - dy1 * dx2;
+            
+            //return concavity based on the sign of the cross product
             if (zcrossproduct == 0) {
                 return false;
             }
