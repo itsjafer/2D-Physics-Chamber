@@ -18,7 +18,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.input.InputProcessor;
 import com.mygdx.game.model.GameWorld;
 import com.mygdx.game.model.Player;
 import com.mygdx.game.model.Polygon;
@@ -76,7 +75,6 @@ public class GameScreen extends MyScreen {
             for (GridPoint2 point : gridLayout) {
                 shapeRenderer.circle(point.x, point.y, 1);
             }
-            
         }
         if (!potentialPolygon.isEmpty()) {
             if (rectangleMode) {
@@ -124,10 +122,10 @@ public class GameScreen extends MyScreen {
         world = new GameWorld();
         potentialPolygon = new ArrayList();
         gridLayout = new ArrayList();
-        gridSize = 10;
+        gridSize = 20;
         //spawn the grid
-        for (int i = 0; i <= MyGdxGame.HEIGHT; i += MyGdxGame.HEIGHT / gridSize) {
-            for (int j = 0; j <= MyGdxGame.WIDTH; j += MyGdxGame.HEIGHT / gridSize) {
+        for (int i = 0; i <= MyGdxGame.HEIGHT; i += gridSize) {
+            for (int j = 0; j <= MyGdxGame.WIDTH; j += gridSize) {
                 gridLayout.add(new GridPoint2(j, i));
             }
         }
@@ -143,10 +141,11 @@ public class GameScreen extends MyScreen {
         if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
             Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
+        mouseDrawPos = GameInputs.getMousePosition();
         if (straight && !potentialPolygon.isEmpty()) {
-            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
-        } else {
-            mouseDrawPos = GameInputs.getMousePosition();
+            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
+        } else if (snapToGrid) {
+            snapMouseToGrid(mouseDrawPos);
         }
 
         world.update(deltaTime);
@@ -196,7 +195,6 @@ public class GameScreen extends MyScreen {
             if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());
-
             }
         }
         // straight should only be true while the SHIFT key is being HELD DOWN
@@ -245,7 +243,20 @@ public class GameScreen extends MyScreen {
     }
 
     public void movePolygon(Polygon movedPoly) {
+    }
 
+    /**
+     * Snaps the mouse position drawing to the grid lines when grid lines are
+     * activated
+     *
+     * @param curMousePos - position of current mouse
+     */
+    public void snapMouseToGrid(Vector2 curMousePos) {
+
+        float xPos = gridSize * Math.round(curMousePos.x / gridSize);
+        float yPos = gridSize * Math.round(curMousePos.y / gridSize);
+
+        mouseDrawPos.set(xPos, yPos - 1);
     }
 
     /**
