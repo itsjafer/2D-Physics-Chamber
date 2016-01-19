@@ -65,20 +65,24 @@ public class Player extends Polygon {
     
     public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
     {
+        System.out.println("Collision depth: " + collisionDepth);
 //        System.out.println("COLLLLLLLIDDDEE");
 //        System.out.println("Collision depth: " + collisionDepth);
         Vector2 collidingNormal = getNormal(collidingAxis);
         
         collidingNormal.nor().scl(-collisionDepth);
-//        System.out.println("Colliding normal vector: " + collidingNormal);
+        System.out.println("Colliding normal vector: " + collidingNormal);
 //        System.out.println("colliding normal length (should be same as collision depth): " + collidingNormal.len());
         
-        // LOL no
+        System.out.println("Colliding normal dot: "  + collidingNormal.cpy().dot(collidingNormal));
+        System.out.println("colliding normal unto velocity: " + collidingNormal.cpy().dot(velocity));
+        System.out.println("VELOCITY PLS: " + velocity);
+        
         // magnitude of displacement vector = |collidingNormal|^2|vel|/collidingNormal.vel
         float displacementMag = collidingNormal.cpy().dot(collidingNormal) * velocity.len() / (collidingNormal.cpy().dot(velocity));
 //        System.out.println("displacement mag: " + displacementMag);
         Vector2 displacement = velocity.cpy().nor().scl(displacementMag);
-//        System.out.println("DISPLACEMENT: " + displacement);
+        System.out.println("DISPLACEMENT: " + displacement);
         
         bump(displacement);
         
@@ -115,9 +119,12 @@ public class Player extends Polygon {
         
 //        System.out.println("normal velocity: " + normalComponent);
         
+        System.out.println("Normal Component: " + normalComponent);
         adjustedSpeed = (float)(Math.sqrt(Math.abs(normalComponent.len()*normalComponent.len()-2*vectorProject(acceleration, normal).len()*vectorProject(displacement, normal).len())));
         normalComponent.nor().scl(adjustedSpeed);
-        normalComponent.scl(restitution);
+        System.out.println("Before Normal Component: " + normalComponent);
+        normalComponent.scl(-restitution);
+        System.out.println("Bouncy normal component: " + normalComponent);
         
 //        System.out.println("completed normal velocity: "  + normalComponent);
 //        System.out.println("RESTITUTION: " + verticalComponent + "    " + vectorProject(velocity, getNormal(collidingAxis)));
@@ -232,7 +239,8 @@ public class Player extends Polygon {
                     collidingAxis = getNormal(normal);
                 }
             }
-            if (collided && Math.abs(collisionDepth) > 1e-4)
+//            if (collided  && Math.abs(collisionDepth) > 1e-4)
+            if (collided)
             {
                 // TESTING
 //                System.out.println("COLLIDED");
