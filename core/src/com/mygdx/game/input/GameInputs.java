@@ -27,9 +27,9 @@ public class GameInputs {
 
         LEFT, RIGHT;
     }
-    
+
     private static boolean mouseMoved;
-    
+
     private static Vector2 mousePosition;
     private static Vector2 oldMousePosition;
     // boolean values corresponding to each key's pressed state
@@ -78,11 +78,12 @@ public class GameInputs {
         }
         oldMousePosition = mousePosition.cpy();
         mousePosition.set(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
-        
-        if (mousePosition.x != oldMousePosition.x || mousePosition.y != oldMousePosition.y)
+
+        if (mousePosition.x != oldMousePosition.x || mousePosition.y != oldMousePosition.y) {
             mouseMoved = true;
-        else
+        } else {
             mouseMoved = false;
+        }
     }
 
     /**
@@ -131,6 +132,7 @@ public class GameInputs {
         // The button's long-pressed state should not be true
         return mouseButtonsDown.get(button) && !mouseButtonsHeldDown.get(button);
     }
+
     public static boolean isMouseButtonJustReleased(MouseButtons button) {
         return !mouseButtonsDown.get(button) && mouseButtonsHeldDown.get(button);
     }
@@ -144,6 +146,10 @@ public class GameInputs {
     public static boolean isMouseButtonDown(MouseButtons button) {
         // It doesn't matter if the button has been held down for a long time, so just return the button's pressed state
         return mouseButtonsDown.get(button);
+    }
+
+    public static boolean isMouseDragged(MouseButtons button) {
+        return mouseButtonsHeldDown.get(button) && mouseMoved;
     }
 
     /**
