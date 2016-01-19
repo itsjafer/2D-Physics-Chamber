@@ -139,9 +139,6 @@ public class Player extends Polygon {
         this.acceleration.add(acceleration);
     }
 
-    public void setVelocity(Vector2 velocity) {
-        this.velocity.add(velocity);
-    }
 
     public boolean collideWithPolygons(ArrayList<Polygon> polygons) {
         // The player's normals

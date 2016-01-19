@@ -39,6 +39,7 @@ public class GameScreen extends MyScreen {
     final float SNAP_ANGLE = (float) Math.toRadians(45);
     // The position at which the next point should be added
     Vector2 mouseDrawPos;
+    boolean rectangleMode = false;
 
     /**
      * Creates a UI object
@@ -67,28 +68,35 @@ public class GameScreen extends MyScreen {
         shapeRenderer.begin();
 
         if (!potentialPolygon.isEmpty()) {
-            drawPotentialPolygon();
-            // drawRectangle();
+            if (rectangleMode) {
+                drawRectangle();
+            } else {
+                drawPotentialPolygon();
+            }
         }
 
         for (Polygon polygon : world.getPolygons()) {
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
                 System.out.println("Mouse is in a polygon");
+                movePolygon(polygon);
+                shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
             }
+            shapeRenderer.setColor(Color.WHITE);
         }
         if (world.getPlayer() != null) {
             Player player = world.getPlayer();
             if (player.containsPoint(GameInputs.getMousePosition())) {
-                System.out.println("Mouse is in the player");
+                shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] playerVertices = player.getVertices();
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
+            shapeRenderer.setColor(Color.WHITE);
 
 //            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
@@ -140,7 +148,7 @@ public class GameScreen extends MyScreen {
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
-            System.out.println(world);
+            rectangleMode = true;
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
         }
@@ -151,6 +159,10 @@ public class GameScreen extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
+
+            if (rectangleMode && potentialPolygon.size() == 4) {
+                rectangleMode = false;
+            }
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
             boolean validPos = true;
@@ -162,6 +174,7 @@ public class GameScreen extends MyScreen {
             if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());
+
             }
         }
         // straight should only be true while the SHIFT key is being HELD DOWN
@@ -199,13 +212,18 @@ public class GameScreen extends MyScreen {
                 System.out.println("Polygon made.");
             }
         }
+
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
-            if (world.getPlayer() == null) {
+            if (world.getPlayer() == null && potentialPolygon.size() > 2) {
                 world.createPlayer(potentialPolygon);
                 potentialPolygon.clear();
                 System.out.println("Player made.");
             }
         }
+    }
+
+    public void movePolygon(Polygon movedPoly) {
+
     }
 
     /**
@@ -220,10 +238,12 @@ public class GameScreen extends MyScreen {
     }
 
     /**
-     * Reset player position
+     * Reset player position and momentum
      */
     public void resetPlayer() {
         world.getPlayer().goHome();
+        world.getPlayer().setVelocity(new Vector2(0, 0));
+        world.getPlayer().applyAcceleration(new Vector2(0, 0));
     }
 
     /**
@@ -252,6 +272,54 @@ public class GameScreen extends MyScreen {
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
+    }
+
+    /**
+     * Reset the level by deleting all polygons and sending the player to the
+     * start position
+     */
+    public void resetLevel() {
+        potentialPolygon.clear();
+        world.getPolygons().clear();
+        resetPlayer();
+    }
+
+    /**
+     * Draws a based based on two points
+     */
+    public void drawRectangle() {
+        System.out.println(potentialPolygon.size());
+        //store the original point to begin the rectangle from
+        Vector2 mouseClick = potentialPolygon.get(0);
+        shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
+
+        //recreate the polygon using only the first vertice
+        potentialPolygon.clear();
+        potentialPolygon.add(mouseClick);
+
+        //create the vertical and horizontal components of the rectangle
+        Vector2 vertical = new Vector2(potentialPolygon.get(0).x, mouseDrawPos.y);
+        Vector2 horizontal = new Vector2(mouseDrawPos.x, potentialPolygon.get(0).y);
+
+        //add rectangle vertices to potentialPolygon 
+        potentialPolygon.add(horizontal);
+        potentialPolygon.add(mouseDrawPos);
+        potentialPolygon.add(vertical);
+
+        //draw the rectangle
+        for (int i = 0; i < potentialPolygon.size(); i++) {
+            // Draw a dot at every point
+            shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
+            // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
+
+            shapeRenderer.setColor(Color.BLUE);
+
+            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
+
+            // reset the color to white for the next loop of drawing points
+            shapeRenderer.setColor((Color.WHITE));
+        }
+
     }
 
     /**
