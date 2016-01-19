@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * @author DmitryJaferCaius
  */
 public class GameScreen extends MyScreen {
-    
+
     OrthographicCamera camera;
     Viewport viewport;
     SpriteBatch batch;
@@ -49,6 +49,7 @@ public class GameScreen extends MyScreen {
     boolean validPos;
     boolean clickedInsidePolygon;
     Vector2 oldMousePos;
+    Color drawColour;
 
     /**
      * Creates a UI object
@@ -72,7 +73,7 @@ public class GameScreen extends MyScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.end();
-        
+
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
         if (snapToGrid) {
@@ -93,11 +94,12 @@ public class GameScreen extends MyScreen {
                 validPos = false;
                 shapeRenderer.setColor(Color.GOLD);
             }
+            shapeRenderer.setColor(drawColour);
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
             }
-            shapeRenderer.setColor(Color.WHITE);
+
         }
         if (world.getPlayer() != null) {
             Player player = world.getPlayer();
@@ -105,16 +107,16 @@ public class GameScreen extends MyScreen {
                 shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] playerVertices = player.getVertices();
+            shapeRenderer.setColor(drawColour);
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
-            shapeRenderer.setColor(Color.WHITE);
 
 //            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
         shapeRenderer.end();
     }
-    
+
     @Override
     public void init() {
         batch = new SpriteBatch();
@@ -133,13 +135,14 @@ public class GameScreen extends MyScreen {
                 gridLayout.add(new GridPoint2(j, i));
             }
         }
+        drawColour = Color.NAVY;
         snapToGrid = false;
         straight = false;
         clickedInsidePolygon = false;
         oldMousePos = null;
         mouseDrawPos = new Vector2();
     }
-    
+
     @Override
     public void update(float deltaTime) {
         processInput();
@@ -153,13 +156,13 @@ public class GameScreen extends MyScreen {
         } else if (snapToGrid) {
             snapMouseToGrid(mouseDrawPos);
         }
-        
+
         world.update(deltaTime);
     }
-    
+
     @Override
     public void processInput() {
-        
+
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
                 world.getPlayer().applyAcceleration(new Vector2(0, 1000));
@@ -216,7 +219,7 @@ public class GameScreen extends MyScreen {
                     }
                 }
             }
-            
+
         }
         if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
             if (clickedInsidePolygon) {
@@ -257,7 +260,7 @@ public class GameScreen extends MyScreen {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
         }
-        
+
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
             if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
@@ -266,7 +269,7 @@ public class GameScreen extends MyScreen {
                 System.out.println("Polygon made.");
             }
         }
-        
+
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
             if (world.getPlayer() == null && potentialPolygon.size() > 2) {
                 world.createPlayer(potentialPolygon);
@@ -283,10 +286,10 @@ public class GameScreen extends MyScreen {
      * @param curMousePos - position of current mouse
      */
     public void snapMouseToGrid(Vector2 curMousePos) {
-        
+
         float xPos = gridSize * Math.round(curMousePos.x / gridSize);
         float yPos = gridSize * Math.round(curMousePos.y / gridSize);
-        
+
         mouseDrawPos.set(xPos, yPos - 1);
     }
 
@@ -321,12 +324,12 @@ public class GameScreen extends MyScreen {
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
             // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
             if (potentialPolygon.size() >= 3) {
-                shapeRenderer.setColor(Color.RED);
+                shapeRenderer.setColor(drawColour);
             }
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
 
             // reset the color to white for the next loop of drawing points
-            shapeRenderer.setColor((Color.WHITE));
+            shapeRenderer.setColor(drawColour);
         }
 
         //temporarily add point to check for concavity
@@ -337,7 +340,7 @@ public class GameScreen extends MyScreen {
         if (!isConvex(potentialPolygon)) {
             shapeRenderer.setColor(Color.RED);
         } else {
-            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.setColor(Color.GREEN);
         }
         potentialPolygon.remove(potentialPolygon.size() - 1);
         // draw a line from the first point to the mouse (to complete the white outline
@@ -346,7 +349,7 @@ public class GameScreen extends MyScreen {
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
-        
+
     }
 
     /**
@@ -419,16 +422,16 @@ public class GameScreen extends MyScreen {
         for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
             shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
-            // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
+            // Draw the outline of the polygon in game colour if it's valid (has at least 3 vertices
 
-            shapeRenderer.setColor(Color.BLUE);
-            
+            shapeRenderer.setColor(drawColour);
+
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
 
             // reset the color to white for the next loop of drawing points
-            shapeRenderer.setColor((Color.WHITE));
+            shapeRenderer.setColor(drawColour);
         }
-        
+
     }
 
     /**
@@ -465,32 +468,32 @@ public class GameScreen extends MyScreen {
         // Using the tangent in a right triangle:
         float xVal = pos2.x - origin.x;
         float yVal = pos2.y - origin.y;
-        
+
         float theta = MathUtils.atan2(yVal, xVal);
-        
+
         return theta;
     }
-    
+
     @Override
     public void show() {
     }
-    
+
     @Override
     public void pause() {
     }
-    
+
     @Override
     public void resume() {
     }
-    
+
     @Override
     public void hide() {
     }
-    
+
     @Override
     public void dispose() {
     }
-    
+
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
