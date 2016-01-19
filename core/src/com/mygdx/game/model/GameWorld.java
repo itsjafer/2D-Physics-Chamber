@@ -31,15 +31,20 @@ public class GameWorld {
     public void update(float deltaTime) {
 
 //        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
-        if (player != null) {
+//        if (player != null && GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
+        if (player != null)
+        {
             player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
-//                while (player.collideWithPolygons(polygons));
-//                System.out.println("delta: " + deltaTime);
-                while (player.collideWithPolygons(polygons));
-//                System.out.println("1" + player.collideWithPolygons(polygons));
-//                System.out.println("problem"  + player.collideWithPolygons(polygons));
+                Vector2 collidingAxis = new Vector2();
+                Vector2 prevCollidingAxis = null;;
+                do
+                {
+                    prevCollidingAxis = collidingAxis.cpy();
+                    collidingAxis = player.collideWithPolygons(polygons, prevCollidingAxis);
+                } while (collidingAxis != null && collidingAxis.x != prevCollidingAxis.x && collidingAxis.y != prevCollidingAxis.y);
+//                player.collideWithPolygons(polygons);
             }
             player.update();
         }

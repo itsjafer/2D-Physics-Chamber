@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author branc2347
  */
-public class Player extends Polygon {
+public class PlayerOldcollisions extends Polygon {
 
     private Vector2 acceleration;
     private float friction = 0f;
@@ -23,7 +23,7 @@ public class Player extends Polygon {
     
     public float HIGHEST = Float.MIN_VALUE;
 
-    public Player(Vector2[] vertices) {
+    public PlayerOldcollisions(Vector2[] vertices) {
         super(vertices);
         velocity = new Vector2();
         acceleration = new Vector2();
@@ -65,60 +65,60 @@ public class Player extends Polygon {
     
     public void collidePhysics(Vector2 collidingAxis, float collisionDepth)
     {
-//        System.out.println("VELOCITY WITH WHICH IT COLLIDED!!: " + velocity);
-//        
-//        System.out.println("Collision depth: " + collisionDepth);
-//        Vector2 collidingNormal = getNormal(collidingAxis);
-//        System.out.println("Colliding normal: " + collidingNormal);
-//        
-//        collidingNormal.nor().scl(-collisionDepth);
-//        System.out.println("Colliding normal vector: " + collidingNormal);
-//        System.out.println("Dot: " + collidingNormal.cpy().dot(velocity));
-//        
-//        if (velocity.x == 0 && velocity.y == 0 || collidingNormal.cpy().dot(velocity) == 0)
-//        {
-//            bump(collidingNormal);
-//            return;
-//        }
-//        // magnitude of displacement vector = |collidingNormal|^2|vel|/collidingNormal.vel
-//        float displacementMag = collidingNormal.cpy().dot(collidingNormal) * velocity.len() / (collidingNormal.cpy().dot(velocity));
-//        System.out.println("Displacement Mag: " + displacementMag);
-//        Vector2 displacement = velocity.cpy().nor().scl(displacementMag);
-//        System.out.println("DISPLACEMENT: " + displacement);
-//        
-//        bump(displacement);
-//        
-//        
-//        float adjustedSpeed = 0f;
-//        Vector2 parallelComponent = vectorProject(velocity, collidingAxis);
-//        
-////        System.out.println("parallel velocity: " + parallelComponent);
-//        
-//        adjustedSpeed = (float)(Math.sqrt(Math.abs(parallelComponent.len()*parallelComponent.len()-2*vectorProject(acceleration, collidingAxis).len()*vectorProject(displacement, collidingAxis).len())));
-//        parallelComponent.nor().scl(adjustedSpeed);
-//        parallelComponent.scl(1f-friction);
-////        System.out.println(horizontalComponent);
-//        
-////        System.out.println("completed parallel velocity: " + parallelComponent);
-//        
-////        System.out.println("FRICTION: " + horizontalComponent + "   " + vectorProject(velocity, collidingAxis));
-//        
-//        // RESTITUTION:
-//        Vector2 normal = getNormal(collidingAxis);
-//        Vector2 normalComponent = vectorProject(velocity, normal);
-//        System.out.println("Normal component: " + normalComponent);
-//        
-////        System.out.println("normal velocity: " + normalComponent);
-//        
-//        adjustedSpeed = (float)(Math.sqrt(Math.abs(normalComponent.len()*normalComponent.len()-2*vectorProject(acceleration, normal).len()*vectorProject(displacement, normal).len())));
-//        normalComponent.nor().scl(adjustedSpeed);
-//        normalComponent.scl(-restitution);
-////        System.out.println("completed normal velocity: "  + normalComponent);
-////        System.out.println("RESTITUTION: " + verticalComponent + "    " + vectorProject(velocity, getNormal(collidingAxis)));
-//        
-//        velocity = parallelComponent.add(normalComponent);
-//        
-//        System.out.println("NEW VELOCITy: " + velocity);
+        System.out.println("VELOCITY WITH WHICH IT COLLIDED!!: " + velocity);
+        
+        System.out.println("Collision depth: " + collisionDepth);
+        Vector2 collidingNormal = getNormal(collidingAxis);
+        System.out.println("Colliding normal: " + collidingNormal);
+        
+        collidingNormal.nor().scl(-collisionDepth);
+        System.out.println("Colliding normal vector: " + collidingNormal);
+        System.out.println("Dot: " + collidingNormal.cpy().dot(velocity));
+        
+        if (velocity.x == 0 && velocity.y == 0 || collidingNormal.cpy().dot(velocity) == 0)
+        {
+            bump(collidingNormal);
+            return;
+        }
+        // magnitude of displacement vector = |collidingNormal|^2|vel|/collidingNormal.vel
+        float displacementMag = collidingNormal.cpy().dot(collidingNormal) * velocity.len() / (collidingNormal.cpy().dot(velocity));
+        System.out.println("Displacement Mag: " + displacementMag);
+        Vector2 displacement = velocity.cpy().nor().scl(displacementMag);
+        System.out.println("DISPLACEMENT: " + displacement);
+        
+        bump(displacement);
+        
+        
+        float adjustedSpeed = 0f;
+        Vector2 parallelComponent = vectorProject(velocity, collidingAxis);
+        
+//        System.out.println("parallel velocity: " + parallelComponent);
+        
+        adjustedSpeed = (float)(Math.sqrt(Math.abs(parallelComponent.len()*parallelComponent.len()-2*vectorProject(acceleration, collidingAxis).len()*vectorProject(displacement, collidingAxis).len())));
+        parallelComponent.nor().scl(adjustedSpeed);
+        parallelComponent.scl(1f-friction);
+//        System.out.println(horizontalComponent);
+        
+//        System.out.println("completed parallel velocity: " + parallelComponent);
+        
+//        System.out.println("FRICTION: " + horizontalComponent + "   " + vectorProject(velocity, collidingAxis));
+        
+        // RESTITUTION:
+        Vector2 normal = getNormal(collidingAxis);
+        Vector2 normalComponent = vectorProject(velocity, normal);
+        System.out.println("Normal component: " + normalComponent);
+        
+//        System.out.println("normal velocity: " + normalComponent);
+        
+        adjustedSpeed = (float)(Math.sqrt(Math.abs(normalComponent.len()*normalComponent.len()-2*vectorProject(acceleration, normal).len()*vectorProject(displacement, normal).len())));
+        normalComponent.nor().scl(adjustedSpeed);
+        normalComponent.scl(-restitution);
+//        System.out.println("completed normal velocity: "  + normalComponent);
+//        System.out.println("RESTITUTION: " + verticalComponent + "    " + vectorProject(velocity, getNormal(collidingAxis)));
+        
+        velocity = parallelComponent.add(normalComponent);
+        
+        System.out.println("NEW VELOCITy: " + velocity);
     }
     /**
      * Resets the player's position to the initial creation position. Also
@@ -129,7 +129,16 @@ public class Player extends Polygon {
         velocity.set(new Vector2(0, 0));
     }
 
-    
+    /**
+     * Instantly moves the polygon to a new position by a fixed amount
+     *
+     * @param displacement the amount to move the player and the direction
+     */
+    public void bump(Vector2 displacement) {
+        for (Vector2 vertex : vertices) {
+            vertex.add(displacement);
+        }
+    }
 
     public void update() {
         acceleration.set(Vector2.Zero);
