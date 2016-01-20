@@ -96,12 +96,11 @@ public class GameScreen extends MyScreen {
         }
         validPos = true;
         for (Polygon polygon : world.getPolygons()) {
+            shapeRenderer.setColor(polygon.getPolygonColour());
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
                 validPos = false;
                 shapeRenderer.setColor(Color.GOLD);
             }
-            shapeRenderer.setColor(polygon.getPolygonColour());
-
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
@@ -110,11 +109,12 @@ public class GameScreen extends MyScreen {
         }
         if (world.getPlayer() != null) {
             Player player = world.getPlayer();
+            shapeRenderer.setColor(player.getPolygonColour());
             if (player.containsPoint(GameInputs.getMousePosition())) {
                 shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] playerVertices = player.getVertices();
-            shapeRenderer.setColor(player.getPolygonColour());
+
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
