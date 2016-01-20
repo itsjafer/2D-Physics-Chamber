@@ -96,6 +96,9 @@ public class GameScreen extends MyScreen {
         }
         validPos = true;
         for (Polygon polygon : world.getPolygons()) {
+            if(!lastPolygonMoved.contains(polygon)){
+                lastPolygonMoved.add(0, polygon);
+            }
             shapeRenderer.setColor(polygon.getPolygonColour());
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
                 validPos = false;
