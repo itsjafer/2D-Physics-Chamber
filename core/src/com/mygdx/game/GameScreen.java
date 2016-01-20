@@ -77,11 +77,16 @@ public class GameScreen extends MyScreen {
 
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
+
+        //draws the grid points, maybe gonna implement drawing lines between these points
         if (snapToGrid) {
+            shapeRenderer.setColor(Color.WHITE);
             for (GridPoint2 point : gridLayout) {
+
                 shapeRenderer.circle(point.x, point.y, 1);
             }
         }
+
         if (!potentialPolygon.isEmpty()) {
             if (rectangleMode) {
                 drawRectangle();
