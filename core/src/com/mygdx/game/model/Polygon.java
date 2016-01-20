@@ -19,12 +19,6 @@ public class Polygon {
     // All of the vertices of the polygon
     protected Vector2[] vertices;
     // the polygon's current velocity
-    protected Vector2 velocity;
-    // The polygon's center
-    protected Vector2 center;
-
-    // The polygon's center when its position was last saved
-    protected Vector2 startPos = null;
 
     /**
      * Creates a polygon.
@@ -36,52 +30,9 @@ public class Polygon {
 
         // Initializes position info
         this.vertices = vertices;
-        updateCenter();
-        // The Polygon's startPos is initially set as its spawn location
-        savePosition();
-
-        // The polygon starts stationary
-        velocity = new Vector2(0, 0);
     }
 
-    /**
-     * Moves the polygon in the direction of its velocity
-     */
-    public void move() {
-
-        // Each vertex is moved by the velocity
-        for (Vector2 vertex : vertices) {
-            vertex.add(velocity);
-        }
-        updateCenter();
-    }
-
-    /**
-     * Updates the polygon's startPos to its center
-     */
-    public void savePosition() {
-        startPos = center.cpy();
-    }
-
-    /**
-     * Recalculates the polygon's center
-     */
-    public void updateCenter() {
-        if (center == null) {
-            center = new Vector2();
-        }
-
-        // The center is the average of the x and y coordinates of all the vertices
-        float x = 0, y = 0;
-        for (Vector2 vertex : vertices) {
-            x += vertex.x;
-            y += vertex.y;
-        }
-        x /= vertices.length;
-        y /= vertices.length;
-
-        center.set(x, y);
-    }
+    
 
     public Vector2[] getVertices() {
         return vertices;
@@ -174,9 +125,5 @@ public class Polygon {
             }
         }
         return true;
-    }
-
-    public void setVelocity(Vector2 velocity) {
-        this.velocity.add(velocity);
     }
 }

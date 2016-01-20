@@ -108,8 +108,6 @@ public class GameScreen extends MyScreen {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
             shapeRenderer.setColor(Color.WHITE);
-
-//            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
         shapeRenderer.end();
     }
@@ -264,7 +262,7 @@ public class GameScreen extends MyScreen {
      */
     public void resetPlayer() {
         if (world.getPlayer() != null) {
-            world.getPlayer().goHome();
+            world.getPlayer().reset();
         }
     }
 
