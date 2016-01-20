@@ -281,6 +281,12 @@ public class GameScreen extends MyScreen {
             if (!potentialPolygon.isEmpty()) {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
+            if (rectangleMode)
+            {
+                rectangleMode = false;
+                potentialPolygon.clear();
+            }
+            
         }
 
         //pressing enter instantiates a polygon
@@ -424,13 +430,12 @@ public class GameScreen extends MyScreen {
      * Draws a based based on two points
      */
     public void drawRectangle() {
-        //store the original point to begin the rectangle from
-        Vector2 mouseClick = potentialPolygon.get(0);
-        shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
-
         //recreate the polygon using only the first vertice
+        //store the original point to begin the rectangle from
+        Vector2 origin = potentialPolygon.get(0);
         potentialPolygon.clear();
-        potentialPolygon.add(mouseClick);
+        
+        potentialPolygon.add(origin);
 
         //create the vertical and horizontal components of the rectangle
         Vector2 vertical = new Vector2(potentialPolygon.get(0).x, mouseDrawPos.y);
@@ -441,6 +446,9 @@ public class GameScreen extends MyScreen {
         potentialPolygon.add(mouseDrawPos);
         potentialPolygon.add(vertical);
 
+        shapeRenderer.line(origin, mouseDrawPos);
+        shapeRenderer.line(horizontal, vertical);
+        
         //draw the rectangle
         for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
