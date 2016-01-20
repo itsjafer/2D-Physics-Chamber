@@ -8,7 +8,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -22,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
@@ -38,11 +41,11 @@ import com.mygdx.game.input.GameInputs;
  */
 public class GameMenu extends MyScreen {
 
-    Skin skin, skinCanvas;
+    Skin skin, skinCanvas, skinColourSample;
     Stage stage, stage2;
     GameScreen background;
     InputMultiplexer im, im2, lastUsedMultiplexer;
-    TextButton resetPlayer, resetLevel, colours, backToMenu;
+    TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton;
     Slider gravitySliderY, gravitySliderX;
     Label labelSliderY, labelSliderX;
     CheckBox snapToGrid;
@@ -80,6 +83,8 @@ public class GameMenu extends MyScreen {
         skin = new Skin(Gdx.files.internal("ui-data/uiskin.json"));
         //skin for the colour palette
         skinCanvas = new Skin(new TextureAtlas(Gdx.files.internal("ui-data/canvas.pack")));
+        //skin for the COLOUR SAMPLE
+        skinColourSample = new Skin();
         canvas = new Pixmap(Gdx.files.internal("ui-data/canvas.png"));
         // Create a table1 that fills the screen, the buttons, etc go into this table1
         Table table1 = new Table();
@@ -130,10 +135,26 @@ public class GameMenu extends MyScreen {
         //table 3 buttons
         colourPalette = new ImageButton(skinCanvas.getDrawable("canvas"));
         backToMenu = new TextButton("Return to Game Menu", skin);
+// SAMPLE FOR THE COLOUR. SO THE USER SEES IT BEFORE SWITCHING WINDOWS
+        // Generate a 1x1 white texture and store it in the skin named "white".
+        Pixmap pixmap = new Pixmap(40, 20, Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        skinColourSample.add("white", new Texture(pixmap));
 
-        table3.debug();
+//		// Store the default libgdx font under the name "default".
+        skinColourSample.add("default", new BitmapFont());
+        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+        TextButtonStyle textButtonStyle2 = new TextButtonStyle();
+        textButtonStyle2.up = skinColourSample.newDrawable("white");
+        textButtonStyle2.font = skinColourSample.getFont("default");
+        skinColourSample.add("default", textButtonStyle2);
+
+        sampleColourButton = new TextButton("", skinColourSample);
         // add the buttons to table 3
-        table3.add(backToMenu);
+        table3.add(backToMenu).pad(4, 4, 4, 4);
+        table3.row();
+        table3.add(sampleColourButton).pad(0, 4, 4, 4);
         table3.row();
         table3.add(colourPalette);
 
@@ -254,10 +275,12 @@ public class GameMenu extends MyScreen {
                 lastUsedMultiplexer = im;
             }
         });
+
     }
 
     public void setColour(int xPos, int yPos) {
         drawColour = new Color(canvas.getPixel(xPos, (canvas.getHeight() - yPos)));
+        sampleColourButton.setColor(drawColour);
         background.drawColour = drawColour;
     }
 
