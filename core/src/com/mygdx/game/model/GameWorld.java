@@ -37,13 +37,7 @@ public class GameWorld {
             player.applyAcceleration(gravity);
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
-                Vector2 collidingAxis = new Vector2();
-                Vector2 prevCollidingAxis = null;;
-                do {
-                    prevCollidingAxis = collidingAxis.cpy();
-                    collidingAxis = player.collideWithPolygons(polygons, prevCollidingAxis);
-                } while (collidingAxis != null && collidingAxis.x != prevCollidingAxis.x && collidingAxis.y != prevCollidingAxis.y);
-//                player.collideWithPolygons(polygons);
+                player.collideWithPolygons(polygons);
             }
             player.update();
         }
