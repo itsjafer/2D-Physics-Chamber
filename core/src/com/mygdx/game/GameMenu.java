@@ -45,7 +45,7 @@ public class GameMenu extends MyScreen {
     Stage stage, stage2;
     GameScreen background;
     InputMultiplexer im, im2, lastUsedMultiplexer;
-    TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton;
+    TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton, backToGame;
     Slider gravitySliderY, gravitySliderX;
     Label labelSliderY, labelSliderX;
     CheckBox snapToGrid;
@@ -100,12 +100,14 @@ public class GameMenu extends MyScreen {
         resetPlayer = new TextButton("Reset Player", skin, "default");
         resetLevel = new TextButton("Reset Shapes", skin, "default");
         colours = new TextButton("Colours:", skin, "default");
+        backToGame = new TextButton("Return to Game", skin);
         snapToGrid = new CheckBox("Snap to grid", skin);
 
         //add objects to table1
         table1.add(resetPlayer).pad(4, 4, 4, 4);
         table1.add(resetLevel).pad(4, 0, 4, 4);
-        table1.add(colours);
+        table1.add(colours).pad(4, 0, 4, 4);
+        table1.add(backToGame);
         table1.row();
         table1.add(snapToGrid);
 
@@ -275,7 +277,12 @@ public class GameMenu extends MyScreen {
                 lastUsedMultiplexer = im;
             }
         });
-
+        backToGame.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+            }
+        });
     }
 
     public void setColour(int xPos, int yPos) {
@@ -286,8 +293,8 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void processInput() {
-        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-        }
+//        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+//            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+//        }
     }
 }
