@@ -120,7 +120,6 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 saveGame.setChecked(false);
                 gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-                gameScreen.world.saveLevel();
             }
         });
         loadGame.addListener(new ClickListener() {
@@ -128,7 +127,6 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 loadGame.setChecked(false);
                 gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-                gameScreen.world.loadLevel();
                 System.out.println("loading");
             }
         });

@@ -29,28 +29,27 @@ import java.util.ArrayList;
  */
 public class GameScreen extends MyScreen {
 
-    OrthographicCamera camera;
-    Viewport viewport;
-    SpriteBatch batch;
-    ShapeRenderer shapeRenderer;
-    GameWorld world;
-    ArrayList<Vector2> potentialPolygon;
-    ArrayList<GridPoint2> gridLayout;
-    ArrayList<Polygon> lastPolygonMoved;
-    float gridSize;
-    // Whether the line being drawn is to be straightened
-    boolean straight;
-    // The angle multiple to which to snap
-    final float SNAP_ANGLE = (float) Math.toRadians(45);
-    // The position at which the next point should be added
-    Vector2 mouseDrawPos;
-    boolean rectangleMode;
-    boolean snapToGrid;
-    boolean validPos;
-    boolean clickedInsidePolygon;
-    Vector2 oldMousePos;
-    Boolean finishMode;
-    Color drawColour;
+    //initializing essential variables
+    private OrthographicCamera camera;
+    private Viewport viewport;
+    private ShapeRenderer shapeRenderer;
+    protected GameWorld world;
+    //initializing storage variables used to change appearance of the game
+    private ArrayList<Vector2> potentialPolygon;
+    private ArrayList<GridPoint2> gridLayout;
+    private ArrayList<Polygon> lastPolygonMoved;
+    private float gridSize;
+    protected Color drawColour;
+    private boolean finishMode;
+    private final float SNAP_ANGLE = (float) Math.toRadians(45); // The angle multiple to which to snap
+    //drawing variables
+    private boolean validPos;
+    private boolean clickedInsidePolygon;
+    private Vector2 oldMousePos;
+    private boolean straight; // Whether the line being drawn is to be straightened
+    private Vector2 mouseDrawPos; // The position at which the next point should be added
+    private boolean rectangleMode;
+    protected boolean gridMode;
 
     /**
      * Creates a UI object
@@ -61,75 +60,9 @@ public class GameScreen extends MyScreen {
         super(gameStateManager);
     }
 
-    /**
-     * Draws the game
-     *
-     * @param deltaTime
-     */
-    @Override
-    public void render(float deltaTime) {
-        // updates the camera to the world space
-        camera.update();
-        // loads the batch and sets it to follow the camera's projection matrix
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        batch.end();
-
-        shapeRenderer.setAutoShapeType(true);
-        shapeRenderer.begin();
-
-        //draws the grid points, maybe gonna implement drawing lines between these points
-        if (snapToGrid) {
-            shapeRenderer.setColor(Color.WHITE);
-            for (GridPoint2 point : gridLayout) {
-
-                shapeRenderer.circle(point.x, point.y, 1);
-            }
-        }
-
-        if (!potentialPolygon.isEmpty()) {
-            if (rectangleMode) {
-                drawRectangle();
-            } else {
-                drawPotentialPolygon();
-            }
-        }
-        validPos = true;
-        for (Polygon polygon : world.getPolygons()) {
-            if(!lastPolygonMoved.contains(polygon)){
-                lastPolygonMoved.add(0, polygon);
-            }
-            shapeRenderer.setColor(polygon.getPolygonColour());
-            if (polygon.containsPoint(GameInputs.getMousePosition())) {
-                validPos = false;
-                shapeRenderer.setColor(Color.GOLD);
-            }
-            Vector2[] shapeVertices = polygon.getVertices();
-            for (int i = 0; i < shapeVertices.length; i++) {
-                shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
-            }
-
-        }
-        if (world.getPlayer() != null) {
-            Player player = world.getPlayer();
-            shapeRenderer.setColor(player.getPolygonColour());
-            if (player.containsPoint(GameInputs.getMousePosition())) {
-                shapeRenderer.setColor(Color.GOLD);
-            }
-            Vector2[] playerVertices = player.getVertices();
-
-            for (int i = 0; i < playerVertices.length; i++) {
-                shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
-            }
-
-//            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
-        }
-        shapeRenderer.end();
-    }
-
     @Override
     public void init() {
-        batch = new SpriteBatch();
+        //initializing all variables
         camera = new OrthographicCamera();
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
@@ -146,7 +79,7 @@ public class GameScreen extends MyScreen {
             }
         }
         drawColour = Color.NAVY;
-        snapToGrid = false;
+        gridMode = false;
         straight = false;
         clickedInsidePolygon = false;
         oldMousePos = null;
@@ -154,18 +87,97 @@ public class GameScreen extends MyScreen {
         rectangleMode = false;
         finishMode = false;
     }
+    
+    /**
+     * Draws the game
+     *
+     * @param deltaTime
+     */
+    @Override
+    public void render(float deltaTime) {
+        // updates the camera to the world space
+        camera.update();
+
+        //shapeRenderer initialization
+        shapeRenderer.setAutoShapeType(true);
+        shapeRenderer.begin();
+
+        //draws the grid points
+        if (gridMode) {
+            shapeRenderer.setColor(Color.WHITE);
+            for (GridPoint2 point : gridLayout) {
+                shapeRenderer.circle(point.x, point.y, 1);
+            }
+        }
+
+        //draw any polygon in progress
+        if (!potentialPolygon.isEmpty()) {
+            if (rectangleMode) {
+                drawRectangle();
+            } else {
+                drawPotentialPolygon();
+            }
+        }
+        validPos = true;
+
+
+        for (Polygon polygon : world.getPolygons()) {
+            //Checking and verifying polygon dragging
+            if (!lastPolygonMoved.contains(polygon)) {
+                lastPolygonMoved.add(0, polygon);
+            }
+
+            //set polygon colour
+            shapeRenderer.setColor(polygon.getPolygonColour());
+
+            //checking if the mouse is on the polygon
+            if (polygon.containsPoint(GameInputs.getMousePosition())) {
+                validPos = false;
+                shapeRenderer.setColor(Color.GOLD);
+            }
+
+            //drawing each polygon
+            Vector2[] shapeVertices = polygon.getVertices();
+            for (int i = 0; i < shapeVertices.length; i++) {
+                shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
+            }
+        }
+        //dealing with the player
+        if (world.getPlayer() != null) {
+            //initialize the player
+            Player player = world.getPlayer();
+            shapeRenderer.setColor(player.getPolygonColour());
+
+            //change the colour based on if the mouse is in the player
+            if (player.containsPoint(GameInputs.getMousePosition())) {
+                shapeRenderer.setColor(Color.GOLD);
+            }
+
+            //render the player
+            Vector2[] playerVertices = player.getVertices();
+            for (int i = 0; i < playerVertices.length; i++) {
+                shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
+            }
+        }
+        shapeRenderer.end();
+    }
 
     @Override
     public void update(float deltaTime) {
+        //check for any inputs
         processInput();
+        
         //check to make sure the correct processor is in use
         if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
             Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
+        
+        //update the mouse position
         mouseDrawPos = GameInputs.getMousePosition();
+        
         if (straight && !potentialPolygon.isEmpty()) {
             straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
-        } else if (snapToGrid) {
+        } else if (gridMode) {
             snapMouseToGrid(mouseDrawPos);
         }
 
@@ -173,8 +185,12 @@ public class GameScreen extends MyScreen {
     }
 
     @Override
+    /**
+     * Processes any inputs taken by the game
+     */
     public void processInput() {
 
+        //player movement
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
                 world.getPlayer().applyAcceleration(new Vector2(0, 1000));
@@ -189,32 +205,43 @@ public class GameScreen extends MyScreen {
                 world.getPlayer().applyAcceleration(new Vector2(1000, 0));
             }
         }
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
+        
+        //holding down ctrl results in rectangle
+        if (GameInputs.isKeyDown(GameInputs.Keys.CTRL)) {
             rectangleMode = true;
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
         }
+        
+        //pressing esc takes you to the main menu
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
-        if (GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+        
+        //holding tab will take you to the game menu
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
+        
+        //click the left mouse button
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-
+            
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
             if (rectangleMode && potentialPolygon.size() == 4) {
                 rectangleMode = false;
             }
+            
             if (finishMode) {
                 finishMode = false;
             }
+            //loop through each vertex to check if it already exists
             for (Vector2 vertex : potentialPolygon) {
                 if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y) {
                     validPos = false;
                 }
             }
+            //if the click is valid based on the previous test
             if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());

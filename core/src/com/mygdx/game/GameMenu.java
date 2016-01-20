@@ -249,9 +249,9 @@ public class GameMenu extends MyScreen {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
                 if (snapToGrid.isChecked()) {
-                    background.snapToGrid = true;
+                    background.gridMode = true;
                 } else if (!snapToGrid.isChecked()) {
-                    background.snapToGrid = false;
+                    background.gridMode = false;
                 }
             }
         });
