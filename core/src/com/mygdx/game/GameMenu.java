@@ -99,7 +99,7 @@ public class GameMenu extends MyScreen {
 
         //create the buttons for table 1
         resetPlayer = new TextButton("Reset Player", skin, "default");
-        resetLevel = new TextButton("Reset Shapes", skin, "default");
+        resetLevel = new TextButton("Delete World", skin, "default");
         colours = new TextButton("Colours:", skin, "default");
         backToGame = new TextButton("Return to Game", skin);
         snapToGrid = new CheckBox("Snap to grid", skin);
