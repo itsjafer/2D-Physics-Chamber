@@ -7,27 +7,29 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.gamestate.MyScreen;
 import com.mygdx.game.gamestate.ScreenManager;
@@ -39,14 +41,19 @@ import com.mygdx.game.input.GameInputs;
  */
 public class GameMenu extends MyScreen {
 
-    Skin skin;
-    Stage stage;
+    Skin skin, skinCanvas, skinColourSample;
+    Stage stage, stage2;
     GameScreen background;
-    InputMultiplexer im;
-    TextButton bResetPlayer, bResetLevel;
+    InputMultiplexer im, im2, lastUsedMultiplexer;
+    TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton, backToGame;
     Slider gravitySliderY, gravitySliderX;
     Label labelSliderY, labelSliderX;
     CheckBox snapToGrid;
+    Color drawColour;
+    ImageButton colourPalette;
+    Pixmap canvas;
+    
+    boolean choosingColour;
 
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
         super(gameStateManager);
@@ -55,40 +62,60 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void init() {
-        stage = new Stage();
 
+        //for all the buttons/sliders
+        stage = new Stage();
+        //for the colour palette 
+        stage2 = new Stage();
         //Input multiplexer, giving priority to stage over gameinput
         im = new InputMultiplexer(this.stage, MyGdxGame.gameInput);
+        //same as above, but giving priority to stage 2, which is colour choosing
+        im2 = new InputMultiplexer(this.stage2, MyGdxGame.gameInput);
+        //in order to know which input multiplexer was used last (when switching screens)
+        lastUsedMultiplexer = im;
         // set the input multiplexer as the input processor
         Gdx.input.setInputProcessor(im);
+
+        //when true, it renders stage 2, when false it renders stage 1
+        choosingColour = false;
 
         //initialize skin by imlpementing the json file that implements the atlas
         // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
         skin = new Skin(Gdx.files.internal("ui-data/uiskin.json"));
-
+        //skin for the colour palette
+        skinCanvas = new Skin(new TextureAtlas(Gdx.files.internal("ui-data/canvas.pack")));
+        //skin for the COLOUR SAMPLE
+        skinColourSample = new Skin();
+        canvas = new Pixmap(Gdx.files.internal("ui-data/canvas.png"));
         // Create a table1 that fills the screen, the buttons, etc go into this table1
         Table table1 = new Table();
         Table table2 = new Table();
+        Table table3 = new Table();
 
         //table 1 LAYOUT
+        stage.addActor(table1);
         table1.setFillParent(true);
         table1.align(Align.topLeft);
-        stage.addActor(table1);
 
         //create the buttons for table 1
-        bResetPlayer = new TextButton("Reset Player", skin, "default");
-        bResetLevel = new TextButton("Reset Shapes", skin, "default");
+        resetPlayer = new TextButton("Reset Player", skin, "default");
+        resetLevel = new TextButton("Reset Shapes", skin, "default");
+        colours = new TextButton("Colours:", skin, "default");
+        backToGame = new TextButton("Return to Game", skin);
         snapToGrid = new CheckBox("Snap to grid", skin);
 
         //add objects to table1
-        table1.add(bResetPlayer).pad(4, 4, 4, 4);
-        table1.add(bResetLevel).pad(4, 0, 4, 4);
+        table1.add(resetPlayer).pad(4, 4, 4, 4);
+        table1.add(resetLevel).pad(4, 0, 4, 4);
+        table1.add(colours).pad(4, 0, 4, 4);
+        table1.add(backToGame);
+        table1.row();
         table1.add(snapToGrid);
 
         //table 2 LAYOUT
+        stage.addActor(table2);
         table2.setFillParent(true);
         table2.align(Align.bottomLeft);
-        stage.addActor(table2);
 
         //create the objects for table 2
         gravitySliderY = new Slider(-100, 100, 10, false, skin);
@@ -103,14 +130,45 @@ public class GameMenu extends MyScreen {
         table2.add(labelSliderY).pad(0, 4, 4, 4);
         table2.add(labelSliderX).pad(0, 0, 4, 4);
 
+        //format table 3 LAYOUT
+        stage2.addActor(table3);
+        table3.setFillParent(true);
+        table3.align(Align.center);
+
+        //table 3 buttons
+        colourPalette = new ImageButton(skinCanvas.getDrawable("canvas"));
+        backToMenu = new TextButton("Return to Game Menu", skin);
+// SAMPLE FOR THE COLOUR. SO THE USER SEES IT BEFORE SWITCHING WINDOWS
+        // Generate a 1x1 white texture and store it in the skin named "white".
+        Pixmap pixmap = new Pixmap(40, 20, Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        skinColourSample.add("white", new Texture(pixmap));
+
+//		// Store the default libgdx font under the name "default".
+        skinColourSample.add("default", new BitmapFont());
+        // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
+        TextButtonStyle textButtonStyle2 = new TextButtonStyle();
+        textButtonStyle2.up = skinColourSample.newDrawable("white");
+        textButtonStyle2.font = skinColourSample.getFont("default");
+        skinColourSample.add("default", textButtonStyle2);
+
+        sampleColourButton = new TextButton("", skinColourSample);
+        // add the buttons to table 3
+        table3.add(backToMenu).pad(4, 4, 4, 4);
+        table3.row();
+        table3.add(sampleColourButton).pad(0, 4, 4, 4);
+        table3.row();
+        table3.add(colourPalette);
+
         //add the button/slider inputs
         addInputs();
     }
 
     @Override
     public void update(float deltaTime) {
-        if (Gdx.input.getInputProcessor() != im) {
-            Gdx.input.setInputProcessor(im);
+        if (Gdx.input.getInputProcessor() != lastUsedMultiplexer) {
+            Gdx.input.setInputProcessor(lastUsedMultiplexer);
         }
         processInput();
     }
@@ -127,8 +185,13 @@ public class GameMenu extends MyScreen {
     @Override
     public void render(float deltaTime) {
         background.render(deltaTime);
-        stage.act(deltaTime);
-        stage.draw();
+        if (choosingColour) {
+            stage2.act(deltaTime);
+            stage2.draw();
+        } else {
+            stage.act(deltaTime);
+            stage.draw();
+        }
     }
 
     @Override
@@ -149,7 +212,7 @@ public class GameMenu extends MyScreen {
 
     //to avoid the clutter of code
     public void addInputs() {
-        bResetPlayer.addListener(new ClickListener() {
+        resetPlayer.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //if the player exists, reset the location of the player
@@ -157,7 +220,7 @@ public class GameMenu extends MyScreen {
                 background.update(Gdx.graphics.getDeltaTime());
             }
         });
-        bResetLevel.addListener(new ClickListener() {
+        resetLevel.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //if the player exists, reset the location of the player
@@ -187,18 +250,52 @@ public class GameMenu extends MyScreen {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
                 if (snapToGrid.isChecked()) {
-                    background.snapToGrid = true;
+                    background.gridMode = true;
                 } else if (!snapToGrid.isChecked()) {
-                    background.snapToGrid = false;
+                    background.gridMode = false;
                 }
+            }
+        });
+        colourPalette.addListener(new DragListener() {
+            @Override
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                setColour((int) x, (int) y);
+            }
+        });
+        colours.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                choosingColour = true;
+                Gdx.input.setInputProcessor(im2);
+                lastUsedMultiplexer = im2;
+            }
+        });
+        backToMenu.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                choosingColour = false;
+                Gdx.input.setInputProcessor(im);
+                lastUsedMultiplexer = im;
+            }
+        });
+        backToGame.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
             }
         });
     }
 
+    public void setColour(int xPos, int yPos) {
+        drawColour = new Color(canvas.getPixel(xPos, (canvas.getHeight() - yPos)));
+        sampleColourButton.setColor(drawColour);
+        background.drawColour = drawColour;
+    }
+
     @Override
     public void processInput() {
-        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-        }
+//        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
+//            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+//        }
     }
 }

@@ -6,6 +6,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -19,6 +20,7 @@ public class Polygon {
     // All of the vertices of the polygon
     protected Vector2[] vertices;
     // the polygon's current velocity
+    protected Color polygonColour;
 
     /**
      * Creates a polygon.
@@ -26,10 +28,16 @@ public class Polygon {
      * @param vertices an array of Vector2.
      * @param friction NOT USED ATM
      */
-    public Polygon(Vector2[] vertices) {
+    public Polygon(Vector2[] vertices, Color colour) {
 
         // Initializes position info
         this.vertices = vertices;
+        //get the colour set from the game by the game menu 
+        this.polygonColour = colour;
+    }
+
+    public Color getPolygonColour() {
+        return polygonColour;
     }
 
     
@@ -125,5 +133,16 @@ public class Polygon {
             }
         }
         return true;
+    }
+
+    /**
+     * Instantly moves the polygon to a new position by a fixed amount
+     *
+     * @param displacement the amount to move the player and the direction
+     */
+    public void bump(Vector2 displacement) {
+        for (Vector2 vertex : vertices) {
+            vertex.add(displacement);
+        }
     }
 }

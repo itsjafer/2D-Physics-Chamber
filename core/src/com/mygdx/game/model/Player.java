@@ -4,6 +4,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import static com.mygdx.game.model.Polygon.vectorProject;
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ public class Player extends Polygon {
     Vector2 center;
     Vector2 startPos;
     
-    public Player(Vector2[] vertices) {
-        super(vertices);
+    public Player(Vector2[] vertices, Color colour) {
+        super(vertices, colour);
         velocity = new Vector2();
         acceleration = new Vector2();
         
@@ -42,15 +43,16 @@ public class Player extends Polygon {
         collided = false;
         movement = new Vector2();
     }
-
+//    public Color getPlayerColour(){
+//        return ;
+//    }
     public void jump() {
         jumping = true;
     }
 
     public void move(float deltaTime) {
         
-        
-        movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
+        Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
         velocity.add(acceleration.cpy().scl(deltaTime));
 
 //         Each vertex is moved by the velocity
@@ -79,7 +81,7 @@ public class Player extends Polygon {
 
         center.set(x, y);
     }
-    
+
     public void collidePhysics()
     {
         Vector2 displacement = getNormal(collisionAxis).nor().scl(-collisionDepth);
@@ -94,17 +96,6 @@ public class Player extends Polygon {
     {
         bump(startPos.cpy().sub(center));
         velocity.set(new Vector2(0, 0));
-    }
-
-    /**
-     * Instantly moves the polygon to a new position by a fixed amount
-     *
-     * @param displacement the amount to move the player and the direction
-     */
-    public void bump(Vector2 displacement) {
-        for (Vector2 vertex : vertices) {
-            vertex.add(displacement);
-        }
     }
 
     public void update() {
