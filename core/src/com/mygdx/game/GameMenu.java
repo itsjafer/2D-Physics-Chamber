@@ -52,6 +52,7 @@ public class GameMenu extends MyScreen {
     Color drawColour;
     ImageButton colourPalette;
     Pixmap canvas;
+    
     boolean choosingColour;
 
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
