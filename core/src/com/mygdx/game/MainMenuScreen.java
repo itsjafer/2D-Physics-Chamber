@@ -6,8 +6,8 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
@@ -34,12 +34,14 @@ public class MainMenuScreen extends MyScreen {
     Table table, table2;
     TextureAtlas atlas;
     InputMultiplexer im, im2;
-    TextButton startGame, saveGame, loadGame, slot1, slot2, slot3;
-    TextArea inputSlot1, inputSlot2, inputSlot3;
+    TextButton startGame, saveGame, loadGame, slot1, slot2, slot3, returnToMenu;
+    String slot1Text, slot2Text, slot3Text;
+    TextField inputSlot1, inputSlot2, inputSlot3;
     GameScreen gameScreen;
     String input;
     boolean isSaving, isLoading, typing;
     private InputMultiplexer lastUsedMultiplexer;
+    InputListener inputListen = new InputListener();
 
     public MainMenuScreen(ScreenManager gameStateManager, GameScreen gameScreen) {
         super(gameStateManager);
@@ -72,6 +74,10 @@ public class MainMenuScreen extends MyScreen {
         //to determine whether user wants to save or load levels
         isLoading = false;
         isSaving = false;
+        //the saved text describing the 3 slots of load/save
+        slot1Text = "Blank";
+        slot2Text = "Blank";
+        slot3Text = "Blank";
 
         //Input multiplexer, giving priority to stage over gameinput
         im = new InputMultiplexer(stage, MyGdxGame.gameInput);
@@ -93,7 +99,6 @@ public class MainMenuScreen extends MyScreen {
         table.setFillParent(true);
         table.align(Align.top | Align.center);
 
-
         //create the buttons... b for button:
         startGame = new TextButton("Start Game", skin, "default");
         saveGame = new TextButton("Save Game", skin, "default");
@@ -112,22 +117,25 @@ public class MainMenuScreen extends MyScreen {
         table2.setFillParent(true);
         table2.align(Align.top | Align.center);
 
-        //create the buttons... b for button:
-        slot1 = new TextButton("               Slot 1:              \n\n", skin, "default");
-        slot2 = new TextButton("               Slot 2:              \n\n", skin, "default");
-        slot3 = new TextButton("               Slot 3:              \n\n", skin, "default");
-        inputSlot1 = new TextArea("Empty", skin);
-        inputSlot2 = new TextArea("Empty", skin);
-        inputSlot3 = new TextArea("Empty", skin);
+        //create the buttons for table 2
+        slot1 = new TextButton("Slot 1:\n\n" + "'" + slot1Text + "'", skin, "default");
+        slot2 = new TextButton("Slot 2:\n\n" + "'" + slot2Text + "'", skin, "default");
+        slot3 = new TextButton("Slot 3:\n\n" + "'" + slot3Text + "'", skin, "default");
+        returnToMenu = new TextButton("Return to Menu", skin);
+        inputSlot1 = new TextField(slot1Text, skin);
+        inputSlot2 = new TextField(slot2Text, skin);
+        inputSlot3 = new TextField(slot3Text, skin);
 
         //add the buttons to the table
-        table2.add(slot1).pad(MyGdxGame.HEIGHT / 4, 20, 20, 20);
-        table2.add(inputSlot1).padTop(MyGdxGame.HEIGHT / 4 - 20);
+        table2.add(returnToMenu).padTop(20);
         table2.row();
-        table2.add(slot2).pad(20, 20, 20, 20);
+        table2.add(slot1).pad(20, 20, 20, 20).size(200, 100);
+        table2.add(inputSlot1).padTop(30);
+        table2.row();
+        table2.add(slot2).pad(20, 20, 20, 20).size(200, 100);
         table2.add(inputSlot2);
         table2.row();
-        table2.add(slot3).pad(20, 20, 20, 20);
+        table2.add(slot3).pad(20, 20, 20, 20).size(200, 100);
         table2.add(inputSlot3);
 
         // add the inputs. they're in a seperate method because of the length;
@@ -147,6 +155,17 @@ public class MainMenuScreen extends MyScreen {
     public void processInput() {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            if (!inputSlot1.getText().equalsIgnoreCase(slot1Text) && !inputSlot1.getText().equals("Blank")) {
+                slot1Text = inputSlot1.getText();
+            }
+            if (!inputSlot2.getText().equalsIgnoreCase(slot2Text) && !inputSlot2.getText().equals("Blank")) {
+                slot2Text = inputSlot2.getText();
+            }
+            if (!inputSlot3.getText().equalsIgnoreCase(slot3Text) && !inputSlot3.getText().equals("Blank")) {
+                slot3Text = inputSlot3.getText();
+            }
         }
     }
 
@@ -176,34 +195,58 @@ public class MainMenuScreen extends MyScreen {
                 isLoading = true;
                 Gdx.input.setInputProcessor(im2);
                 lastUsedMultiplexer = im2;
-
             }
         });
         slot1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("hello");
                 if (isSaving) {
+                    slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
+                    gameScreen.world.saveLevel(0);
+
+                } else if (isLoading) {
+                    gameScreen.world.loadLevel(0);
+                }
+            }
+        });
+        slot2.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (isSaving) {
+                    slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                     gameScreen.world.saveLevel(1);
-                    slot1.setText("               Slot 1:              \n\n" + inputSlot1.getText());
+
                 } else if (isLoading) {
                     gameScreen.world.loadLevel(1);
                 }
             }
         });
-        inputSlot1.addListener(new InputListener(){
-
+        slot3.addListener(new ClickListener() {
             @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                return super.keyDown(event, keycode); //To change body of generated methods, choose Tools | Templates.
+            public void clicked(InputEvent event, float x, float y) {
+                if (isSaving) {
+                    slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
+                    gameScreen.world.saveLevel(2);
+
+                } else if (isLoading) {
+                    gameScreen.world.loadLevel(2);
+                }
             }
-            
         });
-        System.out.println("sdasd  " + inputSlot1.getDefaultInputListener());
+        returnToMenu.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.input.setInputProcessor(im);
+                lastUsedMultiplexer = im;
+                isLoading = false;
+                isSaving = false;
+            }
+        });
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(int width, int height
+    ) {
         stage.getViewport().update(width, height, true);
     }
 

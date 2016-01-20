@@ -294,8 +294,8 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void processInput() {
-//        if (!GameInputs.isKeyDown(GameInputs.Keys.TAB)) {
-//            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-//        }
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
     }
 }
