@@ -7,14 +7,17 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -30,11 +33,13 @@ public class MainMenuScreen extends MyScreen {
     Stage stage, stage2;
     Table table, table2;
     TextureAtlas atlas;
-    InputMultiplexer im;
+    InputMultiplexer im, im2;
     TextButton startGame, saveGame, loadGame, slot1, slot2, slot3;
-    TextField inputSlot1, inputSlot2, inputSlot3;
+    TextArea inputSlot1, inputSlot2, inputSlot3;
     GameScreen gameScreen;
-    boolean isSaving, isLoading;
+    String input;
+    boolean isSaving, isLoading, typing;
+    private InputMultiplexer lastUsedMultiplexer;
 
     public MainMenuScreen(ScreenManager gameStateManager, GameScreen gameScreen) {
         super(gameStateManager);
@@ -61,12 +66,20 @@ public class MainMenuScreen extends MyScreen {
         stage = new Stage();
         stage2 = new Stage();
 
+        //input for saving levels
+        input = "";
+        typing = false;
         //to determine whether user wants to save or load levels
         isLoading = false;
         isSaving = false;
 
         //Input multiplexer, giving priority to stage over gameinput
         im = new InputMultiplexer(stage, MyGdxGame.gameInput);
+        im2 = new InputMultiplexer(stage2, MyGdxGame.gameInput);
+
+        //set the processor to the initial default one
+        lastUsedMultiplexer = im;
+
         // set the input multiplexer as the input processor
         Gdx.input.setInputProcessor(im);
 
@@ -103,9 +116,9 @@ public class MainMenuScreen extends MyScreen {
         slot1 = new TextButton("               Slot 1:              \n\n", skin, "default");
         slot2 = new TextButton("               Slot 2:              \n\n", skin, "default");
         slot3 = new TextButton("               Slot 3:              \n\n", skin, "default");
-        inputSlot1 = new TextField("Empty", skin);
-        inputSlot2 = new TextField("Empty", skin);
-        inputSlot3 = new TextField("Empty", skin);
+        inputSlot1 = new TextArea("Empty", skin);
+        inputSlot2 = new TextArea("Empty", skin);
+        inputSlot3 = new TextArea("Empty", skin);
 
         //add the buttons to the table
         table2.add(slot1).pad(MyGdxGame.HEIGHT / 4, 20, 20, 20);
@@ -124,8 +137,8 @@ public class MainMenuScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
-        if (Gdx.input.getInputProcessor() != im) {
-            Gdx.input.setInputProcessor(im);
+        if (Gdx.input.getInputProcessor() != lastUsedMultiplexer) {
+            Gdx.input.setInputProcessor(lastUsedMultiplexer);
         }
         processInput();
     }
@@ -152,6 +165,8 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 saveGame.setChecked(false);
                 isSaving = true;
+                Gdx.input.setInputProcessor(im2);
+                lastUsedMultiplexer = im2;
             }
         });
         loadGame.addListener(new ClickListener() {
@@ -159,19 +174,32 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 loadGame.setChecked(false);
                 isLoading = true;
+                Gdx.input.setInputProcessor(im2);
+                lastUsedMultiplexer = im2;
+
             }
         });
         slot1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                System.out.println("hello");
                 if (isSaving) {
                     gameScreen.world.saveLevel(1);
+                    slot1.setText("               Slot 1:              \n\n" + inputSlot1.getText());
                 } else if (isLoading) {
                     gameScreen.world.loadLevel(1);
                 }
             }
         });
+        inputSlot1.addListener(new InputListener(){
 
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                return super.keyDown(event, keycode); //To change body of generated methods, choose Tools | Templates.
+            }
+            
+        });
+        System.out.println("sdasd  " + inputSlot1.getDefaultInputListener());
     }
 
     @Override
