@@ -115,7 +115,6 @@ public class GameWorld {
             //loading up the text file with the infomration
             BufferedWriter out = new BufferedWriter(new FileWriter("levels.txt"));
 
-            
             //saving the gravity
             out.write("Gravity:");
             out.write("\n" + gravity.x);
@@ -124,6 +123,7 @@ public class GameWorld {
             //Writing player information to file
             if (getPlayer() != null) {
                 out.write("Player: " + "\n");
+                out.write(player.getPolygonColour().toString() + "\n");
                 Vector2[] playerVertices = player.getVertices();
                 for (int x = 0; x < playerVertices.length; x++) {
                     out.write(playerVertices[x].x + "\n");
@@ -135,7 +135,7 @@ public class GameWorld {
             if (!polygons.isEmpty()) {
                 for (Polygon polygon : polygons) {
                     out.write("\n" + "Polygon ");
-                    out.write("\n" + polygon.getPolygonColour());
+                    out.write("\n" + polygon.getPolygonColour().toString());
                     for (Vector2 vertice : polygon.getVertices()) {
                         out.write("\n" + vertice.x);
                         out.write("\n" + vertice.y);
@@ -171,41 +171,40 @@ public class GameWorld {
         input.nextLine();
         setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
 
-        //reading the information for a player
-        if (input.nextLine().contains("Player")) {
-            ArrayList<Vector2> playerVertices = new ArrayList();
-            String nextWord = input.next();
+        String nextWord = ""; //temporary variable that stores the next string in the file
 
-            //Add vertices until a Polygon or the end of the file is reached
-            while (!nextWord.equals("Polygon") && !nextWord.equals("null")) {
-                Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), Float.parseFloat(input.next()));
-                System.out.println(tempVertice);
+        //creating the player
+        if (input.nextLine().contains("Player")) {
+            Color playerColor = Color.valueOf(input.nextLine());
+            ArrayList<Vector2> playerVertices = new ArrayList();
+            nextWord = input.next();
+            while (!nextWord.contains("Polygon")) {
+                Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), input.nextFloat());
                 playerVertices.add(tempVertice);
                 nextWord = input.next();
             }
-            //create the player
-            createPlayer(playerVertices, Color.WHITE);
+            createPlayer(playerVertices, playerColor);
+        } else {
+            nextWord = input.nextLine();
         }
+        //creating the polygons
+        if (nextWord.contains("Polygon")) {
+            while (true) {
+                Color polygonColor = Color.valueOf(input.nextLine());
 
-        //if there is information about the polygons, use it to create them
-        if (input.hasNext()) {
-            input.nextLine();
-            String nextWord = "";
-            //Read information for every polygon within the text file
-            do {
-                nextWord = input.next();
                 ArrayList<Vector2> polygonVertices = new ArrayList();
-                while (!nextWord.equals("Polygon") && !nextWord.equals("end")) {
+                nextWord = input.next();
+                while (!nextWord.contains("Polygon") && !nextWord.contains("end")) {
                     Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), input.nextFloat());
                     polygonVertices.add(tempVertice);
-                    if (input.hasNext()) {
-                        nextWord = input.next();
-                    } else {
-                        break;
-                    }
+                    nextWord = input.next();
                 }
-                createPolygon(polygonVertices, Color.WHITE);
-            } while (nextWord.equals("Polygon"));
+                createPolygon(polygonVertices, polygonColor);
+                if (nextWord.contains("end")) {
+                    break;
+                }
+                input.nextLine();
+            }
         }
     }
 
