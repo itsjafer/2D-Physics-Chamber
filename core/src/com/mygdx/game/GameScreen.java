@@ -68,6 +68,7 @@ public class GameScreen extends MyScreen {
      */
     @Override
     public void render(float deltaTime) {
+        Gdx.gl20.glClearColor(0, 0, 0, 0);
         // updates the camera to the world space
         camera.update();
         // loads the batch and sets it to follow the camera's projection matrix
@@ -96,7 +97,7 @@ public class GameScreen extends MyScreen {
         }
         validPos = true;
         for (Polygon polygon : world.getPolygons()) {
-            if(!lastPolygonMoved.contains(polygon)){
+            if (!lastPolygonMoved.contains(polygon)) {
                 lastPolygonMoved.add(0, polygon);
             }
             shapeRenderer.setColor(polygon.getPolygonColour());
@@ -145,7 +146,7 @@ public class GameScreen extends MyScreen {
                 gridLayout.add(new GridPoint2(j, i));
             }
         }
-        drawColour = Color.NAVY;
+        drawColour = Color.TEAL;
         snapToGrid = false;
         straight = false;
         clickedInsidePolygon = false;
