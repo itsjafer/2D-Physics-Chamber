@@ -5,6 +5,7 @@
  */
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
@@ -12,6 +13,7 @@ import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -23,23 +25,30 @@ import java.util.ArrayList;
 
 /**
  *
- * @author Dmitry
+ * @author DmitryJaferCaius
  */
 public class GameScreen extends MyScreen {
-
+    
     OrthographicCamera camera;
     Viewport viewport;
     SpriteBatch batch;
     ShapeRenderer shapeRenderer;
     GameWorld world;
     ArrayList<Vector2> potentialPolygon;
-
+    ArrayList<GridPoint2> gridLayout;
+    ArrayList<Polygon> lastPolygonMoved;
+    float gridSize;
     // Whether the line being drawn is to be straightened
     boolean straight;
     // The angle multiple to which to snap
     final float SNAP_ANGLE = (float) Math.toRadians(45);
     // The position at which the next point should be added
     Vector2 mouseDrawPos;
+    boolean rectangleMode = false;
+    boolean snapToGrid;
+    boolean validPos;
+    boolean clickedInsidePolygon;
+    Vector2 oldMousePos;
 
     /**
      * Creates a UI object
@@ -63,38 +72,49 @@ public class GameScreen extends MyScreen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.end();
-
+        
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin();
-
-        if (!potentialPolygon.isEmpty()) {
-            drawPotentialPolygon();
+        if (snapToGrid) {
+            for (GridPoint2 point : gridLayout) {
+                shapeRenderer.circle(point.x, point.y, 1);
+            }
         }
-
+        if (!potentialPolygon.isEmpty()) {
+            if (rectangleMode) {
+                drawRectangle();
+            } else {
+                drawPotentialPolygon();
+            }
+        }
+        validPos = true;
         for (Polygon polygon : world.getPolygons()) {
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
-                System.out.println("Mouse is in a polygon");
+                validPos = false;
+                shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
             }
+            shapeRenderer.setColor(Color.WHITE);
         }
         if (world.getPlayer() != null) {
             Player player = world.getPlayer();
             if (player.containsPoint(GameInputs.getMousePosition())) {
-                System.out.println("Mouse is in the player");
+                shapeRenderer.setColor(Color.GOLD);
             }
             Vector2[] playerVertices = player.getVertices();
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
+            shapeRenderer.setColor(Color.WHITE);
 
 //            shapeRenderer.line(0, world.getPlayer().HIGHEST, MyGdxGame.WIDTH, world.getPlayer().HIGHEST);
         }
         shapeRenderer.end();
     }
-
+    
     @Override
     public void init() {
         batch = new SpriteBatch();
@@ -104,27 +124,42 @@ public class GameScreen extends MyScreen {
         shapeRenderer = new ShapeRenderer();
         world = new GameWorld();
         potentialPolygon = new ArrayList();
-
+        gridLayout = new ArrayList();
+        lastPolygonMoved = new ArrayList();
+        gridSize = 20;
+        //spawn the grid
+        for (int i = 0; i <= MyGdxGame.HEIGHT; i += gridSize) {
+            for (int j = 0; j <= MyGdxGame.WIDTH; j += gridSize) {
+                gridLayout.add(new GridPoint2(j, i));
+            }
+        }
+        snapToGrid = false;
         straight = false;
+        clickedInsidePolygon = false;
+        oldMousePos = null;
         mouseDrawPos = new Vector2();
     }
-
+    
     @Override
     public void update(float deltaTime) {
         processInput();
-
-        if (straight && !potentialPolygon.isEmpty()) {
-            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), GameInputs.getMousePosition());
-        } else {
-            mouseDrawPos = GameInputs.getMousePosition();
+        //check to make sure the correct processor is in use
+        if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
+            Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
-
+        mouseDrawPos = GameInputs.getMousePosition();
+        if (straight && !potentialPolygon.isEmpty()) {
+            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
+        } else if (snapToGrid) {
+            snapMouseToGrid(mouseDrawPos);
+        }
+        
         world.update(deltaTime);
     }
-
+    
     @Override
     public void processInput() {
-
+        
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
                 world.getPlayer().applyAcceleration(new Vector2(0, 1000));
@@ -140,6 +175,7 @@ public class GameScreen extends MyScreen {
             }
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
+            rectangleMode = true;
         }
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
         }
@@ -150,9 +186,12 @@ public class GameScreen extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
+
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
-            boolean validPos = true;
+            if (rectangleMode && potentialPolygon.size() == 4) {
+                rectangleMode = false;
+            }
             for (Vector2 vertex : potentialPolygon) {
                 if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y) {
                     validPos = false;
@@ -161,7 +200,35 @@ public class GameScreen extends MyScreen {
             if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());
+
+                //remove the point if it results in a concave polygon
+                if (!isConvex(potentialPolygon)) {
+                    potentialPolygon.remove(potentialPolygon.size() - 1);
+                }
+            } else {
+                clickedInsidePolygon = true;
+                oldMousePos = mouseDrawPos;
+                for (Polygon polygon : lastPolygonMoved) {
+                    if (polygon.containsPoint(mouseDrawPos)) {
+                        lastPolygonMoved.remove(polygon);
+                        lastPolygonMoved.add(0, polygon);
+                        break;
+                    }
+                }
             }
+            
+        }
+        if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
+            if (clickedInsidePolygon) {
+                Vector2 displacement = mouseDrawPos.cpy().sub(oldMousePos);
+                lastPolygonMoved.get(0).bump(displacement);
+                oldMousePos = mouseDrawPos;
+            }
+        }
+        if (GameInputs.isMouseButtonDown(GameInputs.MouseButtons.LEFT)) {
+        }
+        if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT)) {
+            clickedInsidePolygon = false;
         }
         // straight should only be true while the SHIFT key is being HELD DOWN
         straight = GameInputs.isKeyDown(GameInputs.Keys.SHIFT);
@@ -190,21 +257,37 @@ public class GameScreen extends MyScreen {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
         }
-
+        
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
             if (potentialPolygon.size() > 2) {
                 world.createPolygon(potentialPolygon);
+                lastPolygonMoved.add(0, world.getPolygons().get(world.getPolygons().size() - 1));
                 potentialPolygon.clear();
                 System.out.println("Polygon made.");
             }
         }
+        
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
-            if (world.getPlayer() == null) {
+            if (world.getPlayer() == null && potentialPolygon.size() > 2) {
                 world.createPlayer(potentialPolygon);
                 potentialPolygon.clear();
                 System.out.println("Player made.");
             }
         }
+    }
+
+    /**
+     * Snaps the mouse position drawing to the grid lines when grid lines are
+     * activated
+     *
+     * @param curMousePos - position of current mouse
+     */
+    public void snapMouseToGrid(Vector2 curMousePos) {
+        
+        float xPos = gridSize * Math.round(curMousePos.x / gridSize);
+        float yPos = gridSize * Math.round(curMousePos.y / gridSize);
+        
+        mouseDrawPos.set(xPos, yPos - 1);
     }
 
     /**
@@ -219,10 +302,12 @@ public class GameScreen extends MyScreen {
     }
 
     /**
-     * Reset player position
+     * Reset player position and momentum
      */
     public void resetPlayer() {
-        world.getPlayer().goHome();
+        if (world.getPlayer() != null) {
+            world.getPlayer().goHome();
+        }
     }
 
     /**
@@ -230,7 +315,6 @@ public class GameScreen extends MyScreen {
      * polygon size is greater than 0
      */
     public void drawPotentialPolygon() {
-
         // First loop through all the points except the last one (we don't want the polygon to wrap around
         for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
@@ -245,22 +329,106 @@ public class GameScreen extends MyScreen {
             shapeRenderer.setColor((Color.WHITE));
         }
 
+        //temporarily add point to check for concavity
+        if (validPos) {
+            potentialPolygon.add(mouseDrawPos.cpy());
+        }
+        //change colour based on the the concavity of the polygon
+        if (!isConvex(potentialPolygon)) {
+            shapeRenderer.setColor(Color.RED);
+        } else {
+            shapeRenderer.setColor(Color.WHITE);
+        }
+        potentialPolygon.remove(potentialPolygon.size() - 1);
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
         if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
+        
     }
 
     /**
-     * lolwut
+     * Checks the concavity of a polygon
      *
-     * @param type
+     * @param potentialConvexPolygon an arraylist of vertices within the polygon
+     * @return whether the polygon is convex
      */
-    public void drawShapes(ShapeRenderer.ShapeType type) {
-        shapeRenderer.set(type);
+    public boolean isConvex(ArrayList<Vector2> potentialConvexPolygon) {
+        //the polygon cannot be concave with less than 3 vertices
+        if (potentialConvexPolygon.size() < 3) {
+            return true;
+        }
+        boolean sign = false;
+        int n = potentialConvexPolygon.size();
+        for (int i = 0; i < potentialConvexPolygon.size(); i++) {
 
+            //fiaa
+            double dx1 = potentialConvexPolygon.get((i + 2) % n).x - potentialConvexPolygon.get((i + 1) % n).x;
+            double dy1 = potentialConvexPolygon.get((i + 2) % n).y - potentialConvexPolygon.get((i + 1) % n).y;
+            double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
+            double dy2 = potentialConvexPolygon.get(i).y - potentialConvexPolygon.get((i + 1) % n).y;
+            double zcrossproduct = dx1 * dy2 - dy1 * dx2;
+            if (zcrossproduct == 0) {
+                return false;
+            }
+            if (i == 0) {
+                sign = zcrossproduct > 0;
+            } else {
+                if (sign != (zcrossproduct > 0)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Reset the level by deleting all polygons and sending the player to the
+     * start position
+     */
+    public void resetLevel() {
+        potentialPolygon.clear();
+        world.getPolygons().clear();
+        world.deletePlayer();
+    }
+
+    /**
+     * Draws a based based on two points
+     */
+    public void drawRectangle() {
+        //store the original point to begin the rectangle from
+        Vector2 mouseClick = potentialPolygon.get(0);
+        shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
+
+        //recreate the polygon using only the first vertice
+        potentialPolygon.clear();
+        potentialPolygon.add(mouseClick);
+
+        //create the vertical and horizontal components of the rectangle
+        Vector2 vertical = new Vector2(potentialPolygon.get(0).x, mouseDrawPos.y);
+        Vector2 horizontal = new Vector2(mouseDrawPos.x, potentialPolygon.get(0).y);
+
+        //add rectangle vertices to potentialPolygon 
+        potentialPolygon.add(horizontal);
+        potentialPolygon.add(mouseDrawPos);
+        potentialPolygon.add(vertical);
+
+        //draw the rectangle
+        for (int i = 0; i < potentialPolygon.size(); i++) {
+            // Draw a dot at every point
+            shapeRenderer.circle(potentialPolygon.get(i).x, potentialPolygon.get(i).y, 1);
+            // Draw the outline of the polygon in red if it's valid (has at least 3 vertices
+
+            shapeRenderer.setColor(Color.BLUE);
+            
+            shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
+
+            // reset the color to white for the next loop of drawing points
+            shapeRenderer.setColor((Color.WHITE));
+        }
+        
     }
 
     /**
@@ -297,32 +465,32 @@ public class GameScreen extends MyScreen {
         // Using the tangent in a right triangle:
         float xVal = pos2.x - origin.x;
         float yVal = pos2.y - origin.y;
-
+        
         float theta = MathUtils.atan2(yVal, xVal);
-
+        
         return theta;
     }
-
+    
     @Override
     public void show() {
     }
-
+    
     @Override
     public void pause() {
     }
-
+    
     @Override
     public void resume() {
     }
-
+    
     @Override
     public void hide() {
     }
-
+    
     @Override
     public void dispose() {
     }
-
+    
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);

@@ -22,7 +22,7 @@ public class Polygon {
     protected Vector2 velocity;
     // The polygon's center
     protected Vector2 center;
-    
+
     // The polygon's center when its position was last saved
     protected Vector2 startPos = null;
 
@@ -33,7 +33,7 @@ public class Polygon {
      * @param friction NOT USED ATM
      */
     public Polygon(Vector2[] vertices) {
-        
+
         // Initializes position info
         this.vertices = vertices;
         updateCenter();
@@ -55,8 +55,6 @@ public class Polygon {
         }
         updateCenter();
     }
-
-   
 
     /**
      * Updates the polygon's startPos to its center
@@ -97,18 +95,18 @@ public class Polygon {
      * @return the scalar projection of v1 onto v2
      */
     public static float scalarProject(Vector2 v1, Vector2 v2) {
-        
+
         float dotProduct = v1.cpy().dot(v2);
-        float scalarProjection = dotProduct/v2.len();
-        
+        float scalarProjection = dotProduct / v2.len();
+
         return scalarProjection;
     }
-    
+
     public static Vector2 vectorProject(Vector2 v1, Vector2 v2) {
-        
+
         float scalarProjection = scalarProject(v1, v2);
         Vector2 vectorProjection = v2.cpy().nor().scl(scalarProjection);
-        
+
         return vectorProjection;
     }
 
@@ -141,11 +139,10 @@ public class Polygon {
         return new Vector2(min / axis.len(), max / axis.len());
     }
 
-    public Vector2 getNormal(Vector2 axis)
-    {
+    public Vector2 getNormal(Vector2 axis) {
         return new Vector2(-axis.y, axis.x);
     }
-    
+
     /**
      * @return an array of normals for each axis on the polygon
      */
@@ -177,5 +174,25 @@ public class Polygon {
             }
         }
         return true;
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity.add(velocity);
+    }
+    
+    public Vector2 getCenter()
+    {
+        return this.center;
+    }
+    
+    /**
+     * Instantly moves the polygon to a new position by a fixed amount
+     *
+     * @param displacement the amount to move the player and the direction
+     */
+    public void bump(Vector2 displacement) {
+        for (Vector2 vertex : vertices) {
+            vertex.add(displacement);
+        }
     }
 }
