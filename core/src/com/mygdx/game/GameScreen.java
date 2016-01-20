@@ -78,7 +78,7 @@ public class GameScreen extends MyScreen {
                 gridLayout.add(new GridPoint2(j, i));
             }
         }
-        drawColour = Color.NAVY;
+        drawColour = Color.WHITE;
         gridMode = false;
         straight = false;
         clickedInsidePolygon = false;
@@ -208,9 +208,16 @@ public class GameScreen extends MyScreen {
             }
         }
 
-        //holding down ctrl results in rectangle
-        if (GameInputs.isKeyDown(GameInputs.Keys.CTRL)) {
-            rectangleMode = true;
+        //pressing ctrl results in toggle of rectangle mode
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
+            if (rectangleMode) {
+                Vector2 temp = potentialPolygon.get(0);
+                potentialPolygon.clear();
+                potentialPolygon.add(temp);
+                rectangleMode = false;
+            } else {
+                rectangleMode = true;
+            }
         }
 
         //pressing esc takes you to the main menu
