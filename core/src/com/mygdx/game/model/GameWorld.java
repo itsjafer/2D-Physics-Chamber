@@ -110,11 +110,10 @@ public class GameWorld {
     /**
      * Saves the position of the polygons and the player
      */
-    public void saveLevel() {
+    public void saveLevel(int index) {
         try {
             //loading up the text file with the infomration
-            BufferedWriter out = new BufferedWriter(new FileWriter("levels.txt"));
-
+            BufferedWriter out = new BufferedWriter(new FileWriter("level" + index + ".txt"));
             //saving the gravity
             out.write("Gravity:");
             out.write("\n" + gravity.x);
@@ -154,14 +153,14 @@ public class GameWorld {
     /**
      * Loads the level based on the information in levels.txt
      */
-    public void loadLevel() {
+    public void loadLevel(int index) {
         //delete any existing polygons from the level
         polygons.clear();
 
         //loading the file to be read from
         FileReader file = null;
         try {
-            file = new FileReader("levels.txt");
+            file = new FileReader("level" + index + ".txt");
         } catch (Exception e) {
             System.out.println(e);
         }
