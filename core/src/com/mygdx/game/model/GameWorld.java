@@ -31,12 +31,14 @@ public class GameWorld {
     public void update(float deltaTime) {
 
 //        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
-        if (player != null) {
-                player.applyAcceleration(gravity);
-                do
-                {
-                    player.move(deltaTime);
-                } while (player.collideWithPolygons(polygons));
+        if (player != null && GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
+            player.applyAcceleration(gravity);
+            player.move(deltaTime);
+            
+            if (polygons != null)
+            {
+                player.collideWithPolygons(polygons);
+            }
                 player.update();
         }
     }
