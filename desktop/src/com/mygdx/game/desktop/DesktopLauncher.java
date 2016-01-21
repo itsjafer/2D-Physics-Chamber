@@ -8,8 +8,7 @@ public class DesktopLauncher {
     public static void main (String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "SAT Finpario";
-        config.width = 1366;
-        config.height = 768;
+        config.fullscreen = true;
         new LwjglApplication(new MyGdxGame(), config);
     }
 }
