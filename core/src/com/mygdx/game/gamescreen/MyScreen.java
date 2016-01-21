@@ -1,23 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package com.mygdx.game.gamescreen;
 
 import com.badlogic.gdx.Screen;
 
 /**
- * A modified version of the Screen class that draws screen content, updates screen content, and handles input for the screen content
+ * A modified version of the Screen class that separates drawing and logic, and handles input
  * @author Dmitry
  */
 public abstract class MyScreen implements Screen{
     
-    // Has an instance of the game state manager so that individual MyScreen instances can invoke switched to other MyScreen instances
+    // Has an instance of the game state manager so that individual screen instances switch the current screen
     protected ScreenManager gameStateManager;
+    
     /**
-     * Creates a MyScreen object
+     * Creates a screen object
      * @param gameStateManager the gameStateManager
      */
     public MyScreen(ScreenManager gameStateManager)
