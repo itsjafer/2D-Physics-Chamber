@@ -22,11 +22,13 @@ public class GameWorld {
     private ArrayList<Polygon> polygons;
     private Player player;
     private Vector2 gravity;
+    private Vector2 horizontalMovementAxis;
+    static public Vector2 verticalMovementAxis;
     private Polygon finish;
-
+    
     public GameWorld() {
         polygons = new ArrayList();
-        gravity = new Vector2(0, -30f);
+        updateGravity(new Vector2(0, -30));
     }
 
     public void update(float deltaTime) {
@@ -39,7 +41,31 @@ public class GameWorld {
             if (!polygons.isEmpty()) {
                 player.collideWithPolygons(polygons);
             }
-            player.update();
+                player.update();
+        }
+    }
+    
+    public void movePlayerRight()
+    {
+        player.applyAcceleration(horizontalMovementAxis.cpy().scl(Player.HORIZONTAL_ACCELERATION));
+    }
+    public void movePlayerLeft()
+    {
+        player.applyAcceleration(horizontalMovementAxis.cpy().scl(-Player.HORIZONTAL_ACCELERATION));
+    }
+    public void jumpPlayer()
+    {
+        
+        
+//        player.setVelocity(verticalMovementAxis.cpy().scl((float)Math.sqrt(Polygon.scalarProject(gravity, verticalMovementAxis)*(-2*Polygon.scalarProject(new Vector2(0, 100), verticalMovementAxis)))));
+//        System.out.println(player.getVelocity());
+//        
+//        player.totalHeight = new Vector2(0, 0);
+//        player.totalTime = 0f;
+        if (player.canJump())
+        {
+            player.setVelocity(new Vector2(0, 316));
+            player.jump();
         }
     }
 
@@ -57,8 +83,10 @@ public class GameWorld {
      *
      * @param gravity - direction and magnitude
      */
-    public void setGravity(Vector2 gravity) {
+    public void updateGravity(Vector2 gravity) {
         this.gravity = gravity;
+        horizontalMovementAxis = Polygon.getNormal(gravity).nor();
+        verticalMovementAxis = gravity.cpy().nor().scl(-1);
     }
 
     /**
@@ -85,7 +113,7 @@ public class GameWorld {
      * @param playerPolygon arraylist of vertices
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon, Color colour) {
-        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour);
+        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour, this);
     }
 
     /**
@@ -162,7 +190,7 @@ public class GameWorld {
 
         //setting the Gravity
         input.nextLine();
-        setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
+        updateGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
 
         String nextWord = ""; //temporary variable that stores the next string in the file
 
