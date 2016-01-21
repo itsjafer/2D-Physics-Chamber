@@ -62,7 +62,7 @@ public class GameScreen extends MyScreen {
     @Override
     public void init() {
         //initializing all variables
-        camera = new OrthographicCamera();
+        camera = new OrthographicCamera(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
         shapeRenderer = new ShapeRenderer();

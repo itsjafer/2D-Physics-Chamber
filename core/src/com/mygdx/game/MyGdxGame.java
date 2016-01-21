@@ -30,7 +30,8 @@ public class MyGdxGame extends Game {
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);
         // The game screen manager starts out showing the menu screen
-        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
+        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_GAME);
+        screenManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
     }
 
     /**
