@@ -76,6 +76,7 @@ public class ScreenManager {
                 currentGameState = activeScreens.get(screen);
                 break;
         }
+        currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
     }
 
     /**
