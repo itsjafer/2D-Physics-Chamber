@@ -123,7 +123,6 @@ public class InputProcessor extends InputAdapter {
         {
             GameInputs.setMouseButton(bttn, true);
         }
-        System.out.println("BUTTON: " + bttn);
         return true;
     }
 
