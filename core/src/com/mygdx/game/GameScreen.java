@@ -66,7 +66,7 @@ public class GameScreen extends MyScreen {
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
         shapeRenderer = new ShapeRenderer();
-        world = new GameWorld();
+        world = MyGdxGame.WORLD;
         potentialPolygon = new ArrayList();
         gridLayout = new ArrayList();
         lastPolygonMoved = new ArrayList();
@@ -172,6 +172,7 @@ public class GameScreen extends MyScreen {
 
         //check to make sure the correct processor is in use
         if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
+            System.out.println("NEW INPTU SPROCES");
             Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
 
@@ -233,7 +234,6 @@ public class GameScreen extends MyScreen {
 
         //click the left mouse button
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
             if (rectangleMode && potentialPolygon.size() == 4) {
