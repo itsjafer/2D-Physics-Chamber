@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mygdx.game.gamestate;
+package com.mygdx.game.gamescreen;
 
 import com.mygdx.game.GameMenu;
 import com.mygdx.game.GameScreen;
@@ -56,6 +56,7 @@ public class ScreenManager {
         // Since the gameState variable is an enum, identify the target game state and initialize it separately
         switch (gameState) {
             case MAIN_MENU:
+                System.out.println("ADDING GAME SCREEN");
                 // To avoid restarting the game, only create a new instance if it hasn't yet been created.
                 if (!activeScreens.containsKey(gameState)) {
                     activeScreens.put(gameState, new MainMenuScreen(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
@@ -95,15 +96,5 @@ public class ScreenManager {
      */
     public void update(float deltaTime) {
         currentGameState.update(deltaTime);
-    }
-
-    /**
-     * Resizes the current screen
-     *
-     * @param width the new width
-     * @param height the new height
-     */
-    public void resize(int width, int height) {
-        currentGameState.resize(width, height);
     }
 }
