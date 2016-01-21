@@ -18,13 +18,16 @@ import java.util.Scanner;
  * @author haidj9901
  */
 public class LevelLoader {
-    
+
     GameWorld world;
-    
-    public LevelLoader(GameWorld world)
-    {
+
+    public LevelLoader(GameWorld world) {
         this.world = world;
     }
+
+    public LevelLoader() {
+    }
+
     /**
      * Saves the position of the polygons and the player
      */

@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.game.model.LevelLoader;
 
 /**
  *
@@ -43,6 +44,7 @@ public class MainMenuScreen extends MyScreen {
     boolean isSaving, isLoading, typing;
     private InputMultiplexer lastUsedMultiplexer;
     InputListener inputListen = new InputListener();
+    private static LevelLoader loader;
 
     public MainMenuScreen(ScreenManager gameStateManager, GameScreen gameScreen) {
         super(gameStateManager);
@@ -218,7 +220,7 @@ public class MainMenuScreen extends MyScreen {
                     slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 1");
-                    gameScreen.world.saveLevel(0);
+                   MyGdxGame.world.saveLevel(0);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
@@ -234,7 +236,7 @@ public class MainMenuScreen extends MyScreen {
                     slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 2");
-                    gameScreen.world.saveLevel(1);
+                    saveLevel(1);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
@@ -280,8 +282,7 @@ public class MainMenuScreen extends MyScreen {
     }
 
     @Override
-    public void resize(int width, int height
-    ) {
+    public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
 
