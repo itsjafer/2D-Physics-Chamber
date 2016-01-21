@@ -167,26 +167,26 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
-        System.out.println(GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT));
-//        //check for any inputs
-//        processInput();
-//
-//        //check to make sure the correct processor is in use
-//        if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
-//            Gdx.input.setInputProcessor(MyGdxGame.gameInput);
-//        }
-//
-//        //update the mouse position
-//        mouseDrawPos = GameInputs.getMousePosition();
-//
-//        //check if there are any special conditions for drawing a line
-//        if (straight && !potentialPolygon.isEmpty()) {
-//            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
-//        } else if (gridMode) {
-//            snapMouseToGrid(mouseDrawPos);
-//        }
-//
-//        world.update(deltaTime);
+        //check for any inputs
+        processInput();
+
+        //check to make sure the correct processor is in use
+        if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
+            System.out.println("NEW INPTU SPROCES");
+            Gdx.input.setInputProcessor(MyGdxGame.gameInput);
+        }
+
+        //update the mouse position
+        mouseDrawPos = GameInputs.getMousePosition();
+
+        //check if there are any special conditions for drawing a line
+        if (straight && !potentialPolygon.isEmpty()) {
+            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
+        } else if (gridMode) {
+            snapMouseToGrid(mouseDrawPos);
+        }
+
+        world.update(deltaTime);
     }
 
     @Override

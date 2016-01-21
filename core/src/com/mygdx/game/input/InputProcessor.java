@@ -136,25 +136,21 @@ public class InputProcessor extends InputAdapter {
         }
         return true;
     }
-//
-//    @Override
-//    public boolean touchDragged(int x, int y, int i2) {
-//        GameInputs.MouseButtons bttn = getButton(i2);
-//        if (bttn != null)
-//        {
-//            GameInputs.setMouseButton(bttn, true);
-//        }
-//        GameInputs.setMousePosition(x, MyGdxGame.HEIGHT-y);
-//        GameInputs.moveMouse();
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean mouseMoved(int x, int y) {
-//        GameInputs.setMousePosition(x, MyGdxGame.HEIGHT-y);
-//        GameInputs.moveMouse();
-//        return false;
-//    }
+    
+    @Override
+    public boolean touchDragged(int x, int y, int i2) {
+        // don't need to set mouse bttn down because that's already handled in touchDown
+        GameInputs.setMousePosition(x, MyGdxGame.HEIGHT-y);
+        GameInputs.moveMouse();
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int x, int y) {
+        GameInputs.setMousePosition(x, MyGdxGame.HEIGHT-y);
+        GameInputs.moveMouse();
+        return false;
+    }
 
     @Override
     public boolean scrolled(int i) {
