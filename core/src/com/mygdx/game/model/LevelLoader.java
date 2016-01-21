@@ -6,6 +6,7 @@ package com.mygdx.game.model;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.MyGdxGame;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -18,13 +19,14 @@ import java.util.Scanner;
  * @author haidj9901
  */
 public class LevelLoader {
-    
+
     GameWorld world;
-    
-    public LevelLoader(GameWorld world)
+
+    public LevelLoader() 
     {
-        this.world = world;
+       world = MyGdxGame.WORLD;
     }
+
     /**
      * Saves the position of the polygons and the player
      */
