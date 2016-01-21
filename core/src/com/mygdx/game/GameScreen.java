@@ -66,7 +66,7 @@ public class GameScreen extends MyScreen {
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
         shapeRenderer = new ShapeRenderer();
-        world = new GameWorld();
+        world = MyGdxGame.WORLD;
         potentialPolygon = new ArrayList();
         gridLayout = new ArrayList();
         lastPolygonMoved = new ArrayList();
@@ -167,25 +167,26 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
-        //check for any inputs
-        processInput();
-
-        //check to make sure the correct processor is in use
-        if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
-            Gdx.input.setInputProcessor(MyGdxGame.gameInput);
-        }
-
-        //update the mouse position
-        mouseDrawPos = GameInputs.getMousePosition();
-
-        //check if there are any special conditions for drawing a line
-        if (straight && !potentialPolygon.isEmpty()) {
-            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
-        } else if (gridMode) {
-            snapMouseToGrid(mouseDrawPos);
-        }
-
-        world.update(deltaTime);
+        System.out.println(GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT));
+//        //check for any inputs
+//        processInput();
+//
+//        //check to make sure the correct processor is in use
+//        if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
+//            Gdx.input.setInputProcessor(MyGdxGame.gameInput);
+//        }
+//
+//        //update the mouse position
+//        mouseDrawPos = GameInputs.getMousePosition();
+//
+//        //check if there are any special conditions for drawing a line
+//        if (straight && !potentialPolygon.isEmpty()) {
+//            straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
+//        } else if (gridMode) {
+//            snapMouseToGrid(mouseDrawPos);
+//        }
+//
+//        world.update(deltaTime);
     }
 
     @Override
@@ -233,7 +234,6 @@ public class GameScreen extends MyScreen {
 
         //click the left mouse button
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
             if (rectangleMode && potentialPolygon.size() == 4) {
