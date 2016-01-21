@@ -25,7 +25,7 @@ public class GameWorld {
     private Vector2 horizontalMovementAxis;
     static public Vector2 verticalMovementAxis;
     private Polygon finish;
-    
+
     public GameWorld() {
         polygons = new ArrayList();
         updateGravity(new Vector2(0, -30));
@@ -41,29 +41,27 @@ public class GameWorld {
             if (!polygons.isEmpty()) {
                 player.collideWithPolygons(polygons);
             }
-                player.update();
+            player.update();
         }
     }
-    
-    public void movePlayerRight()
-    {
+
+    public void movePlayerRight() {
         player.applyAcceleration(horizontalMovementAxis.cpy().scl(Player.HORIZONTAL_ACCELERATION));
     }
-    public void movePlayerLeft()
-    {
+
+    public void movePlayerLeft() {
         player.applyAcceleration(horizontalMovementAxis.cpy().scl(-Player.HORIZONTAL_ACCELERATION));
     }
-    public void jumpPlayer()
-    {
-        
-        
+
+    public void jumpPlayer() {
+
+
 //        player.setVelocity(verticalMovementAxis.cpy().scl((float)Math.sqrt(Polygon.scalarProject(gravity, verticalMovementAxis)*(-2*Polygon.scalarProject(new Vector2(0, 100), verticalMovementAxis)))));
 //        System.out.println(player.getVelocity());
 //        
 //        player.totalHeight = new Vector2(0, 0);
 //        player.totalTime = 0f;
-        if (player.canJump())
-        {
+        if (player.canJump()) {
             player.setVelocity(new Vector2(0, 316));
             player.jump();
         }
@@ -127,106 +125,6 @@ public class GameWorld {
 
     public void deletePlayer() {
         player = null;
-    }
-
-    /**
-     * Saves the position of the polygons and the player
-     */
-    public void saveLevel(int index) {
-        try {
-            //loading up the text file with the infomration
-            BufferedWriter out = new BufferedWriter(new FileWriter("level" + index + ".txt"));
-            //saving the gravity
-            out.write("Gravity:");
-            out.write("\n" + gravity.x);
-            out.write("\n" + gravity.y + "\n");
-
-            //Writing player information to file
-            if (getPlayer() != null) {
-                out.write("Player: " + "\n");
-                out.write(player.getPolygonColour().toString() + "\n");
-                Vector2[] playerVertices = player.getVertices();
-                for (int x = 0; x < playerVertices.length; x++) {
-                    out.write(playerVertices[x].x + "\n");
-                    out.write(playerVertices[x].y + "\n");
-                }
-            }
-
-            //Writing polygon information to file
-            if (!polygons.isEmpty()) {
-                for (Polygon polygon : polygons) {
-                    out.write("\n" + "Polygon ");
-                    out.write("\n" + polygon.getPolygonColour().toString());
-                    for (Vector2 vertice : polygon.getVertices()) {
-                        out.write("\n" + vertice.x);
-                        out.write("\n" + vertice.y);
-                    }
-                }
-                out.write("\nend");
-            } else {
-                out.write("\nnull");
-            }
-            out.close();
-        } catch (IOException e) {
-        }
-
-    }
-
-    /**
-     * Loads the level based on the information in levels.txt
-     */
-    public void loadLevel(int index) {
-        //delete any existing polygons from the level
-        polygons.clear();
-
-        //loading the file to be read from
-        FileReader file = null;
-        try {
-            file = new FileReader("level" + index + ".txt");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
-
-        //setting the Gravity
-        input.nextLine();
-        updateGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
-
-        String nextWord = ""; //temporary variable that stores the next string in the file
-
-        //creating the player
-        if (input.nextLine().contains("Player")) {
-            Color playerColor = Color.valueOf(input.nextLine());
-            ArrayList<Vector2> playerVertices = new ArrayList();
-            nextWord = input.next();
-            while (!nextWord.contains("Polygon")) {
-                Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), input.nextFloat());
-                playerVertices.add(tempVertice);
-                nextWord = input.next();
-            }
-            createPlayer(playerVertices, playerColor);
-        } else {
-            nextWord = input.nextLine();
-        }
-        //creating the polygons
-        if (nextWord.contains("Polygon")) {
-            while (true) {
-                Color polygonColor = Color.valueOf(input.nextLine());
-
-                ArrayList<Vector2> polygonVertices = new ArrayList();
-                nextWord = input.next();
-                while (!nextWord.contains("Polygon") && !nextWord.contains("end")) {
-                    Vector2 tempVertice = new Vector2(Float.parseFloat(nextWord), input.nextFloat());
-                    polygonVertices.add(tempVertice);
-                    nextWord = input.next();
-                }
-                createPolygon(polygonVertices, polygonColor);
-                if (nextWord.contains("end")) {
-                    break;
-                }
-                input.nextLine();
-            }
-        }
     }
 
     public void createFinish(ArrayList<Vector2> vertices, Color colour) {
