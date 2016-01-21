@@ -102,7 +102,7 @@ public class GameScreen extends MyScreen {
 
         //shapeRenderer initialization
         shapeRenderer.setAutoShapeType(true);
-//        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin();
 
         //draws the grid points
