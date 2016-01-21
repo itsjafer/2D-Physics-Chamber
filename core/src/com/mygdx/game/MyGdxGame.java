@@ -50,6 +50,7 @@ public class MyGdxGame extends Game {
 
     /**
      * Resizes the window
+     *
      * @param width the new window width
      * @param height the new window height
      */
