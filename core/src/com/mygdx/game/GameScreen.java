@@ -58,7 +58,7 @@ public class GameScreen extends MyScreen {
     public GameScreen(ScreenManager gameStateManager) {
         super(gameStateManager);
     }
-
+    
     @Override
     public void init() {
         //initializing all variables
@@ -95,10 +95,14 @@ public class GameScreen extends MyScreen {
     @Override
     public void render(float deltaTime) {
         // updates the camera to the world space
+//        if (world.getPlayer() != null) {
+//            camera.position.set(world.getPlayer().getCenter().x, world.getPlayer().getCenter().y, 0);
+//        }
         camera.update();
 
         //shapeRenderer initialization
         shapeRenderer.setAutoShapeType(true);
+//        shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin();
 
         //draws the grid points
@@ -118,8 +122,7 @@ public class GameScreen extends MyScreen {
             }
         }
         validPos = true;
-
-
+        
         for (Polygon polygon : world.getPolygons()) {
             //Checking and verifying polygon dragging
             if (!lastPolygonMoved.contains(polygon)) {
@@ -161,7 +164,7 @@ public class GameScreen extends MyScreen {
         }
         shapeRenderer.end();
     }
-
+    
     @Override
     public void update(float deltaTime) {
         //check for any inputs
@@ -181,10 +184,10 @@ public class GameScreen extends MyScreen {
         } else if (gridMode) {
             snapMouseToGrid(mouseDrawPos);
         }
-
+        
         world.update(deltaTime);
     }
-
+    
     @Override
     /**
      * Processes any inputs taken by the game
@@ -264,7 +267,7 @@ public class GameScreen extends MyScreen {
                     }
                 }
             }
-
+            
         }
         //check if the left mouse button has been dragged
         if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
@@ -286,8 +289,7 @@ public class GameScreen extends MyScreen {
             if (!potentialPolygon.isEmpty()) {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
-            if (rectangleMode)
-            {
+            if (rectangleMode) {
                 rectangleMode = false;
                 potentialPolygon.clear();
             }
@@ -320,10 +322,10 @@ public class GameScreen extends MyScreen {
      * @param curMousePos - position of current mouse
      */
     public void snapMouseToGrid(Vector2 curMousePos) {
-
+        
         float xPos = gridSize * Math.round(curMousePos.x / gridSize);
         float yPos = gridSize * Math.round(curMousePos.y / gridSize);
-
+        
         mouseDrawPos.set(xPos, yPos - 1);
     }
 
@@ -379,7 +381,7 @@ public class GameScreen extends MyScreen {
         {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
-
+        
     }
 
     /**
@@ -450,10 +452,10 @@ public class GameScreen extends MyScreen {
         potentialPolygon.add(horizontal);
         potentialPolygon.add(mouseDrawPos);
         potentialPolygon.add(vertical);
-
+        
         shapeRenderer.line(origin, mouseDrawPos);
         shapeRenderer.line(horizontal, vertical);
-        
+
         //draw the rectangle
         for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point
@@ -461,13 +463,13 @@ public class GameScreen extends MyScreen {
             // Draw the outline of the polygon in game colour if it's valid (has at least 3 vertices
 
             shapeRenderer.setColor(drawColour);
-
+            
             shapeRenderer.line(potentialPolygon.get(i), potentialPolygon.get(i + 1 == potentialPolygon.size() ? 0 : i + 1));
 
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor(drawColour);
         }
-
+        
     }
 
     /**
@@ -504,32 +506,32 @@ public class GameScreen extends MyScreen {
         // Using the tangent in a right triangle:
         float xVal = pos2.x - origin.x;
         float yVal = pos2.y - origin.y;
-
+        
         float theta = MathUtils.atan2(yVal, xVal);
-
+        
         return theta;
     }
-
+    
     @Override
     public void show() {
     }
-
+    
     @Override
     public void pause() {
     }
-
+    
     @Override
     public void resume() {
     }
-
+    
     @Override
     public void hide() {
     }
-
+    
     @Override
     public void dispose() {
     }
-
+    
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);

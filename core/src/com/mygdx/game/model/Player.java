@@ -16,56 +16,54 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 
     private GameWorld world;
-    
+
     public static final float HORIZONTAL_ACCELERATION = 700f;
     public static final float JUMPING_ACCELERATION = 1500f;
-    
+
     private Vector2 acceleration;
     private float friction = 0f;
     private float restitution = 1f;
     private boolean canJump = false;
-    
+
     float collisionDepth;
     Vector2 collisionAxis;
     boolean collided;
-    
+
     Vector2 velocity;
     Vector2 center;
+
     Vector2 startPos;
-    
+
     Vector2 totalHeight = new Vector2(0, 0);
     float totalTime = 0f;
-    
+
     private float rotationSpeed;
     private float rotation;
-    
+
     public Player(Vector2[] vertices, Color colour, GameWorld world) {
         super(vertices, colour);
         velocity = new Vector2();
         acceleration = new Vector2();
-        
+
         center = new Vector2();
         updateCenter();
         startPos = center.cpy();
-        
+
         collisionAxis = new Vector2();
         collisionDepth = 0f;
         collided = false;
-        
+
         rotationSpeed = 0f;
         rotation = 0f;
-        
+
         canJump = false;
         this.world = world;
     }
-//    public Color getPlayerColour(){
-//        return ;
-//    }
 
     public void move(float deltaTime) {
-        
+
         totalTime += deltaTime;
-        
+
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
         totalHeight.add(movement);
         velocity.add(acceleration.cpy().scl(deltaTime));
@@ -74,44 +72,44 @@ public class Player extends Polygon {
             vertex.add(movement);
         }
         updateCenter();
-        
+
 //        rotate(deltaTime);
     }
-    
-    public void jump()
-    {
+
+    public Vector2 getCenter() {
+        return center;
+    }
+
+    public void jump() {
         canJump = false;
     }
-    public boolean canJump()
-    {
+
+    public boolean canJump() {
         return canJump;
     }
-    
-    public Vector2 getVelocity()
-    {
+
+    public Vector2 getVelocity() {
         return velocity;
     }
-    public void setVelocity(Vector2 velocity)
-    {
+
+    public void setVelocity(Vector2 velocity) {
         this.velocity = velocity;
     }
-    
-    public void rotate(float deltaTime)
-    {
-        for (Vector2 vertex: vertices)
-        {
-            float existingAngle = (float)Math.atan2(vertex.y-center.y, vertex.x-center.x);
+
+    public void rotate(float deltaTime) {
+        for (Vector2 vertex : vertices) {
+            float existingAngle = (float) Math.atan2(vertex.y - center.y, vertex.x - center.x);
             float radius = (vertex.cpy().sub(center)).len();
-            
-            float newX = center.x + radius*(float)Math.cos(existingAngle + rotationSpeed*deltaTime);
-            float newY = center.y + radius*(float)Math.sin(existingAngle + rotationSpeed*deltaTime);
-            
+
+            float newX = center.x + radius * (float) Math.cos(existingAngle + rotationSpeed * deltaTime);
+            float newY = center.y + radius * (float) Math.sin(existingAngle + rotationSpeed * deltaTime);
+
             vertex.set(newX, newY);
-            
+
         }
-        rotation += rotationSpeed*deltaTime;
+        rotation += rotationSpeed * deltaTime;
     }
-    
+
     /**
      * Recalculates the polygon's center
      */
@@ -132,30 +130,26 @@ public class Player extends Polygon {
         center.set(x, y);
     }
 
-    public void collidePhysics()
-    {
-        if (scalarProject(velocity, world.getGravity()) > 0)
-        {
+    public void collidePhysics() {
+        if (scalarProject(velocity, world.getGravity()) > 0) {
             canJump = true;
         }
-        
+
         Vector2 displacement = getNormal(collisionAxis).nor().scl(-collisionDepth);
         bump(displacement);
-        
+
 //        rotationSpeed += (float)Math.toRadians(displacement.angle());
-        if (!Float.isNaN(displacement.len()*(float)Math.atan2(displacement.y, displacement.x)*Math.signum((float)Math.cos(displacement.y/displacement.x))))
-        {
-            rotationSpeed += displacement.len()*(float)Math.atan2(displacement.y, displacement.x)*Math.signum(Math.cos(displacement.y/displacement.x)*restitution);
+        if (!Float.isNaN(displacement.len() * (float) Math.atan2(displacement.y, displacement.x) * Math.signum((float) Math.cos(displacement.y / displacement.x)))) {
+            rotationSpeed += displacement.len() * (float) Math.atan2(displacement.y, displacement.x) * Math.signum(Math.cos(displacement.y / displacement.x) * restitution);
             rotationSpeed *= -1;
         }
     }
-    
+
     /**
      * Resets the player's position to the initial creation position. Also
      * resets momentum
      */
-    public void reset()
-    {
+    public void reset() {
         bump(startPos.cpy().sub(center));
         updateCenter();
         velocity.set(new Vector2(0, 0));
@@ -174,8 +168,7 @@ public class Player extends Polygon {
         this.acceleration.add(acceleration);
     }
 
-    public void updateCollisionStatus(ArrayList<Polygon> polygons)
-    {
+    public void updateCollisionStatus(ArrayList<Polygon> polygons) {
         collided = false;
         // The player's normals
         Vector2[] normals1 = getNormals();
@@ -248,37 +241,33 @@ public class Player extends Polygon {
                     collisionAxisLocal = getNormal(normal);
                 }
             }
-            if (collided)
-            {
+            if (collided) {
                 collisionDepth = collisionDepthLocal;
                 collisionAxis = collisionAxisLocal;
                 return;
             }
         }
-        
+
     }
-    
+
     public void collideWithPolygons(ArrayList<Polygon> polygons) {
         updateCollisionStatus(polygons);
-        if (collided)
-        {
+        if (collided) {
             int safety = 0;
-            while (collided)
-            {
+            while (collided) {
                 collidePhysics();
                 updateCollisionStatus(polygons);
-                safety ++;
-                if (safety > 10)
-                {
+                safety++;
+                if (safety > 10) {
                     break;
                 }
             }
             Vector2 parallelComponent = vectorProject(velocity, collisionAxis);
-            parallelComponent.scl(1f-friction);
+            parallelComponent.scl(1f - friction);
 
             Vector2 normalComponent = vectorProject(velocity, getNormal(collisionAxis));
             normalComponent.scl(-restitution);
-            
+
             velocity = parallelComponent.add(normalComponent);
         }
     }
