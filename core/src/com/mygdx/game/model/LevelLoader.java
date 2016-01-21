@@ -21,21 +21,24 @@ import java.util.Scanner;
 public class LevelLoader {
 
     GameWorld world;
+    String[] slotNames;
 
     public LevelLoader() 
     {
        world = MyGdxGame.WORLD;
+       slotNames = new String[3];
     }
 
     /**
      * Saves the position of the polygons and the player
      */
-    public void saveLevel(int index) {
+    public void saveLevel(int index, String slotName) {
         try {
             //loading up the text file with the infomration
             BufferedWriter out = new BufferedWriter(new FileWriter("level" + index + ".txt"));
+            out.write(slotName);
             //saving the gravity
-            out.write("Gravity:");
+            out.write("\nGravity:");
             out.write("\n" + world.getGravity().x);
             out.write("\n" + world.getGravity().y + "\n");
 
@@ -87,6 +90,7 @@ public class LevelLoader {
         Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
 
         //setting the Gravity
+        slotNames[index] = input.nextLine();
         input.nextLine();
         world.updateGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
 
@@ -130,5 +134,10 @@ public class LevelLoader {
                 input.nextLine();
             }
         }
+    }
+    
+    public String getSlotName(int index)
+    {
+        return slotNames[index];
     }
 }
