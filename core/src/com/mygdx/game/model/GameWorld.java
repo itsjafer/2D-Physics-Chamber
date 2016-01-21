@@ -25,7 +25,7 @@ public class GameWorld {
     private Vector2 horizontalMovementAxis;
     static public Vector2 verticalMovementAxis;
     private Polygon finish;
-
+    
     public GameWorld() {
         polygons = new ArrayList();
         updateGravity(new Vector2(0, -30));

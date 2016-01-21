@@ -6,6 +6,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.game.input.GameInputs;
+import com.mygdx.game.model.GameWorld;
 
 public class MyGdxGame extends Game {
 
@@ -15,6 +16,7 @@ public class MyGdxGame extends Game {
     public static InputProcessor gameInput;
     // screen width and height
     public static int WIDTH, HEIGHT;
+    public static final GameWorld WORLD = new GameWorld();
 
     /**
      * Creates the game
@@ -50,6 +52,7 @@ public class MyGdxGame extends Game {
 
     /**
      * Resizes the window
+     *
      * @param width the new window width
      * @param height the new window height
      */

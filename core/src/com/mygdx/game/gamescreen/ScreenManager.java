@@ -12,72 +12,70 @@ import com.mygdx.game.MyGdxGame;
 import java.util.HashMap;
 
 /**
- * Controls the GameScreens for the entire game. It basically mimics the screen
- * managing functions of the badlogic Game class
+ * Controls the game screens for the entire game. It basically mimics the screen
+ * managing functions of the badlogic Game class, but adds some input flow, and
+ * separates logic from drawing
  *
  * @author Dmitry
  */
 public class ScreenManager {
 
-    // a "permanent" instance of the main game so that the game doesn't restart every time this gameinstance is activated
-    /// Another approach to thsi would be to store all fo the game states in a hashmpa here in this class and then IF we want it to rest
-    //// (like the main menu), we just switch to it and call "init()"
+    // All of the screens that have already been created
     HashMap<GameScreens, MyScreen> activeScreens;
-    // the MyScreen currently being shown on screen
+    // the current screen
     private MyScreen currentGameState;
 
-    // All of the game screens
+    // All of the possible game screens
     public static enum GameScreens {
 
         MAIN_MENU, MAIN_GAME, GAME_MENU;
     }
 
     /**
-     * Creates a MyScreen manager.
+     * Creates the screen manager manager.
      *
-     * @param startingGameState the starting game state.
+     * @param startingScreen the initial screen.
      */
-    public ScreenManager(GameScreens startingGameState) {
+    public ScreenManager(GameScreens startingScreen) {
         activeScreens = new HashMap<GameScreens, MyScreen>();
-        setGameScreen(startingGameState);
+        setGameScreen(startingScreen);
     }
 
     /**
-     * Sets the current game state
+     * Sets the current game screen
      *
      * @param gameState the enum value of the target game state
      */
-    public void setGameScreen(GameScreens gameState) {
-        //// we might not need this
-        // Dispose of the current game state as it is going to be switched
+    public void setGameScreen(GameScreens screen) {
+        // Dispose of the current screen as it is going to be switched
         if (currentGameState != null) {
             currentGameState.dispose();
         }
-        // Since the gameState variable is an enum, identify the target game state and initialize it separately
-        switch (gameState) {
+
+        ////////////////// IMPORTANT  FIX THE DEFAULT THING... WITH THE PARAMATER THING SAVE/LOAD..
+
+        // Initialize each screen based on its requirements
+        switch (screen) {
             case MAIN_MENU:
-                System.out.println("ADDING GAME SCREEN");
                 // To avoid restarting the game, only create a new instance if it hasn't yet been created.
-                if (!activeScreens.containsKey(gameState)) {
-                    activeScreens.put(gameState, new MainMenuScreen(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
+                if (!activeScreens.containsKey(screen)) {
+                    activeScreens.put(screen, new MainMenuScreen(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
                 }
-                currentGameState = activeScreens.get(gameState);
+                currentGameState = activeScreens.get(screen);
                 break;
             case GAME_MENU:
-                if (!activeScreens.containsKey(gameState)) {
-                    activeScreens.put(gameState, new GameMenu(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
+                if (!activeScreens.containsKey(screen)) {
+                    activeScreens.put(screen, new GameMenu(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
                 }
-                currentGameState = activeScreens.get(gameState);
+                currentGameState = activeScreens.get(screen);
                 break;
             case MAIN_GAME:
-                if (!activeScreens.containsKey(gameState)) {
-                    activeScreens.put(gameState, new GameScreen(this));
+                if (!activeScreens.containsKey(screen)) {
+                    activeScreens.put(screen, new GameScreen(this));
                 }
-                currentGameState = activeScreens.get(gameState);
+                currentGameState = activeScreens.get(screen);
                 break;
         }
-        System.out.println(currentGameState);
-        currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
     }
 
     /**
