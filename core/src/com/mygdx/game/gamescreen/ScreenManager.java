@@ -56,20 +56,13 @@ public class ScreenManager {
 
         // Initialize each screen based on its requirements
         switch (screen) {
-            case MAIN_MENU:
-                // To avoid restarting the game, only create a new instance if it hasn't yet been created.
-                if (!activeScreens.containsKey(screen)) {
-                    activeScreens.put(screen, new MainMenuScreen(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
-                }
-                currentGameState = activeScreens.get(screen);
-                break;
             case GAME_MENU:
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new GameMenu(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
                 }
                 currentGameState = activeScreens.get(screen);
                 break;
-            case MAIN_GAME:
+            default:
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new GameScreen(this));
                 }

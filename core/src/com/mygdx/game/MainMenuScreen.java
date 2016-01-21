@@ -39,16 +39,14 @@ public class MainMenuScreen extends MyScreen {
     String slot1Text, slot2Text, slot3Text;
     TextField inputSlot1, inputSlot2, inputSlot3;
     Label notification;
-    GameScreen gameScreen;
     String input;
     boolean isSaving, isLoading, typing;
     private InputMultiplexer lastUsedMultiplexer;
     InputListener inputListen = new InputListener();
     private LevelLoader loader;
 
-    public MainMenuScreen(ScreenManager gameStateManager, GameScreen gameScreen) {
+    public MainMenuScreen(ScreenManager gameStateManager) {
         super(gameStateManager);
-        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -163,22 +161,11 @@ public class MainMenuScreen extends MyScreen {
 
     @Override
     public void processInput() {
-
+        slot1Text = inputSlot1.getText();
         System.out.println(startGame.isPressed());
 
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            if (!inputSlot1.getText().equalsIgnoreCase(slot1Text) && !inputSlot1.getText().equals("Blank")) {
-                slot1Text = inputSlot1.getText();
-            }
-            if (!inputSlot2.getText().equalsIgnoreCase(slot2Text) && !inputSlot2.getText().equals("Blank")) {
-                slot2Text = inputSlot2.getText();
-            }
-            if (!inputSlot3.getText().equalsIgnoreCase(slot3Text) && !inputSlot3.getText().equals("Blank")) {
-                slot3Text = inputSlot3.getText();
-            }
         }
 
 
@@ -229,12 +216,14 @@ public class MainMenuScreen extends MyScreen {
                     slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 1");
-                    loader.saveLevel(0);
+                    loader.saveLevel(0, slot1Text);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
                     notification.setText("Loaded slot 1");
                     loader.loadLevel(0);
+                    slot1Text = loader.getSlotName(0);
+                    slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                 }
             }
         });
@@ -245,7 +234,7 @@ public class MainMenuScreen extends MyScreen {
                     slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 2");
-                    loader.saveLevel(1);
+                    loader.saveLevel(1, slot2Text);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
@@ -261,7 +250,7 @@ public class MainMenuScreen extends MyScreen {
                     slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 3");
-                    loader.saveLevel(2);
+                    loader.saveLevel(2, slot3Text);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
