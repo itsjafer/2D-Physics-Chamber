@@ -34,8 +34,8 @@ public class MainMenuScreen extends MyScreen {
     Stage stage, stage2;
     Table table, table2;
     TextureAtlas atlas;
-    InputMultiplexer im, im2;
-    TextButton startGame, saveGame, loadGame, slot1, slot2, slot3, returnToMenu;
+    InputMultiplexer inputMultiplexMain, inputMultiplexLoad;
+    TextButton startGame, saveGame, loadGame, slot1, slot2, slot3, returnToMenu, quitGame;
     String slot1Text, slot2Text, slot3Text;
     TextField inputSlot1, inputSlot2, inputSlot3;
     Label notification;
@@ -74,10 +74,6 @@ public class MainMenuScreen extends MyScreen {
         //create loader
         loader = new LevelLoader();
 
-        //input for saving levels
-        input = "";
-        typing = false;
-
         //to determine whether user wants to save or load levels
         isLoading = false;
         isSaving = false;
@@ -88,14 +84,14 @@ public class MainMenuScreen extends MyScreen {
         slot3Text = "Blank";
 
         //Input multiplexer, giving priority to stage over gameinput
-        im = new InputMultiplexer(stage, MyGdxGame.gameInput);
-        im2 = new InputMultiplexer(stage2, MyGdxGame.gameInput);
+        inputMultiplexMain = new InputMultiplexer(stage, MyGdxGame.gameInput);
+        inputMultiplexLoad = new InputMultiplexer(stage2, MyGdxGame.gameInput);
 
         //set the processor to the initial default one
-        lastUsedMultiplexer = im;
+        lastUsedMultiplexer = inputMultiplexMain;
 
         // set the input multiplexer as the input processor
-        Gdx.input.setInputProcessor(im);
+        Gdx.input.setInputProcessor(inputMultiplexMain);
 
         //initialize skin by imlpementing the json file that implements the atlas
         // the json file has the buttonstyle,etc already coded into it, only need to call the name to use it
@@ -111,6 +107,7 @@ public class MainMenuScreen extends MyScreen {
         startGame = new TextButton("Start Game", skin, "default");
         saveGame = new TextButton("Save Game", skin, "default");
         loadGame = new TextButton("Load Game", skin, "default");
+        quitGame = new TextButton("Quit Game", skin);
 
         //add the buttons to the table
         table.add(startGame).pad(MyGdxGame.HEIGHT / 3, 20, 20, 20);
@@ -118,6 +115,8 @@ public class MainMenuScreen extends MyScreen {
         table.add(saveGame).pad(20, 20, 20, 20);
         table.row();
         table.add(loadGame).pad(20, 20, 20, 20);
+        table.row();
+        table.add(quitGame);
 
         // Create a table that fills the screen, the buttons, etc go into this table
         table2 = new Table();
@@ -164,6 +163,9 @@ public class MainMenuScreen extends MyScreen {
 
     @Override
     public void processInput() {
+
+        System.out.println(startGame.isPressed());
+
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
@@ -179,6 +181,7 @@ public class MainMenuScreen extends MyScreen {
             }
         }
 
+
         //this tests the user's input, whether they have clicked load . if they have, give them the option of going to main menu
         if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
             returnToMenu.setText("Go to Game");
@@ -189,23 +192,24 @@ public class MainMenuScreen extends MyScreen {
 
     public void addInputs() {
 
-        startGame.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                startGame.setText("Resume Game");
-                startGame.setChecked(false);
-                gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
 
-            }
-        });
+//        startGame.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                startGame.setText("Resume Game");
+//                startGame.setChecked(false);
+//                gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+//
+//            }
+//        });
         saveGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 saveGame.setChecked(false);
                 notification.setVisible(false);
                 isSaving = true;
-                Gdx.input.setInputProcessor(im2);
-                lastUsedMultiplexer = im2;
+                Gdx.input.setInputProcessor(inputMultiplexLoad);
+                lastUsedMultiplexer = inputMultiplexLoad;
             }
         });
         loadGame.addListener(new ClickListener() {
@@ -214,8 +218,8 @@ public class MainMenuScreen extends MyScreen {
                 loadGame.setChecked(false);
                 notification.setVisible(false);
                 isLoading = true;
-                Gdx.input.setInputProcessor(im2);
-                lastUsedMultiplexer = im2;
+                Gdx.input.setInputProcessor(inputMultiplexLoad);
+                lastUsedMultiplexer = inputMultiplexLoad;
             }
         });
         slot1.addListener(new ClickListener() {
@@ -271,13 +275,13 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
                     gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-                    Gdx.input.setInputProcessor(im);
-                    lastUsedMultiplexer = im;
+                    Gdx.input.setInputProcessor(inputMultiplexMain);
+                    lastUsedMultiplexer = inputMultiplexMain;
                     isLoading = false;
                     isSaving = false;
                 } else {
-                    Gdx.input.setInputProcessor(im);
-                    lastUsedMultiplexer = im;
+                    Gdx.input.setInputProcessor(inputMultiplexMain);
+                    lastUsedMultiplexer = inputMultiplexMain;
                     isLoading = false;
                     isSaving = false;
                 }

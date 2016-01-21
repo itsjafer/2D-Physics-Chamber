@@ -49,7 +49,7 @@ public class InputProcessor extends InputAdapter {
             case Input.Keys.CONTROL_LEFT:
                 GameInputs.setKey(GameInputs.Keys.CTRL, true);
                 break;
-                case Input.Keys.SHIFT_LEFT:
+            case Input.Keys.SHIFT_LEFT:
                 GameInputs.setKey(GameInputs.Keys.SHIFT, true);
                 break;
         }
@@ -88,10 +88,10 @@ public class InputProcessor extends InputAdapter {
             case Input.Keys.D:
                 GameInputs.setKey(GameInputs.Keys.D, false);
                 break;
-           case Input.Keys.CONTROL_LEFT:
+            case Input.Keys.CONTROL_LEFT:
                 GameInputs.setKey(GameInputs.Keys.CTRL, false);
                 break;
-               case Input.Keys.SHIFT_LEFT:
+            case Input.Keys.SHIFT_LEFT:
                 GameInputs.setKey(GameInputs.Keys.SHIFT, false);
                 break;
         }
