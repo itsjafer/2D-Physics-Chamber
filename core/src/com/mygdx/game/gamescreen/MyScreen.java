@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.mygdx.game.gamestate;
+package com.mygdx.game.gamescreen;
 
 import com.badlogic.gdx.Screen;
 

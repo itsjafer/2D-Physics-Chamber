@@ -1,19 +1,16 @@
 package com.mygdx.game;
 
 import com.mygdx.game.input.InputProcessor;
-import com.mygdx.game.gamestate.ScreenManager;
+import com.mygdx.game.gamescreen.ScreenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.mygdx.game.input.GameInputs;
 
 public class MyGdxGame extends Game {
 
-    // The game state manager for the entire game
+    // The game screen manager for the entire game
     private ScreenManager screenManager;
-    ////////////NEED TO ASK ABOUT VIEWPORTS
-    public static OrthographicCamera camera;
     //game input processor
     public static InputProcessor gameInput;
     // screen width and height
@@ -30,9 +27,8 @@ public class MyGdxGame extends Game {
         // The game input processor is gonna distribute all of the input for the game
         gameInput = new InputProcessor();
         Gdx.input.setInputProcessor(gameInput);
-        // The game state manager starts out showing the menu screen
-        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_GAME);
-        screenManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
+        // The game screen manager starts out showing the menu screen
+        screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
     }
 
     /**
@@ -54,7 +50,6 @@ public class MyGdxGame extends Game {
 
     /**
      * Resizes the window
-     *
      * @param width the new window width
      * @param height the new window height
      */
@@ -62,6 +57,5 @@ public class MyGdxGame extends Game {
     public void resize(int width, int height) {
         WIDTH = width;
         HEIGHT = height;
-        screenManager.resize(width, height);
     }
 }

@@ -16,27 +16,28 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 
     private GameWorld world;
-
     public static final float HORIZONTAL_ACCELERATION = 700f;
     public static final float JUMPING_ACCELERATION = 1500f;
-
     private Vector2 acceleration;
     private float friction = 0f;
     private float restitution = 1f;
-    private boolean canJump = false;
 
+    public void setFriction(float friction) {
+        this.friction = friction;
+    }
+
+    public void setRestitution(float restitution) {
+        this.restitution = restitution;
+    }
+    private boolean canJump = false;
     float collisionDepth;
     Vector2 collisionAxis;
     boolean collided;
-
     Vector2 velocity;
     Vector2 center;
-
     Vector2 startPos;
-
     Vector2 totalHeight = new Vector2(0, 0);
     float totalTime = 0f;
-
     private float rotationSpeed;
     private float rotation;
 

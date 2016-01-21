@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -28,11 +27,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.game.gamestate.MyScreen;
-import com.mygdx.game.gamestate.ScreenManager;
+import com.mygdx.game.gamescreen.MyScreen;
+import com.mygdx.game.gamescreen.ScreenManager;
 import com.mygdx.game.input.GameInputs;
 
 /**
@@ -46,13 +43,12 @@ public class GameMenu extends MyScreen {
     GameScreen background;
     InputMultiplexer im, im2, lastUsedMultiplexer;
     TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton, backToGame;
-    Slider gravitySliderY, gravitySliderX;
-    Label labelSliderY, labelSliderX;
+    Slider gravitySliderY, gravitySliderX, restitutionSlider, frictionSlider;
+    Label labelGravityY, labelGravityX, labelRestitution, labelFriction;
     CheckBox snapToGrid;
     Color drawColour;
     ImageButton colourPalette;
     Pixmap canvas;
-    
     boolean choosingColour;
 
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
@@ -118,17 +114,25 @@ public class GameMenu extends MyScreen {
         table2.align(Align.bottomLeft);
 
         //create the objects for table 2
-        gravitySliderY = new Slider(-100, 100, 10, false, skin);
-        gravitySliderX = new Slider(-100, 100, 10, false, skin);
-        labelSliderY = new Label("Gravity y-dir: " + gravitySliderY.getVisualValue(), skin);
-        labelSliderX = new Label("Gravity x-dir: " + gravitySliderX.getVisualValue(), skin);
+        gravitySliderY = new Slider(-1000f, 1000f, 20f, false, skin);
+        gravitySliderX = new Slider(-1000f, 1000f, 20f, false, skin);
+        restitutionSlider = new Slider(0f, 1f, 0.05f, false, skin);
+        frictionSlider = new Slider(0f, 1f, 0.05f, false, skin);
+        labelGravityY = new Label("Gravity y-dir: " + gravitySliderY.getVisualValue(), skin);
+        labelGravityX = new Label("Gravity x-dir: " + gravitySliderX.getVisualValue(), skin);
+        labelFriction = new Label("Friction: " + frictionSlider.getVisualValue(), skin);
+        labelRestitution = new Label("Restitution: " + restitutionSlider.getVisualValue(), skin);
 
         //add objects to table 2
         table2.add(gravitySliderY).pad(4, 4, 4, 4);
         table2.add(gravitySliderX).pad(4, 0, 4, 4);
+        table2.add(restitutionSlider).pad(4, 0, 4, 4);
+        table2.add(frictionSlider).pad(4, 0, 4, 4);
         table2.row();
-        table2.add(labelSliderY).pad(0, 4, 4, 4);
-        table2.add(labelSliderX).pad(0, 0, 4, 4);
+        table2.add(labelGravityY).pad(0, 4, 4, 4);
+        table2.add(labelGravityX).pad(0, 0, 4, 4);
+        table2.add(labelRestitution).pad(0, 0, 4, 4);
+        table2.add(labelFriction).pad(0, 0, 4, 4);
 
         //format table 3 LAYOUT
         stage2.addActor(table3);
@@ -138,14 +142,14 @@ public class GameMenu extends MyScreen {
         //table 3 buttons
         colourPalette = new ImageButton(skinCanvas.getDrawable("canvas"));
         backToMenu = new TextButton("Return to Game Menu", skin);
-// SAMPLE FOR THE COLOUR. SO THE USER SEES IT BEFORE SWITCHING WINDOWS
+        // SAMPLE FOR THE COLOUR. SO THE USER SEES IT BEFORE SWITCHING WINDOWS
         // Generate a 1x1 white texture and store it in the skin named "white".
         Pixmap pixmap = new Pixmap(40, 20, Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
         pixmap.fill();
         skinColourSample.add("white", new Texture(pixmap));
 
-//		// Store the default libgdx font under the name "default".
+        // Store the default libgdx font under the name "default".
         skinColourSample.add("default", new BitmapFont());
         // Configure a TextButtonStyle and name it "default". Skin resources are stored by type, so this doesn't overwrite the font.
         TextButtonStyle textButtonStyle2 = new TextButtonStyle();
@@ -228,25 +232,20 @@ public class GameMenu extends MyScreen {
             }
         });
         gravitySliderY.addListener(new ChangeListener() {
-
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
-                System.out.println(gravitySliderY.getVisualValue());
                 background.world.updateGravity(new Vector2(background.world.getGravity().x, gravitySliderY.getVisualValue()));
-                labelSliderY.setText("Gravity y-dir: " + gravitySliderY.getVisualValue());
+                labelGravityY.setText("Gravity y-dir: " + gravitySliderY.getVisualValue());
             }
         });
         gravitySliderX.addListener(new ChangeListener() {
-
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
-                System.out.println(gravitySliderX.getVisualValue());
                 background.world.updateGravity(new Vector2(gravitySliderX.getVisualValue(), background.world.getGravity().y));
-                labelSliderX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
+                labelGravityX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
             }
         });
         snapToGrid.addListener(new ChangeListener() {
-
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
                 if (snapToGrid.isChecked()) {
@@ -282,6 +281,28 @@ public class GameMenu extends MyScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+            }
+        });
+        restitutionSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+                if (background.world.getPlayer() != null) {
+                    background.world.getPlayer().setRestitution(restitutionSlider.getVisualValue());
+                    labelRestitution.setText("Restitution: " + restitutionSlider.getVisualValue());
+                } else {
+                    labelRestitution.setText("Create player first.");
+                }
+            }
+        });
+        frictionSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+                if (background.world.getPlayer() != null) {
+                    background.world.getPlayer().setFriction(frictionSlider.getVisualValue());
+                    labelFriction.setText("Friction: " + frictionSlider.getVisualValue());
+                } else {
+                    labelFriction.setText("Create player first.");
+                }
             }
         });
     }
