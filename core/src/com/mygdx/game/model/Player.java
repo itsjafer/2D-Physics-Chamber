@@ -4,7 +4,7 @@
  */
 package com.mygdx.game.model;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import static com.mygdx.game.model.Polygon.vectorProject;
 import java.util.ArrayList;
@@ -17,53 +17,42 @@ public class Player extends Polygon {
 
     private Vector2 acceleration;
     private float friction = 0f;
-    private float restitution = 0f;
+    private float restitution = 1f;
     private boolean jumping = false;
     
-    float delF;
-    
-    boolean collided;
     float collisionDepth;
     Vector2 collisionAxis;
+    boolean collided;
     Vector2 movement;
     
-    public float HIGHEST = Float.MIN_VALUE;
-
-    public Player(Vector2[] vertices) {
-        super(vertices);
+    Vector2 velocity;
+    Vector2 center;
+    Vector2 startPos;
+    
+    public Player(Vector2[] vertices, Color colour) {
+        super(vertices, colour);
         velocity = new Vector2();
         acceleration = new Vector2();
         
-        for (Vector2 vertex: vertices)
-        {
-            if (vertex.y > HIGHEST)
-            {
-                HIGHEST = vertex.y;
-            }
-        }
+        center = new Vector2();
+        updateCenter();
+        startPos = center.cpy();
         
-        collided = false;
-        collisionDepth = 0f;
         collisionAxis = new Vector2();
+        collisionDepth = 0f;
+        collided = false;
         movement = new Vector2();
     }
-
+//    public Color getPlayerColour(){
+//        return ;
+//    }
     public void jump() {
         jumping = true;
     }
 
     public void move(float deltaTime) {
         
-//        if (Float.isNaN(velocity.x))
-//            velocity.x = 0;
-//        if (Float.isNaN(velocity.y))
-//            velocity.y = 0;
-        System.out.println("=========movement ==========");
-        System.out.println("DeltaTime: " + Gdx.graphics.getDeltaTime());
-        System.out.println("Initial velocity before accel: " + velocity);
-        System.out.println("acceleration: " + acceleration);
-//        Vector2 movement = velocity.cpy().add(acceleration.cpy().scl(0.5f));
-        movement = (velocity.cpy().scl(deltaTime)).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
+        Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
         velocity.add(acceleration.cpy().scl(deltaTime));
         System.out.println("final velocity after acceleration :" + velocity);
         System.out.println("MOVEMENT : " + movement);
@@ -76,58 +65,41 @@ public class Player extends Polygon {
         System.out.println("--------end--------------");
     }
     
+    /**
+     * Recalculates the polygon's center
+     */
+    private void updateCenter() {
+        if (center == null) {
+            center = new Vector2();
+        }
+
+        // The center is the average of the x and y coordinates of all the vertices
+        float x = 0, y = 0;
+        for (Vector2 vertex : vertices) {
+            x += vertex.x;
+            y += vertex.y;
+        }
+        x /= vertices.length;
+        y /= vertices.length;
+
+        center.set(x, y);
+    }
+
     public void collidePhysics()
     {
-        
-        System.out.println("--------------START OF COLLISION ----------------------");
-        System.out.println("Colliding axis: " + collisionAxis);
-        System.out.println("Depth: " + collisionDepth);
-        System.out.println("Initial velocity: " + velocity);
         Vector2 displacement = getNormal(collisionAxis).nor().scl(-collisionDepth);
-        System.out.println("initial displacement: " + displacement);
-        // complex stuff
-        float displacementMag = displacement.cpy().dot(displacement)*movement.len()/(displacement.cpy().dot(movement));
-        System.out.println("Displacement mag: " + displacementMag);
-        displacement = movement.cpy().nor().scl(displacementMag);
-        
-        System.out.println("Displacement: " + displacement);
         bump(displacement);
-        
-//        float componentSpeed = 0f;
-//        /// PARALLEL
-//        Vector2 parallelComponent = vectorProject(velocity, collisionAxis);
-//        System.out.println("initial parallel: " + parallelComponent);
-//        System.out.println("accel: " + vectorProject(acceleration, collisionAxis));
-//        System.out.println("parallel displacement: " + vectorProject(displacement, collisionAxis));
-//        componentSpeed = (float)Math.sqrt(parallelComponent.len()*parallelComponent.len()-2*vectorProject(acceleration, collisionAxis).len()*vectorProject(displacement, collisionAxis).len());
-//        parallelComponent.nor().scl(componentSpeed);
-//        System.out.println("final parallel: " + parallelComponent);
-//        
-//        /// NORMAL
-//        Vector2 normalComponent = vectorProject(velocity, getNormal(collisionAxis));
-//        System.out.println("initial normal: " + normalComponent);
-//        System.out.println("accel: " + vectorProject(acceleration, getNormal(collisionAxis)));
-//        System.out.println("normal displacement: " + vectorProject(displacement, getNormal(collisionAxis)));
-//        componentSpeed = (float)Math.sqrt(normalComponent.len()*normalComponent.len()-2*vectorProject(acceleration, getNormal(collisionAxis)).len()*vectorProject(displacement, getNormal(collisionAxis)).len());
-//        normalComponent.nor().scl(componentSpeed);
-//        System.out.println("final normal: " + normalComponent);
-//        
-//        velocity = parallelComponent.add(normalComponent);
-//        
-//        System.out.println("=============== END ======================");
-//        
-//        System.out.println("Final velocity: " + velocity);
     }
+    
     /**
      * Resets the player's position to the initial creation position. Also
      * resets momentum
      */
-    public void goHome() {
+    public void reset()
+    {
         bump(startPos.cpy().sub(center));
         velocity.set(new Vector2(0, 0));
     }
-
-    
 
     public void update() {
         acceleration.set(Vector2.Zero);
@@ -138,13 +110,10 @@ public class Player extends Polygon {
         this.acceleration.add(acceleration);
     }
 
-    public void setVelocity(Vector2 velocity) {
-        this.velocity.add(velocity);
-    }
-    
     public void updateCollisionStatus(ArrayList<Polygon> polygons)
     {
-         // The player's normals
+        collided = false;
+        // The player's normals
         Vector2[] normals1 = getNormals();
         // The other polygon's normals
         Vector2[] normals2;
@@ -154,7 +123,7 @@ public class Player extends Polygon {
         Vector2 projection2;
 
         float collisionDepthLocal = Float.MAX_VALUE;
-        Vector2 collisionAxisLocal = new Vector2();
+        Vector2 collisionAxisLocal = Vector2.Zero;
 
         // Iterate through all the polygons and check for a collision on a 1 to 1 basis
         for (Polygon otherPoly : polygons) {
@@ -215,35 +184,40 @@ public class Player extends Polygon {
                     collisionAxisLocal = getNormal(normal);
                 }
             }
+            if (collided)
+            {
+                collisionDepth = collisionDepthLocal;
+                collisionAxis = collisionAxisLocal;
+                return;
+            }
         }
-        System.out.println("COLL DEPTH CALCL THING: " + collisionDepthLocal);
-        if (collided)
-        {
-            this.collisionDepth = collisionDepthLocal;
-            this.collisionAxis = collisionAxisLocal;
-            return;
-        }
-//        if (collisionDepth < Float.MAX_VALUE && collisionAxis.len() > 0)
-//        {
-//            collided = true;
-//        }
+        
     }
-
+    
     public void collideWithPolygons(ArrayList<Polygon> polygons) {
         updateCollisionStatus(polygons);
         if (collided)
         {
+            int safety = 0;
             while (collided)
             {
                 collidePhysics();
                 updateCollisionStatus(polygons);
+                safety ++;
+                if (safety > 10)
+                {
+                    break;
+                }
             }
-//            Vector2 parallelComponent = vectorProject(velocity, collisionAxis);
-//            parallelComponent.scl(1f-friction);
-//            Vector2 normalComponent = vectorProject(velocity, getNormal(collisionAxis));
-//            parallelComponent.scl(-restitution);
-//            
-//            velocity = parallelComponent.add(normalComponent);
+            Vector2 parallelComponent = vectorProject(velocity, collisionAxis);
+            parallelComponent.scl(1f-friction);
+
+            Vector2 normalComponent = vectorProject(velocity, getNormal(collisionAxis));
+            normalComponent.scl(-restitution);
+            
+            velocity = parallelComponent.add(normalComponent);
+            
+            System.out.println("new velocity: " +velocity);
         }
     }
 }
