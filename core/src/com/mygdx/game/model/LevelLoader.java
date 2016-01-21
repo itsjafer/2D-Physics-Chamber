@@ -6,6 +6,7 @@ package com.mygdx.game.model;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.MyGdxGame;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -21,11 +22,9 @@ public class LevelLoader {
 
     GameWorld world;
 
-    public LevelLoader(GameWorld world) {
-        this.world = world;
-    }
-
-    public LevelLoader() {
+    public LevelLoader() 
+    {
+       world = MyGdxGame.WORLD;
     }
 
     /**
