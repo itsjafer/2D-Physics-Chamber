@@ -44,7 +44,7 @@ public class MainMenuScreen extends MyScreen {
     boolean isSaving, isLoading, typing;
     private InputMultiplexer lastUsedMultiplexer;
     InputListener inputListen = new InputListener();
-    private static LevelLoader loader;
+    private LevelLoader loader;
 
     public MainMenuScreen(ScreenManager gameStateManager, GameScreen gameScreen) {
         super(gameStateManager);
@@ -71,12 +71,17 @@ public class MainMenuScreen extends MyScreen {
         stage = new Stage();
         stage2 = new Stage();
 
+        //create loader
+        loader = new LevelLoader();
+
         //input for saving levels
         input = "";
         typing = false;
+
         //to determine whether user wants to save or load levels
         isLoading = false;
         isSaving = false;
+
         //the saved text describing the 3 slots of load/save
         slot1Text = "Blank";
         slot2Text = "Blank";
@@ -220,12 +225,12 @@ public class MainMenuScreen extends MyScreen {
                     slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 1");
-                   MyGdxGame.world.saveLevel(0);
+                    loader.saveLevel(0);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
                     notification.setText("Loaded slot 1");
-                    gameScreen.world.loadLevel(0);
+                    loader.loadLevel(0);
                 }
             }
         });
@@ -236,12 +241,12 @@ public class MainMenuScreen extends MyScreen {
                     slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 2");
-                    saveLevel(1);
+                    loader.saveLevel(1);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
                     notification.setText("Loaded slot 2");
-                    gameScreen.world.loadLevel(1);
+                    loader.loadLevel(1);
                 }
             }
         });
@@ -252,12 +257,12 @@ public class MainMenuScreen extends MyScreen {
                     slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
                     notification.setVisible(true);
                     notification.setText("Saved to slot 3");
-                    gameScreen.world.saveLevel(2);
+                    loader.saveLevel(2);
 
                 } else if (isLoading) {
                     notification.setVisible(true);
                     notification.setText("Loaded slot 3");
-                    gameScreen.world.loadLevel(2);
+                    loader.loadLevel(2);
                 }
             }
         });
