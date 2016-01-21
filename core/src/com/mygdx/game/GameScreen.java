@@ -11,7 +11,6 @@ import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamestate.ScreenManager;
 import com.mygdx.game.gamestate.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.MathUtils;
@@ -195,16 +194,15 @@ public class GameScreen extends MyScreen {
         //player movement
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
-                world.getPlayer().applyAcceleration(new Vector2(0, 1000));
+                world.jumpPlayer();
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
-                world.getPlayer().applyAcceleration(new Vector2(0, -1000));
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.A)) {
-                world.getPlayer().applyAcceleration(new Vector2(-1000, 0));
+                world.movePlayerLeft();
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.D)) {
-                world.getPlayer().applyAcceleration(new Vector2(1000, 0));
+                world.movePlayerRight();
             }
         }
 

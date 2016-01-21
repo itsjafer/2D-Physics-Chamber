@@ -232,7 +232,7 @@ public class GameMenu extends MyScreen {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
                 System.out.println(gravitySliderY.getVisualValue());
-                background.world.setGravity(new Vector2(background.world.getGravity().x, gravitySliderY.getVisualValue()));
+                background.world.updateGravity(new Vector2(background.world.getGravity().x, gravitySliderY.getVisualValue()));
                 labelSliderY.setText("Gravity y-dir: " + gravitySliderY.getVisualValue());
             }
         });
@@ -241,7 +241,7 @@ public class GameMenu extends MyScreen {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
                 System.out.println(gravitySliderX.getVisualValue());
-                background.world.setGravity(new Vector2(gravitySliderX.getVisualValue(), background.world.getGravity().y));
+                background.world.updateGravity(new Vector2(gravitySliderX.getVisualValue(), background.world.getGravity().y));
                 labelSliderX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
             }
         });

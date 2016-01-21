@@ -98,7 +98,7 @@ public class Polygon {
         return new Vector2(min / axis.len(), max / axis.len());
     }
 
-    public Vector2 getNormal(Vector2 axis) {
+    public static Vector2 getNormal(Vector2 axis) {
         return new Vector2(-axis.y, axis.x);
     }
 

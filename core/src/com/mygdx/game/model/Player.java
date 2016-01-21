@@ -15,21 +15,31 @@ import java.util.ArrayList;
  */
 public class Player extends Polygon {
 
+    private GameWorld world;
+    
+    public static final float HORIZONTAL_ACCELERATION = 700f;
+    public static final float JUMPING_ACCELERATION = 1500f;
+    
     private Vector2 acceleration;
     private float friction = 0f;
     private float restitution = 1f;
-    private boolean jumping = false;
+    private boolean canJump = false;
     
     float collisionDepth;
     Vector2 collisionAxis;
     boolean collided;
-    Vector2 movement;
     
     Vector2 velocity;
     Vector2 center;
     Vector2 startPos;
     
-    public Player(Vector2[] vertices, Color colour) {
+    Vector2 totalHeight = new Vector2(0, 0);
+    float totalTime = 0f;
+    
+    private float rotationSpeed;
+    private float rotation;
+    
+    public Player(Vector2[] vertices, Color colour, GameWorld world) {
         super(vertices, colour);
         velocity = new Vector2();
         acceleration = new Vector2();
@@ -41,28 +51,65 @@ public class Player extends Polygon {
         collisionAxis = new Vector2();
         collisionDepth = 0f;
         collided = false;
-        movement = new Vector2();
+        
+        rotationSpeed = 0f;
+        rotation = 0f;
+        
+        canJump = false;
+        this.world = world;
     }
 //    public Color getPlayerColour(){
 //        return ;
 //    }
-    public void jump() {
-        jumping = true;
-    }
 
     public void move(float deltaTime) {
         
+        totalTime += deltaTime;
+        
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
+        totalHeight.add(movement);
         velocity.add(acceleration.cpy().scl(deltaTime));
-        System.out.println("final velocity after acceleration :" + velocity);
-        System.out.println("MOVEMENT : " + movement);
 //         Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
             vertex.add(movement);
         }
         updateCenter();
         
-        System.out.println("--------end--------------");
+//        rotate(deltaTime);
+    }
+    
+    public void jump()
+    {
+        canJump = false;
+    }
+    public boolean canJump()
+    {
+        return canJump;
+    }
+    
+    public Vector2 getVelocity()
+    {
+        return velocity;
+    }
+    public void setVelocity(Vector2 velocity)
+    {
+        this.velocity = velocity;
+    }
+    
+    public void rotate(float deltaTime)
+    {
+        for (Vector2 vertex: vertices)
+        {
+            float existingAngle = (float)Math.atan2(vertex.y-center.y, vertex.x-center.x);
+            float radius = (vertex.cpy().sub(center)).len();
+            
+            float newX = center.x + radius*(float)Math.cos(existingAngle + rotationSpeed*deltaTime);
+            float newY = center.y + radius*(float)Math.sin(existingAngle + rotationSpeed*deltaTime);
+            
+            vertex.set(newX, newY);
+            
+        }
+        rotation += rotationSpeed*deltaTime;
     }
     
     /**
@@ -87,8 +134,20 @@ public class Player extends Polygon {
 
     public void collidePhysics()
     {
+        if (scalarProject(velocity, world.getGravity()) > 0)
+        {
+            canJump = true;
+        }
+        
         Vector2 displacement = getNormal(collisionAxis).nor().scl(-collisionDepth);
         bump(displacement);
+        
+//        rotationSpeed += (float)Math.toRadians(displacement.angle());
+        if (!Float.isNaN(displacement.len()*(float)Math.atan2(displacement.y, displacement.x)*Math.signum((float)Math.cos(displacement.y/displacement.x))))
+        {
+            rotationSpeed += displacement.len()*(float)Math.atan2(displacement.y, displacement.x)*Math.signum(Math.cos(displacement.y/displacement.x)*restitution);
+            rotationSpeed *= -1;
+        }
     }
     
     /**
@@ -98,12 +157,17 @@ public class Player extends Polygon {
     public void reset()
     {
         bump(startPos.cpy().sub(center));
+        updateCenter();
         velocity.set(new Vector2(0, 0));
+        System.out.println(rotation);
+        rotationSpeed = -rotation;
+        rotate(1);
+        rotation = 0;
+        rotationSpeed = 0;
     }
 
     public void update() {
         acceleration.set(Vector2.Zero);
-        jumping = false;
     }
 
     public void applyAcceleration(Vector2 acceleration) {
@@ -216,8 +280,6 @@ public class Player extends Polygon {
             normalComponent.scl(-restitution);
             
             velocity = parallelComponent.add(normalComponent);
-            
-            System.out.println("new velocity: " +velocity);
         }
     }
 }
