@@ -15,9 +15,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -37,6 +37,7 @@ public class MainMenuScreen extends MyScreen {
     TextButton startGame, saveGame, loadGame, slot1, slot2, slot3, returnToMenu;
     String slot1Text, slot2Text, slot3Text;
     TextField inputSlot1, inputSlot2, inputSlot3;
+    Label notification;
     GameScreen gameScreen;
     String input;
     boolean isSaving, isLoading, typing;
@@ -122,12 +123,14 @@ public class MainMenuScreen extends MyScreen {
         slot2 = new TextButton("Slot 2:\n\n" + "'" + slot2Text + "'", skin, "default");
         slot3 = new TextButton("Slot 3:\n\n" + "'" + slot3Text + "'", skin, "default");
         returnToMenu = new TextButton("Return to Menu", skin);
+        notification = new Label("Saved to slot1", skin);
         inputSlot1 = new TextField(slot1Text, skin);
         inputSlot2 = new TextField(slot2Text, skin);
         inputSlot3 = new TextField(slot3Text, skin);
 
         //add the buttons to the table
         table2.add(returnToMenu).padTop(20);
+        table2.add(notification).size(100, 30);
         table2.row();
         table2.add(slot1).pad(20, 20, 20, 20).size(200, 100);
         table2.add(inputSlot1).padTop(30);
@@ -135,8 +138,9 @@ public class MainMenuScreen extends MyScreen {
         table2.add(slot2).pad(20, 20, 20, 20).size(200, 100);
         table2.add(inputSlot2);
         table2.row();
-        table2.add(slot3).pad(20, 20, 20, 20).size(200, 100);
+        table2.add(slot3).pad(20, 20, 0, 20).size(200, 100);
         table2.add(inputSlot3);
+        table2.row();
 
         // add the inputs. they're in a seperate method because of the length;
         // to make the code clearer
@@ -167,9 +171,17 @@ public class MainMenuScreen extends MyScreen {
                 slot3Text = inputSlot3.getText();
             }
         }
+
+        //this tests the user's input, whether they have clicked load . if they have, give them the option of going to main menu
+        if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
+            returnToMenu.setText("Go to Game");
+        } else if (!notification.isVisible() && !returnToMenu.getText().equals("Return to Menu")) {
+            returnToMenu.setText("Return to Menu");
+        }
     }
 
     public void addInputs() {
+
         startGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -183,6 +195,7 @@ public class MainMenuScreen extends MyScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 saveGame.setChecked(false);
+                notification.setVisible(false);
                 isSaving = true;
                 Gdx.input.setInputProcessor(im2);
                 lastUsedMultiplexer = im2;
@@ -192,6 +205,7 @@ public class MainMenuScreen extends MyScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 loadGame.setChecked(false);
+                notification.setVisible(false);
                 isLoading = true;
                 Gdx.input.setInputProcessor(im2);
                 lastUsedMultiplexer = im2;
@@ -202,9 +216,13 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (isSaving) {
                     slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
+                    notification.setVisible(true);
+                    notification.setText("Saved to slot 1");
                     gameScreen.world.saveLevel(0);
 
                 } else if (isLoading) {
+                    notification.setVisible(true);
+                    notification.setText("Loaded slot 1");
                     gameScreen.world.loadLevel(0);
                 }
             }
@@ -214,9 +232,13 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (isSaving) {
                     slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
+                    notification.setVisible(true);
+                    notification.setText("Saved to slot 2");
                     gameScreen.world.saveLevel(1);
 
                 } else if (isLoading) {
+                    notification.setVisible(true);
+                    notification.setText("Loaded slot 2");
                     gameScreen.world.loadLevel(1);
                 }
             }
@@ -226,9 +248,13 @@ public class MainMenuScreen extends MyScreen {
             public void clicked(InputEvent event, float x, float y) {
                 if (isSaving) {
                     slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
+                    notification.setVisible(true);
+                    notification.setText("Saved to slot 3");
                     gameScreen.world.saveLevel(2);
 
                 } else if (isLoading) {
+                    notification.setVisible(true);
+                    notification.setText("Loaded slot 3");
                     gameScreen.world.loadLevel(2);
                 }
             }
@@ -236,10 +262,19 @@ public class MainMenuScreen extends MyScreen {
         returnToMenu.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.input.setInputProcessor(im);
-                lastUsedMultiplexer = im;
-                isLoading = false;
-                isSaving = false;
+                if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
+                    gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+                    Gdx.input.setInputProcessor(im);
+                    lastUsedMultiplexer = im;
+                    isLoading = false;
+                    isSaving = false;
+                } else {
+                    Gdx.input.setInputProcessor(im);
+                    lastUsedMultiplexer = im;
+                    isLoading = false;
+                    isSaving = false;
+                }
+
             }
         });
     }
