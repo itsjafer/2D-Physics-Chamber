@@ -161,27 +161,39 @@ public class GameWorld {
     }
 
     /**
-     * Get the player
-     *
-     * @return
+     * @return the player
      */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * @return the friction
+     */
     public float getFriction() {
         return friction;
     }
 
+    /**
+     * Sets the friction
+     * @param friction
+     */
     public void setFriction(float friction) {
         this.friction = friction;
     }
 
+    /**
+     * @return the restitution
+     */
     public float getRestitution() {
         return restitution;
 
     }
 
+    /**
+     * Set the world's restitution
+     * @param restitution 
+     */
     public void setRestitution(float restitution) {
         this.restitution = restitution;
     }
