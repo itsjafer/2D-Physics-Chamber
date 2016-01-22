@@ -15,15 +15,16 @@ import java.util.ArrayList;
  */
 public class GameWorld {
 
+    private float friction = 0.05f;
+    private float restitution = 1f;
     private ArrayList<Polygon> polygons;
     private Player player;
-    
     private Vector2 gravity;
     // Axis on which the player jumps (unit vector)
     private Vector2 horizontalMovementAxis;
     // Axis on which the player runs (unit vector)
     private Vector2 verticalMovementAxis;
-    
+
     /**
      * Creates the game world
      */
@@ -31,20 +32,18 @@ public class GameWorld {
         polygons = new ArrayList();
         init();
     }
-    
+
     /**
      * Resets the defaults
      */
-    public void reset()
-    {
+    public void reset() {
         init();
     }
-    
+
     /**
      * Sets the default values
      */
-    private void init()
-    {
+    private void init() {
         player = null;
         polygons.clear();
         setGravity(new Vector2(0, -500));
@@ -52,7 +51,8 @@ public class GameWorld {
 
     /**
      * Updates the player
-     * @param deltaTime 
+     *
+     * @param deltaTime
      */
     public void update(float deltaTime) {
         if (player != null) {
@@ -74,8 +74,9 @@ public class GameWorld {
      */
     public void movePlayerRight() {
         // only apply movement if the player's speed is smaller than the running speed
-        if (player.runningSpeed(horizontalMovementAxis) >= Player.RUN_SPEED)
+        if (player.runningSpeed(horizontalMovementAxis) >= Player.RUN_SPEED) {
             return;
+        }
         // get the "instantaneous" acceleration to achieve the desired velocity
         Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(Player.RUN_SPEED));
         player.applyAcceleration(accel);
@@ -87,8 +88,9 @@ public class GameWorld {
     public void movePlayerLeft() {
         System.out.println("moving him right");
         // only apply movement if the player's speed is smaller than the running speed
-        if (player.runningSpeed(horizontalMovementAxis) <= -Player.RUN_SPEED)
+        if (player.runningSpeed(horizontalMovementAxis) <= -Player.RUN_SPEED) {
             return;
+        }
         // get the "instantaneous" acceleration to achieve the desired velocity
         Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(-Player.RUN_SPEED));
         player.applyAcceleration(accel);
@@ -101,9 +103,9 @@ public class GameWorld {
         // the player should only jump when he is on ground
         if (player.onGround()) {
             // Vf^2 = Vi^2-2ad ..... Vf is zero (the peak of the jump).... therefore, Vi = Math.sqrt(-2ad)...
-                // so all that's left to do is to scalar project the acceleration + displacement onto the desired movement axis
-                // and apply that resulting Vi onto the desired axis
-            Vector2 verticalVel = verticalMovementAxis.cpy().scl((float)Math.sqrt(-2*Polygon.scalarProject(gravity, verticalMovementAxis)*verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
+            // so all that's left to do is to scalar project the acceleration + displacement onto the desired movement axis
+            // and apply that resulting Vi onto the desired axis
+            Vector2 verticalVel = verticalMovementAxis.cpy().scl((float) Math.sqrt(-2 * Polygon.scalarProject(gravity, verticalMovementAxis) * verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
             // get the "instantaneous" acceleration to achieve the desired velocity
             Vector2 accel = player.accelerationToVelocity(verticalMovementAxis, verticalVel);
             player.applyAcceleration(accel);
@@ -112,6 +114,7 @@ public class GameWorld {
 
     /**
      * Creates a polygon and adds it to the list
+     *
      * @param polygon list of vertices of the polygon
      * @param colour the color of the new polygon
      */
@@ -121,6 +124,7 @@ public class GameWorld {
 
     /**
      * Updates the gravity and horizontal/vertical direction vectors
+     *
      * @param gravity the vector
      */
     public void setGravity(Vector2 gravity) {
@@ -141,6 +145,7 @@ public class GameWorld {
 
     /**
      * Get the polygon list
+     *
      * @return
      */
     public ArrayList<Polygon> getPolygons() {
@@ -149,6 +154,7 @@ public class GameWorld {
 
     /**
      * Creates the player based on the vectors passed in
+     *
      * @param playerPolygon arraylist of vertices
      * @param colour the color of the player
      */
@@ -158,6 +164,7 @@ public class GameWorld {
 
     /**
      * Get the player
+     *
      * @return
      */
     public Player getPlayer() {
