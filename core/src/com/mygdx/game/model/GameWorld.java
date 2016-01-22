@@ -14,21 +14,28 @@ import java.util.ArrayList;
  */
 public class GameWorld {
 
-    private float friction = 0.1f;
-    private float restitution = 1f;
-    private ArrayList<Polygon> polygons;
-    private Player player;
+    // The friction between the player and the blocks
+    private float friction;
+    // The bounciness the player has
+    private float restitution;
+    
     private Vector2 gravity;
     // Axis on which the player jumps (unit vector)
     private Vector2 horizontalMovementAxis;
     // Axis on which the player runs (unit vector)
     private Vector2 verticalMovementAxis;
+    
+    private ArrayList<Polygon> polygons;
+    private Player player;
 
     /**
      * Creates the game world
      */
     public GameWorld() {
         polygons = new ArrayList();
+        // the friction & restitution defaults
+        friction = 0f;
+        restitution = 1f;
         init();
     }
 
