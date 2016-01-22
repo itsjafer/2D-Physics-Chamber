@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 /**
  * The player
+ *
  * @author Dmitry, Jafer, Caius
  */
 public class Player extends Polygon {
@@ -19,47 +20,46 @@ public class Player extends Polygon {
     // MOVEMENT STUFF
     public static final float RUN_SPEED = 100f;
     public static final float JUMP_DISTANCE = 100f;
-    // 
+
     private Vector2 acceleration;
     private Vector2 velocity;
     private Vector2 center;
     private Vector2 startPos;
-    
+
     private boolean onGround;
-    
+
+    private boolean doRotate;
     private float rotation;
     private float rotationSpeed;
-    
+
     private boolean collided;
     private float collisionDepth;
     private Vector2 collisionAxis;
-    
-    private GameWorld world;
+
+    private final GameWorld world = MyGdxGame.WORLD;
 
     /**
      * Creates the player
+     *
      * @param vertices the list of vertices that define the player's polygon
      * @param colour the player's colour
-     * @param world the world the player exist in
      */
-    public Player(Vector2[] vertices, Color colour, GameWorld world) {
+    public Player(Vector2[] vertices, Color colour) {
         super(vertices, colour);
-        this.world = world;
-        
+
         velocity = new Vector2();
         acceleration = new Vector2();
         center = new Vector2();
-        
+
         collisionAxis = new Vector2();
-        
+
         init();
     }
-    
+
     /**
      * Set defaults
      */
-    private void init()
-    {
+    private void init() {
         velocity.set(0, 0);
         acceleration.set(0, 0);
         updateCenter();
@@ -74,7 +74,7 @@ public class Player extends Polygon {
 
         onGround = false;
     }
-    
+
     /**
      * Reset to defaults
      */
@@ -88,18 +88,27 @@ public class Player extends Polygon {
         init();
     }
 
+    /**
+     * Move the player
+     *
+     * @param deltaTime the time it took to render the last frame
+     */
     public void move(float deltaTime) {
-
-        onGround = false;
-
+        // d = vi*t + 1/2*a*t^2
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
         velocity.add(acceleration.cpy().scl(deltaTime));
-//         Each vertex is moved by the velocity
+
+//      Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
             vertex.add(movement);
         }
         updateCenter();
-//        rotate(deltaTime);
+        // Only rotate the player if rotation is turned on
+        if (doRotate) {
+            rotate(deltaTime);
+        }
+        // Assume the player isn't on ground anymore
+        onGround = false;
     }
 
     public Vector2 getCenter() {
@@ -279,18 +288,16 @@ public class Player extends Polygon {
             velocity = parallelComponent.add(normalComponent);
         }
     }
-    
-    public float runningSpeed(Vector2 horizontalMovementAxis)
-    {
+
+    public float runningSpeed(Vector2 horizontalMovementAxis) {
         return VectorMath.scalarProject(velocity, horizontalMovementAxis);
     }
-    public Vector2 runningVelocity(Vector2 horizontalMovementAxis)
-    {
+
+    public Vector2 runningVelocity(Vector2 horizontalMovementAxis) {
         return VectorMath.vectorProject(velocity, horizontalMovementAxis);
     }
-    
-    public Vector2 accelerationToVelocity(Vector2 movementAxis, Vector2 desiredMovementVelocity)
-    {
-        return desiredMovementVelocity.sub(VectorMath.vectorProject(velocity, movementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+
+    public Vector2 accelerationToVelocity(Vector2 movementAxis, Vector2 desiredMovementVelocity) {
+        return desiredMovementVelocity.sub(VectorMath.vectorProject(velocity, movementAxis)).scl(1f / Gdx.graphics.getDeltaTime());
     }
 }

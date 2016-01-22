@@ -164,7 +164,7 @@ public class GameWorld {
      * @param colour the color of the player
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon, Color colour) {
-        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour, this);
+        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour);
     }
 
     /**
