@@ -6,28 +6,24 @@
  */
 package com.mygdx.game.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * For now lets not extends shape cause I'm not exactly sure how that's going to
- * be structured ^^ still need to fool around with circles before we can decide
- *
+ * A custom polygon object, to be used as the base object in the world
  * @author Dmitry
  */
 public class Polygon {
 
     // All of the vertices of the polygon
     protected Vector2[] vertices;
-    // the polygon's current velocity
+    // The polygon's colour
     protected Color polygonColour;
 
     /**
      * Creates a polygon.
-     *
-     * @param vertices an array of Vector2.
-     * @param friction NOT USED ATM
+     * @param vertices the vertices defining the shape
+     * @param colour the color of the polygon
      */
     public Polygon(Vector2[] vertices, Color colour) {
 
@@ -37,43 +33,23 @@ public class Polygon {
         this.polygonColour = colour;
     }
 
+    /**
+     * @return the polygon's color
+     */
     public Color getPolygonColour() {
         return polygonColour;
     }
 
-    
-
+    /**
+     * @return the vertices of the polygon
+     */
     public Vector2[] getVertices() {
         return vertices;
     }
 
     /**
-     * WE SHOULD CONSIDER MOVING THIS OUT OF THE CLASS
-     *
-     * @param v1 the vector to be projected
-     * @param v2 the vector being projected on
-     * @return the scalar projection of v1 onto v2
-     */
-    public static float scalarProject(Vector2 v1, Vector2 v2) {
-
-        float dotProduct = v1.cpy().dot(v2);
-        float scalarProjection = dotProduct / v2.len();
-
-        return scalarProjection;
-    }
-
-    public static Vector2 vectorProject(Vector2 v1, Vector2 v2) {
-
-        float scalarProjection = scalarProject(v1, v2);
-        Vector2 vectorProjection = v2.cpy().nor().scl(scalarProjection);
-
-        return vectorProjection;
-    }
-
-    /**
-     * CONSIDER MOVING THIS OUT OF THE CLASS
-     *
-     * @param axis the Axis onto which the polygon is to be projected.
+     * Project the polygon onto an axis
+     * @param axis the axis onto which the polygon is to be projected.
      * @return the polygon's projection onto the axis.
      */
     public Vector2 projectPolygon(Vector2 axis) {
@@ -99,49 +75,56 @@ public class Polygon {
         return new Vector2(min / axis.len(), max / axis.len());
     }
 
-    public static Vector2 getNormal(Vector2 axis) {
-        return new Vector2(-axis.y, axis.x);
-    }
-
     /**
      * @return an array of normals for each axis on the polygon
      */
     public Vector2[] getNormals() {
         Vector2[] normals = new Vector2[vertices.length];
         Vector2 axis = null;
+        // Loop through all the vertices and wrap around for the edges. Then store the enormal of each edge
         for (int i = 0; i < vertices.length; i++) {
             // getting an edge between two vertices
             axis = vertices[i].cpy().sub(vertices[i + 1 == vertices.length ? 0 : i + 1]);
             // the normal is the negative reciprocal of the slope
-            normals[i] = getNormal(axis);
+            normals[i] = VectorMath.getNormal(axis);
         }
         return normals;
     }
 
+    /**
+     * Checks whether or not a point is contained within the polygon
+     * @param point the point to be checked
+     * @return true of the point is contained; otherwise, return false
+     */
     public boolean containsPoint(Vector2 point) {
-        Vector2[] normals;
+        // The normals to each edge
+        Vector2[] normals = getNormals();
 
+        // The projection of the polygon
         Vector2 polyProjection;
+        // The "projection" of the point
         float pointProjection;
 
-        normals = getNormals();
+        // Loop through all the normals and project onto them
         for (Vector2 normal : normals) {
             polyProjection = projectPolygon(normal);
-            pointProjection = scalarProject(point, normal);
+            pointProjection = VectorMath.scalarProject(point, normal);
 
+            // if there is no overlap on this normal, return false since there is no overlap anywhere
             if (polyProjection.x > pointProjection || polyProjection.y < pointProjection) {
                 return false;
             }
         }
+        // at this point there is a definite overlap
         return true;
     }
 
     /**
-     * Instantly moves the polygon to a new position by a fixed amount
-     *
-     * @param displacement the amount to move the player and the direction
+     * Instantly moves the polygon by a fixed amount
+     * @param displacement the displacement vector
      */
     public void bump(Vector2 displacement) {
+        // move all the vertices by the same displacement
         for (Vector2 vertex : vertices) {
             vertex.add(displacement);
         }

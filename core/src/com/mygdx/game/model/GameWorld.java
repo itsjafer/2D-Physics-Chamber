@@ -101,7 +101,7 @@ public class GameWorld {
             // Vf^2 = Vi^2-2ad ..... Vf is zero (the peak of the jump).... therefore, Vi = Math.sqrt(-2ad)...
                 // so all that's left to do is to scalar project the acceleration + displacement onto the desired movement axis
                 // and apply that resulting Vi onto the desired axis
-            Vector2 verticalVel = verticalMovementAxis.cpy().scl((float)Math.sqrt(-2*Polygon.scalarProject(gravity, verticalMovementAxis)*verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
+            Vector2 verticalVel = verticalMovementAxis.cpy().scl((float)Math.sqrt(-2*VectorMath.scalarProject(gravity, verticalMovementAxis)*verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
             // get the "instantaneous" acceleration to achieve the desired velocity
             Vector2 accel = player.accelerationToVelocity(verticalMovementAxis, verticalVel);
             player.applyAcceleration(accel);
@@ -125,7 +125,7 @@ public class GameWorld {
         // update gravity
         this.gravity = gravity;
         // perpendicular to gravity
-        horizontalMovementAxis = Polygon.getNormal(gravity).nor();
+        horizontalMovementAxis = VectorMath.getNormal(gravity).nor();
         // parallel but opposite in dir to gravity
         verticalMovementAxis = gravity.cpy().nor().scl(-1);
     }

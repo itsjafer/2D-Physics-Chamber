@@ -98,7 +98,7 @@ public class GameScreen extends MyScreen {
 //        if (world.getPlayer() != null) {
 //            camera.position.set(world.getPlayer().getCenter().x, world.getPlayer().getCenter().y, 0);
 //        }
-        camera.update();
+//        camera.update();
 
         //shapeRenderer initialization
         shapeRenderer.setAutoShapeType(true);

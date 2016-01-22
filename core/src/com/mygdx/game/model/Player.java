@@ -8,7 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.MyGdxGame;
-import static com.mygdx.game.model.Polygon.vectorProject;
 import java.util.ArrayList;
 
 /**
@@ -75,7 +74,7 @@ public class Player extends Polygon {
             vertex.add(movement);
         }
         updateCenter();
-        rotate(deltaTime);
+//        rotate(deltaTime);
     }
 
     public Vector2 getCenter() {
@@ -129,12 +128,12 @@ public class Player extends Polygon {
     }
 
     public void collidePhysics() {
-        if (scalarProject(velocity, MyGdxGame.WORLD.getGravity()) > 0) {
+        if (VectorMath.scalarProject(velocity, MyGdxGame.WORLD.getGravity()) > 0) {
             System.out.println("CAN JUMP");
             onGround = true;
         }
 
-        Vector2 displacement = getNormal(collisionAxis).nor().scl(-collisionDepth);
+        Vector2 displacement = VectorMath.getNormal(collisionAxis).nor().scl(-collisionDepth);
         bump(displacement);
 
 //        rotationSpeed += (float)Math.toRadians(displacement.angle());
@@ -208,7 +207,7 @@ public class Player extends Polygon {
                 // If the current intersection depth is smaller than the overall intersection depth, udpate the overall intersection depth and the overall intersection axis
                 if (Math.abs(intersection) < Math.abs(collisionDepthLocal)) {
                     collisionDepthLocal = intersection;
-                    collisionAxisLocal = getNormal(normal);
+                    collisionAxisLocal = VectorMath.getNormal(normal);
                 }
             }
 
@@ -237,7 +236,7 @@ public class Player extends Polygon {
                 // If the current intersection depth is smaller than the overall intersection depth, udpate the overall intersection depth and the overall intersection axis
                 if (Math.abs(intersection) < Math.abs(collisionDepthLocal)) {
                     collisionDepthLocal = intersection;
-                    collisionAxisLocal = getNormal(normal);
+                    collisionAxisLocal = VectorMath.getNormal(normal);
                 }
             }
             if (collided) {
@@ -261,10 +260,10 @@ public class Player extends Polygon {
                     break;
                 }
             }
-            Vector2 parallelComponent = vectorProject(velocity, collisionAxis);
+            Vector2 parallelComponent = VectorMath.vectorProject(velocity, collisionAxis);
             parallelComponent.scl(1f - friction);
 
-            Vector2 normalComponent = vectorProject(velocity, getNormal(collisionAxis));
+            Vector2 normalComponent = VectorMath.vectorProject(velocity, VectorMath.getNormal(collisionAxis));
             normalComponent.scl(-restitution);
 
             velocity = parallelComponent.add(normalComponent);
@@ -273,15 +272,15 @@ public class Player extends Polygon {
     
     public float runningSpeed(Vector2 horizontalMovementAxis)
     {
-        return scalarProject(velocity, horizontalMovementAxis);
+        return VectorMath.scalarProject(velocity, horizontalMovementAxis);
     }
     public Vector2 runningVelocity(Vector2 horizontalMovementAxis)
     {
-        return vectorProject(velocity, horizontalMovementAxis);
+        return VectorMath.vectorProject(velocity, horizontalMovementAxis);
     }
     
     public Vector2 accelerationToVelocity(Vector2 movementAxis, Vector2 desiredMovementVelocity)
     {
-        return desiredMovementVelocity.sub(vectorProject(velocity, movementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+        return desiredMovementVelocity.sub(VectorMath.vectorProject(velocity, movementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
     }
 }
