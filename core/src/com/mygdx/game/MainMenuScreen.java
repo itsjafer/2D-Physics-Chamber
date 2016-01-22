@@ -7,6 +7,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamescreen.ScreenManager;
 import com.mygdx.game.gamescreen.MyScreen;
@@ -25,7 +26,7 @@ import com.mygdx.game.model.LevelLoader;
  * @author CaiusDmitryJafer
  */
 public class MainMenuScreen extends MyScreen {
-
+    
     private Skin skin;
     private Stage stageMenu, stageLoad;
     private Table tableMenu, tableLoad;
@@ -36,17 +37,17 @@ public class MainMenuScreen extends MyScreen {
     private TextField inputSlot1, inputSlot2, inputSlot3;
     private Label notification;
     private boolean isSaving, isLoading;
-    private InputMultiplexer lastUsedMultiplexer;
+    private InputProcessor lastUsedProcessor;
     private LevelLoader loader;
-
+    
     public MainMenuScreen(ScreenManager gameStateManager) {
         super(gameStateManager);
     }
-
+    
     @Override
     public void show() {
     }
-
+    
     @Override
     public void render(float delta) {
 
@@ -59,7 +60,7 @@ public class MainMenuScreen extends MyScreen {
             stageMenu.draw();
         }
     }
-
+    
     @Override
     public void init() {
         //create the stage for the main menu
@@ -81,15 +82,11 @@ public class MainMenuScreen extends MyScreen {
         slot2Text = loader.getSlotName(1);
         slot3Text = loader.getSlotName(2);
 
-        //Input multiplexer, giving priority to stageMenu over gameinput
-        inputMultiplexMain = new InputMultiplexer(stageMenu, MyGdxGame.gameInput);
-        inputMultiplexLoad = new InputMultiplexer(stageLoad, MyGdxGame.gameInput);
+        //initially input is set to main menu
+        lastUsedProcessor = stageMenu;
 
-        //set the processor to the initial default one
-        lastUsedMultiplexer = inputMultiplexMain;
-
-        // set the input multiplexer as the input processor
-        Gdx.input.setInputProcessor(inputMultiplexMain);
+        // set the default input to be menu input
+        Gdx.input.setInputProcessor(lastUsedProcessor);
 
         //initialize skin by imlpementing the json file that implements the atlas
         // the json file has the buttonstyle, sliderstyle, etc already coded into it, only need to call the name to use it
@@ -100,7 +97,7 @@ public class MainMenuScreen extends MyScreen {
         tableMenu = new Table();
         stageMenu.addActor(tableMenu);
         tableMenu.setFillParent(true);
-        tableMenu.align(Align.center);
+        tableMenu.align(Align.center | Align.top);
 
         //create the buttons for the table implemented in main menu
         startGame = new TextButton("Start Game", skin, "default");
@@ -110,13 +107,13 @@ public class MainMenuScreen extends MyScreen {
 
         //add the buttons to the table
         //padding to make the buttons more spaced out
-        tableMenu.add(startGame).pad(MyGdxGame.HEIGHT / 3, 20, 20, 20);
+        tableMenu.add(startGame).pad(MyGdxGame.HEIGHT / 5, 20, 20, 20).size(150, 50);
         tableMenu.row();
-        tableMenu.add(saveGame).pad(20, 20, 20, 20);
+        tableMenu.add(saveGame).pad(20, 20, 20, 20).size(150, 50);
         tableMenu.row();
-        tableMenu.add(loadGame).pad(20, 20, 20, 20);
+        tableMenu.add(loadGame).pad(20, 20, 20, 20).size(150, 50);
         tableMenu.row();
-        tableMenu.add(quitGame);
+        tableMenu.add(quitGame).pad(20, 20, 20, 20).size(150, 50);
 
         // Create a table that fills the screen, the buttons, etc go into this table
         tableLoad = new Table();
@@ -129,7 +126,7 @@ public class MainMenuScreen extends MyScreen {
         slot2 = new TextButton("Slot 2:\n\n" + "'" + slot2Text + "'", skin, "default");
         slot3 = new TextButton("Slot 3:\n\n" + "'" + slot3Text + "'", skin, "default");
         returnToMenu = new TextButton("Return to Menu", skin);
-        notification = new Label("Input level title \n then click on the corresponding slot", skin);
+        notification = new Label("Input level title \n then click on the \ncorresponding slot", skin);
         inputSlot1 = new TextField(slot1Text, skin);
         inputSlot2 = new TextField(slot2Text, skin);
         inputSlot3 = new TextField(slot3Text, skin);
@@ -147,23 +144,22 @@ public class MainMenuScreen extends MyScreen {
         tableLoad.add(slot3).pad(20, 20, 0, 20).size(200, 100);
         tableLoad.add(inputSlot3);
         tableLoad.row();
-
+        
     }
-
+    
     @Override
     public void update(float deltaTime) {
-        if (Gdx.input.getInputProcessor() != lastUsedMultiplexer) {
-            Gdx.input.setInputProcessor(lastUsedMultiplexer);
-        }
-        //if the user loaded a level, give them the option of going to game. if they haven't loaded, let them go to main menu
-        if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
-            returnToMenu.setText("Go to Game");
-        } else if (!notification.isVisible() && !returnToMenu.getText().equals("Return to Menu")) {
-            returnToMenu.setText("Return to Menu");
+        if (Gdx.input.getInputProcessor() != lastUsedProcessor) {
+            Gdx.input.setInputProcessor(lastUsedProcessor);
         }
         processInput();
+        
+        slot1Text = inputSlot1.getText();
+        slot2Text = inputSlot2.getText();
+        slot3Text = inputSlot3.getText();
+        
     }
-
+    
     @Override
     public void processInput() {
         //to easily switch between main menu and main game using the ESC key
@@ -171,80 +167,83 @@ public class MainMenuScreen extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
         //if the Start Game button is pressed
-        if (startGame.isPressed()) {
+        if (startGame.isChecked()) {
             startGame.setText("Resume Game"); //set the text to resume game, in case user returns to menu
             startGame.setChecked(false); //uncheck the button
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME); //change screens to game screen
         }
         //if the Save Game button is pressed
-        if (saveGame.isPressed()) {
+        if (saveGame.isChecked()) {
+            returnToMenu.setText("Return to Menu");
             saveGame.setChecked(false); //uncheck the button
             isSaving = true; // this means that the user wants to save
-            Gdx.input.setInputProcessor(inputMultiplexLoad);
-            lastUsedMultiplexer = inputMultiplexLoad;
+            lastUsedProcessor = stageLoad;
         }
-        if (loadGame.isPressed()) {
+        if (loadGame.isChecked()) {
             loadGame.setChecked(false);
-            notification.setVisible(false);
             isLoading = true;
-            Gdx.input.setInputProcessor(inputMultiplexLoad);
-            lastUsedMultiplexer = inputMultiplexLoad;
+            lastUsedProcessor = stageLoad;
         }
-        if (slot1.isPressed()) {
+        if (slot1.isChecked()) {
+            slot1.setChecked(false);
             if (isSaving) {
                 slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                 notification.setText("Saved to slot 1");
                 loader.saveLevel(0, slot1Text);
-
+                
             } else if (isLoading) {
                 notification.setText("Loaded slot 1");
+                returnToMenu.setText("Go to Game");
                 loader.loadLevel(0);
                 slot1Text = loader.getSlotName(0);
                 slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
             }
         }
-        if (slot2.isPressed()) {
+        if (slot2.isChecked()) {
+            slot2.setChecked(false);
             if (isSaving) {
                 slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                 notification.setText("Saved to slot 2");
                 loader.saveLevel(1, slot2Text);
-
+                
             } else if (isLoading) {
                 notification.setText("Loaded slot 2");
+                returnToMenu.setText("Go to Game");
                 loader.loadLevel(1);
             }
         }
-        if (slot3.isPressed()) {
+        if (slot3.isChecked()) {
+            slot3.setChecked(false);
             if (isSaving) {
                 slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
                 notification.setText("Saved to slot 3");
                 loader.saveLevel(2, slot3Text);
-
+                
             } else if (isLoading) {
                 notification.setText("Loaded slot 3");
+                returnToMenu.setText("Go to Game");
                 loader.loadLevel(2);
             }
         }
-        if (returnToMenu.isPressed()) {
-            if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
+        if (returnToMenu.isChecked()) {
+            returnToMenu.setChecked(false);
+            if (returnToMenu.getText().charAt(0) == 'G') {
                 gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-                Gdx.input.setInputProcessor(inputMultiplexMain);
-                lastUsedMultiplexer = inputMultiplexMain;
                 isLoading = false;
                 isSaving = false;
             } else {
-                Gdx.input.setInputProcessor(inputMultiplexMain);
-                lastUsedMultiplexer = inputMultiplexMain;
                 isLoading = false;
                 isSaving = false;
             }
-
+            lastUsedProcessor = stageMenu;
         }
-
+        if (quitGame.isChecked()) {
+            quitGame.setChecked(false);
+            Gdx.app.exit();
+        }
     }
-
+    
     public void addInputs() {
-
 //        startGame.addListener(new ClickListener() {
 //            @Override
 //            public void clicked(InputEvent event, float x, float y) {
@@ -261,7 +260,7 @@ public class MainMenuScreen extends MyScreen {
 //                notification.setVisible(false);
 //                isSaving = true;
 //                Gdx.input.setInputProcessor(inputMultiplexLoad);
-//                lastUsedMultiplexer = inputMultiplexLoad;
+//                lastUsedProcessor = inputMultiplexLoad;
 //            }
 //        });
 //        loadGame.addListener(new ClickListener() {
@@ -271,7 +270,7 @@ public class MainMenuScreen extends MyScreen {
 //                notification.setVisible(false);
 //                isLoading = true;
 //                Gdx.input.setInputProcessor(inputMultiplexLoad);
-//                lastUsedMultiplexer = inputMultiplexLoad;
+//                lastUsedProcessor = inputMultiplexLoad;
 //            }
 //        });
 //        slot1.addListener(new ClickListener() {
@@ -330,12 +329,12 @@ public class MainMenuScreen extends MyScreen {
 //                if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
 //                    gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
 //                    Gdx.input.setInputProcessor(inputMultiplexMain);
-//                    lastUsedMultiplexer = inputMultiplexMain;
+//                    lastUsedProcessor = inputMultiplexMain;
 //                    isLoading = false;
 //                    isSaving = false;
 //                } else {
 //                    Gdx.input.setInputProcessor(inputMultiplexMain);
-//                    lastUsedMultiplexer = inputMultiplexMain;
+//                    lastUsedProcessor = inputMultiplexMain;
 //                    isLoading = false;
 //                    isSaving = false;
 //                }
@@ -343,24 +342,24 @@ public class MainMenuScreen extends MyScreen {
 //            }
 //        });
     }
-
+    
     @Override
     public void resize(int width, int height) {
         stageMenu.getViewport().update(width, height, true);
     }
-
+    
     @Override
     public void pause() {
     }
-
+    
     @Override
     public void resume() {
     }
-
+    
     @Override
     public void hide() {
     }
-
+    
     @Override
     public void dispose() {
     }

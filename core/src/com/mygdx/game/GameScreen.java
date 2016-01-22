@@ -167,14 +167,14 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
-        //check for any inputs
-        processInput();
-
         //check to make sure the correct processor is in use
         if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
             System.out.println("NEW INPTU SPROCES");
             Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
+
+        //check for any inputs
+        processInput();
 
         //update the mouse position
         mouseDrawPos = GameInputs.getMousePosition();
