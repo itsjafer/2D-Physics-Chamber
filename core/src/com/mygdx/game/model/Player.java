@@ -227,11 +227,17 @@ public class Player extends Polygon {
     }
 
     /**
-     * 
-     * @param polygons 
+     *
+     * @param polygons
      */
     public void checkForCollisions(ArrayList<Polygon> polygons) {
+        // assume the player hasn't collided
         collided = false;
+        // make sure polygons isn't empty
+        if (polygons.isEmpty()) {
+            return;
+        }
+
         // The player's normals
         Vector2[] normals1 = getNormals();
         // The other polygon's normals
@@ -241,23 +247,27 @@ public class Player extends Polygon {
         // The other polygon's projection
         Vector2 projection2;
 
+        // the collision depth is maxed out and is to be reduced throughout the checks
         float collisionDepthLocal = Float.MAX_VALUE;
+        // the collision axis is zeroed and is to be set through the checks
         Vector2 collisionAxisLocal = Vector2.Zero;
 
         // Iterate through all the polygons and check for a collision on a 1 to 1 basis
         for (Polygon otherPoly : polygons) {
+            // assume collided is true until a collision is not found
             collided = true;
             // Check all of the player's normals
             for (Vector2 normal : normals1) {
+                // project player and other polygon onto normal
                 projection1 = this.projectPolygon(normal);
                 projection2 = otherPoly.projectPolygon(normal);
 
-                // If one normal doesn't contain a collision, then no collision occurs at all
+                // If one normal doesn't contain a collision, then no collision occurs at all for this polygon
                 if (projection1.x >= projection2.y || projection1.y <= projection2.x) {
                     collided = false;
                     break;
-                    // Execution below this point indicates an intersection has occured
                 }
+
                 // the intersection depth for the current intersection
                 float intersection;
 
@@ -275,18 +285,19 @@ public class Player extends Polygon {
                 }
             }
 
-            // Check all of the other polygon's normals
             normals2 = otherPoly.getNormals();
+            // Check all of the polygon's normals
             for (Vector2 normal : normals2) {
+                // project player and other polygon onto normal
                 projection1 = this.projectPolygon(normal);
                 projection2 = otherPoly.projectPolygon(normal);
 
-                // If one normal doesn't contain a collision, then no collision occurs at all
+                // If one normal doesn't contain a collision, then no collision occurs at all for this polygon
                 if (projection1.x >= projection2.y || projection1.y <= projection2.x) {
                     collided = false;
                     break;
-                    // Execution below this point indicates an intersection has occured
                 }
+
                 // the intersection depth for the current intersection
                 float intersection;
 
@@ -303,21 +314,23 @@ public class Player extends Polygon {
                     collisionAxisLocal = VectorMath.getNormal(normal);
                 }
             }
+
+            // stop at the first collision
             if (collided) {
+                // update global collision depth & axis
                 collisionDepth = collisionDepthLocal;
                 collisionAxis = collisionAxisLocal;
                 return;
             }
         }
-
     }
 
     public void collideWithPolygons(ArrayList<Polygon> polygons) {
         checkForCollisions(polygons);
-        
+
         if (collided) {
             doCollision();
-            
+
             // The component of velocity parallel to the collision axis
             Vector2 parallelComponent = VectorMath.vectorProject(velocity, collisionAxis);
             // friction 0 means 100% conservation of momentum
@@ -327,7 +340,7 @@ public class Player extends Polygon {
             Vector2 normalComponent = VectorMath.vectorProject(velocity, VectorMath.getNormal(collisionAxis));
             // the negative is needed for a bounce
             normalComponent.scl(-world.getRestitution());
-            
+
             // the new velocity is the sum of both transformed components
             velocity = parallelComponent.add(normalComponent);
         }
