@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author DmitryJaferCaius
+ * @author Dmitry, Jafer, Caius
  */
 public class GameScreen extends MyScreen {
 

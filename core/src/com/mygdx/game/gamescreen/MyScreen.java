@@ -5,7 +5,7 @@ import com.badlogic.gdx.Screen;
 
 /**
  * A modified version of the Screen class that separates drawing and logic, and handles input
- * @author Dmitry
+ * @author Dmitry, Jafer, Caius
  */
 public abstract class MyScreen implements Screen{
     

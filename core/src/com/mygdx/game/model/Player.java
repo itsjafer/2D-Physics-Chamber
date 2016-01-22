@@ -11,8 +11,8 @@ import com.mygdx.game.MyGdxGame;
 import java.util.ArrayList;
 
 /**
- *
- * @author branc2347 jafer
+ * The player
+ * @author Dmitry, Jafer, Caius
  */
 public class Player extends Polygon {
 

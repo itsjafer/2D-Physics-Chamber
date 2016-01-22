@@ -11,7 +11,7 @@ import com.mygdx.game.MyGdxGame;
 /**
  * The source of the input for the game
  *
- * @author kobed6328
+ * @author Dmitry, Jafer, Caius
  */
 public class InputProcessor extends InputAdapter {
 
