@@ -4,6 +4,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
@@ -21,9 +22,11 @@ public class GameWorld {
     static public Vector2 verticalMovementAxis;
     private Polygon finish;
     
+    public boolean playerJump = false;
+    
     public GameWorld() {
         polygons = new ArrayList();
-        updateGravity(new Vector2(0, -30));
+        setGravity(new Vector2(0, -30));
     }
 
     public void update(float deltaTime) {
@@ -32,6 +35,12 @@ public class GameWorld {
 //        if (player != null && GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
         if (player != null) {
             player.applyAcceleration(gravity);
+            if (playerJump)
+            {
+                System.out.println("hHI");
+                jumpPlayer();
+                playerJump = false;
+            }
             player.move(deltaTime);
             if (!polygons.isEmpty()) {
                 player.collideWithPolygons(polygons);
@@ -41,44 +50,43 @@ public class GameWorld {
     }
 
     public void movePlayerRight() {
-        player.applyAcceleration(horizontalMovementAxis.cpy().scl(Player.HORIZONTAL_ACCELERATION));
+        Vector2 accel = horizontalMovementAxis.cpy().scl(70).sub(Polygon.vectorProject(player.getVelocity(), horizontalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+        player.applyAcceleration(accel);
     }
 
     public void movePlayerLeft() {
-        player.applyAcceleration(horizontalMovementAxis.cpy().scl(-Player.HORIZONTAL_ACCELERATION));
+        Vector2 accel = horizontalMovementAxis.cpy().scl(-70).sub(Polygon.vectorProject(player.getVelocity(), horizontalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+        player.applyAcceleration(accel);
     }
 
     public void jumpPlayer() {
-
-
-//        player.setVelocity(verticalMovementAxis.cpy().scl((float)Math.sqrt(Polygon.scalarProject(gravity, verticalMovementAxis)*(-2*Polygon.scalarProject(new Vector2(0, 100), verticalMovementAxis)))));
-//        System.out.println(player.getVelocity());
-//        
-//        player.totalHeight = new Vector2(0, 0);
-//        player.totalTime = 0f;
-        if (player.canJump()) {
-            player.setVelocity(new Vector2(0, 316));
-            player.jump();
+        if (player.onGround()) {
+            Vector2 vi = verticalMovementAxis.cpy().scl((float)Math.sqrt(-2*Polygon.scalarProject(gravity, verticalMovementAxis)*verticalMovementAxis.cpy().scl(100).len()));
+            Vector2 accel = vi.sub(Polygon.vectorProject(player.getVelocity(), verticalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+            player.applyAcceleration(accel);
+//            player.move(Gdx.graphics.getDeltaTime());
         }
     }
 
     /**
      * Creates a polygon based on the vectors passed in
      *
-     * @param polygon arraylist of vertices of the polygon
+     * @param polygon list of vertices of the polygon
      */
     public void createPolygon(ArrayList<Vector2> polygon, Color colour) {
         polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()]), colour));
     }
 
     /**
-     * Sets the gravity of the world, including direction and magnitude
-     *
-     * @param gravity - direction and magnitude
+     * Updates the gravity and horizontal/vertical direction vectors
+     * @param gravity the vector
      */
-    public void updateGravity(Vector2 gravity) {
+    public void setGravity(Vector2 gravity) {
+        // update gravity
         this.gravity = gravity;
+        // perpendicular to gravity
         horizontalMovementAxis = Polygon.getNormal(gravity).nor();
+        // parallel but opposite in dir to gravity
         verticalMovementAxis = gravity.cpy().nor().scl(-1);
     }
 
@@ -106,7 +114,7 @@ public class GameWorld {
      * @param playerPolygon arraylist of vertices
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon, Color colour) {
-        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour, this);
+        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour);
     }
 
     /**

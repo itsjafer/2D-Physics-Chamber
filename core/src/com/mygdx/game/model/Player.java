@@ -6,6 +6,7 @@ package com.mygdx.game.model;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.MyGdxGame;
 import static com.mygdx.game.model.Polygon.vectorProject;
 import java.util.ArrayList;
 
@@ -15,7 +16,6 @@ import java.util.ArrayList;
  */
 public class Player extends Polygon {
 
-    private GameWorld world;
     public static final float HORIZONTAL_ACCELERATION = 700f;
     public static final float JUMPING_ACCELERATION = 1500f;
     private Vector2 acceleration;
@@ -29,7 +29,7 @@ public class Player extends Polygon {
     public void setRestitution(float restitution) {
         this.restitution = restitution;
     }
-    private boolean canJump = false;
+    private boolean onGround = false;
     float collisionDepth;
     Vector2 collisionAxis;
     boolean collided;
@@ -41,7 +41,7 @@ public class Player extends Polygon {
     private float rotationSpeed;
     private float rotation;
 
-    public Player(Vector2[] vertices, Color colour, GameWorld world) {
+    public Player(Vector2[] vertices, Color colour) {
         super(vertices, colour);
         velocity = new Vector2();
         acceleration = new Vector2();
@@ -57,12 +57,12 @@ public class Player extends Polygon {
         rotationSpeed = 0f;
         rotation = 0f;
 
-        canJump = false;
-        this.world = world;
+        onGround = false;
     }
 
     public void move(float deltaTime) {
-
+        
+        onGround = false;
         totalTime += deltaTime;
 
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
@@ -73,20 +73,15 @@ public class Player extends Polygon {
             vertex.add(movement);
         }
         updateCenter();
-
-//        rotate(deltaTime);
+        rotate(deltaTime);
     }
 
     public Vector2 getCenter() {
         return center;
     }
 
-    public void jump() {
-        canJump = false;
-    }
-
-    public boolean canJump() {
-        return canJump;
+    public boolean onGround() {
+        return onGround;
     }
 
     public Vector2 getVelocity() {
@@ -132,8 +127,9 @@ public class Player extends Polygon {
     }
 
     public void collidePhysics() {
-        if (scalarProject(velocity, world.getGravity()) > 0) {
-            canJump = true;
+        if (scalarProject(velocity, MyGdxGame.WORLD.getGravity()) > 0) {
+            System.out.println("CAN JUMP");
+            onGround = true;
         }
 
         Vector2 displacement = getNormal(collisionAxis).nor().scl(-collisionDepth);

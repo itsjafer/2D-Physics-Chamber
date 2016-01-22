@@ -31,6 +31,8 @@ public class LevelLoader {
 
     /**
      * Saves the position of the polygons and the player
+     * @param index 
+     * @param slotName
      */
     public void saveLevel(int index, String slotName) {
         try {
@@ -92,7 +94,7 @@ public class LevelLoader {
         //setting the Gravity
         slotNames[index] = input.nextLine();
         input.nextLine();
-        world.updateGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
+        world.setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
 
         String nextWord = ""; //temporary variable that stores the next string in the file
 

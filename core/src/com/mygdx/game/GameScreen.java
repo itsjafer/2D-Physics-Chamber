@@ -198,7 +198,7 @@ public class GameScreen extends MyScreen {
         //player movement
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
-                world.jumpPlayer();
+                world.playerJump = true;
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
             }
