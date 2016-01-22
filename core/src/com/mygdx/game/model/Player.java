@@ -201,8 +201,7 @@ public class Player extends Polygon {
         bump(mtv);
 
         // some test rotation code... it's just rotating the player by the mtv... completely incorrect and poorly written
-        if (doRotate)
-        {
+        if (doRotate) {
             if (!Float.isNaN(mtv.len() * (float) Math.atan2(mtv.y, mtv.x) * Math.signum((float) Math.cos(mtv.y / mtv.x)))) {
                 rotationSpeed += mtv.len() * (float) Math.atan2(mtv.y, mtv.x) * Math.signum(Math.cos(mtv.y / mtv.x) * world.getRestitution());
                 rotationSpeed *= -1;
@@ -211,16 +210,26 @@ public class Player extends Polygon {
     }
 
     /**
-     * Clears the player's acceleration. Used to maintain newton's first law of motion (only applied forces change a body's velocity)
+     * Clears the player's acceleration. Used to maintain newton's first law of
+     * motion (only applied forces change a body's velocity)
      */
     public void clearAcceleration() {
         acceleration.set(Vector2.Zero);
     }
 
+    /**
+     * Add acceleration to the player's current acceleration
+     *
+     * @param acceleration the ammount to add
+     */
     public void applyAcceleration(Vector2 acceleration) {
         this.acceleration.add(acceleration);
     }
 
+    /**
+     * 
+     * @param polygons 
+     */
     public void updateCollisionStatus(ArrayList<Polygon> polygons) {
         collided = false;
         // The player's normals
