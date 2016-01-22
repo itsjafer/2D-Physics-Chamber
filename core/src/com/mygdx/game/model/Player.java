@@ -13,36 +13,53 @@ import java.util.ArrayList;
 
 /**
  *
- * @author branc2347
+ * @author branc2347 jafer
  */
 public class Player extends Polygon {
 
+    //initializing movement variables
     public static final float RUN_SPEED = 100f;
     public static final float JUMP_DISTANCE = 100f;
-    
     private Vector2 acceleration;
+    private boolean onGround;
+    Vector2 totalHeight = new Vector2(0, 0);
+    Vector2 startPos;
+    Vector2 velocity;
+    private float rotationSpeed;
+    private float rotation;
+    //environmental factors affecting the player
     private float friction = 0f;
     private float restitution = 1f;
-    
+    //collision variables
+    float collisionDepth;
+    Vector2 collisionAxis;
+    boolean collided;
+    Vector2 center;
+    float totalTime = 0f;
+
+    /**
+     * Sets the amount of friction affecting the player
+     *
+     * @param friction the new friction
+     */
     public void setFriction(float friction) {
         this.friction = friction;
     }
 
+    /**
+     * Sets the level of restitution of the player
+     *
+     * @param restitution the new restitution to be applied
+     */
     public void setRestitution(float restitution) {
         this.restitution = restitution;
     }
-    private boolean onGround = false;
-    float collisionDepth;
-    Vector2 collisionAxis;
-    boolean collided;
-    Vector2 velocity;
-    Vector2 center;
-    Vector2 startPos;
-    Vector2 totalHeight = new Vector2(0, 0);
-    float totalTime = 0f;
-    private float rotationSpeed;
-    private float rotation;
 
+    /**
+     * Player constructor creates a moveable polygon using a colour and vertices
+     * @param vertices 
+     * @param colour 
+     */
     public Player(Vector2[] vertices, Color colour) {
         super(vertices, colour);
         velocity = new Vector2();
@@ -63,7 +80,7 @@ public class Player extends Polygon {
     }
 
     public void move(float deltaTime) {
-        
+
         onGround = false;
         totalTime += deltaTime;
 
@@ -270,18 +287,16 @@ public class Player extends Polygon {
             velocity = parallelComponent.add(normalComponent);
         }
     }
-    
-    public float runningSpeed(Vector2 horizontalMovementAxis)
-    {
+
+    public float runningSpeed(Vector2 horizontalMovementAxis) {
         return scalarProject(velocity, horizontalMovementAxis);
     }
-    public Vector2 runningVelocity(Vector2 horizontalMovementAxis)
-    {
+
+    public Vector2 runningVelocity(Vector2 horizontalMovementAxis) {
         return vectorProject(velocity, horizontalMovementAxis);
     }
-    
-    public Vector2 accelerationToVelocity(Vector2 movementAxis, Vector2 desiredMovementVelocity)
-    {
-        return desiredMovementVelocity.sub(vectorProject(velocity, movementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+
+    public Vector2 accelerationToVelocity(Vector2 movementAxis, Vector2 desiredMovementVelocity) {
+        return desiredMovementVelocity.sub(vectorProject(velocity, movementAxis)).scl(1f / Gdx.graphics.getDeltaTime());
     }
 }

@@ -213,9 +213,11 @@ public class GameScreen extends MyScreen {
         //pressing ctrl results in toggle of rectangle mode
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
             if (rectangleMode) {
-                Vector2 temp = potentialPolygon.get(0);
-                potentialPolygon.clear();
-                potentialPolygon.add(temp);
+                if (!potentialPolygon.isEmpty()) {
+                    Vector2 temp = potentialPolygon.get(0);
+                    potentialPolygon.clear();
+                    potentialPolygon.add(temp);
+                }
                 rectangleMode = false;
             } else {
                 rectangleMode = true;
