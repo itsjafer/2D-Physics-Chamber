@@ -24,6 +24,7 @@ public class Player extends Polygon {
     private Vector2 acceleration;
     private Vector2 velocity;
     private Vector2 center;
+    // the player's spawn position
     private Vector2 startPos;
 
     private boolean onGround;
@@ -63,6 +64,7 @@ public class Player extends Polygon {
         velocity.set(0, 0);
         acceleration.set(0, 0);
         updateCenter();
+        // the player starts at this position
         startPos = center.cpy();
 
         collided = false;
