@@ -85,11 +85,12 @@ public class GameWorld {
      * Moves the player left
      */
     public void movePlayerLeft() {
+        System.out.println("moving him right");
         // only apply movement if the player's speed is smaller than the running speed
-        if (player.runningSpeed(horizontalMovementAxis) >= Player.RUN_SPEED)
+        if (player.runningSpeed(horizontalMovementAxis) <= -Player.RUN_SPEED)
             return;
         // get the "instantaneous" acceleration to achieve the desired velocity
-        Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(Player.RUN_SPEED));
+        Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(-Player.RUN_SPEED));
         player.applyAcceleration(accel);
     }
 
@@ -110,9 +111,9 @@ public class GameWorld {
     }
 
     /**
-     * Creates a polygon based on the vectors passed in
-     *
+     * Creates a polygon and adds it to the list
      * @param polygon list of vertices of the polygon
+     * @param colour the color of the new polygon
      */
     public void createPolygon(ArrayList<Vector2> polygon, Color colour) {
         polygons.add(new Polygon(polygon.toArray(new Vector2[polygon.size()]), colour));
@@ -133,16 +134,13 @@ public class GameWorld {
 
     /**
      * Get the gravity of the world, including direction and magnitude
-     *
-     * @return gravity - direction and magnitude
      */
     public Vector2 getGravity() {
         return this.gravity;
     }
 
     /**
-     * Getter method for the polygons arraylist
-     *
+     * Get the polygon list
      * @return
      */
     public ArrayList<Polygon> getPolygons() {
@@ -151,23 +149,18 @@ public class GameWorld {
 
     /**
      * Creates the player based on the vectors passed in
-     *
      * @param playerPolygon arraylist of vertices
+     * @param colour the color of the player
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon, Color colour) {
         player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour);
     }
 
     /**
-     * Getter method for the player polygon
-     *
+     * Get the player
      * @return
      */
     public Player getPlayer() {
         return player;
-    }
-
-    public void deletePlayer() {
-        player = null;
     }
 }

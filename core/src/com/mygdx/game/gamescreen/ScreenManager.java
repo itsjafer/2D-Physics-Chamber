@@ -9,6 +9,7 @@ import com.mygdx.game.GameMenu;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.MainMenuScreen;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.input.GameInputs;
 import java.util.HashMap;
 
 /**
@@ -73,6 +74,8 @@ public class ScreenManager {
         currentGameState = activeScreens.get(screen);
         // resize the screen to potentially updated screen dimensions
         currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
+        // Clear all the stored inputs screen
+        GameInputs.reset();
     }
 
     /**

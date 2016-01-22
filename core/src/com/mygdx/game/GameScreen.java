@@ -224,6 +224,7 @@ public class GameScreen extends MyScreen {
 
         //pressing esc takes you to the main menu
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
+            System.out.println("ESCAPE");
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
 

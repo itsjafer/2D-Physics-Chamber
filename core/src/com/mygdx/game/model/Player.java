@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class Player extends Polygon {
 
-    public static final float RUN_SPEED = 70f;
+    public static final float RUN_SPEED = 100f;
     public static final float JUMP_DISTANCE = 100f;
     
     private Vector2 acceleration;

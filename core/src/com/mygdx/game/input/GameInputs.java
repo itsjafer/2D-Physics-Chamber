@@ -18,7 +18,7 @@ public class GameInputs {
     // The valid keys
     public static enum Keys {
 
-        UP, ENTER, ESCAPE, P, TAB, W, A, S, D, CTRL, SHIFT;
+        ENTER, ESCAPE, P, TAB, W, A, S, D, CTRL, SHIFT;
     }
 
     public static enum MouseButtons {
@@ -39,9 +39,17 @@ public class GameInputs {
     private static HashMap<MouseButtons, Boolean> mouseButtonsHeldDown;
 
     /**
-     * Initializes the key and mouse storage
+     * Start up
      */
     static {
+        init();
+    }
+    
+    /**
+     * Initializes the key and mouse storage
+     */
+    private static void init()
+    {
         mousePosition = new Vector2();
         mouseMoved = false;
         // set each key state to false
@@ -59,6 +67,11 @@ public class GameInputs {
         }
         // mouseButtonsDown should start as the same as the normal mouseButtonsDown
         mouseButtonsHeldDown = (HashMap<MouseButtons, Boolean>) mouseButtonsDown.clone();
+    }
+    
+    public static void reset()
+    {
+        init();
     }
 
     /**

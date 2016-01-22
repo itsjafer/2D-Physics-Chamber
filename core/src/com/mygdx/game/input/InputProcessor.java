@@ -24,9 +24,6 @@ public class InputProcessor extends InputAdapter {
     {
         GameInputs.Keys key = null;
         switch (keyCode) {
-            case Input.Keys.UP:
-                key = GameInputs.Keys.UP;
-                break;
             case Input.Keys.ENTER:
                 key = GameInputs.Keys.ENTER;
                 break;

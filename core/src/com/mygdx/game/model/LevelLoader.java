@@ -79,8 +79,7 @@ public class LevelLoader {
      * Loads the level based on the information in levels.txt
      */
     public void loadLevel(int index) {
-        //delete any existing polygons from the level
-        world.getPolygons().clear();
+        world.reset();
 
         //loading the file to be read from
         FileReader file = null;
@@ -114,9 +113,7 @@ public class LevelLoader {
             }
         } else {
             nextWord = input.nextLine();
-            world.deletePlayer();
         }
-        System.out.println(nextWord);
         //creating the polygons
         if (nextWord.contains("Polygon")) {
             while (true) {
