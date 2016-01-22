@@ -18,13 +18,13 @@ public class GameWorld {
     private float friction;
     // The bounciness the player has
     private float restitution;
-    
+
     private Vector2 gravity;
     // Axis on which the player jumps (unit vector)
     private Vector2 horizontalMovementAxis;
     // Axis on which the player runs (unit vector)
     private Vector2 verticalMovementAxis;
-    
+
     private ArrayList<Polygon> polygons;
     private Player player;
 
@@ -183,6 +183,7 @@ public class GameWorld {
 
     /**
      * Sets the friction
+     *
      * @param friction
      */
     public void setFriction(float friction) {
@@ -199,7 +200,8 @@ public class GameWorld {
 
     /**
      * Set the world's restitution
-     * @param restitution 
+     *
+     * @param restitution
      */
     public void setRestitution(float restitution) {
         this.restitution = restitution;
