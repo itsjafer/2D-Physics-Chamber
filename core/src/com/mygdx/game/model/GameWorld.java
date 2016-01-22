@@ -159,7 +159,7 @@ public class GameWorld {
      * @param colour the color of the player
      */
     public void createPlayer(ArrayList<Vector2> playerPolygon, Color colour) {
-        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour);
+        player = new Player(playerPolygon.toArray(new Vector2[playerPolygon.size()]), colour, friction, restitution);
     }
 
     /**
@@ -169,5 +169,21 @@ public class GameWorld {
      */
     public Player getPlayer() {
         return player;
+    }
+
+    public float getFriction() {
+        return friction;
+    }
+
+    public void setFriction(float friction) {
+        this.friction = friction;
+    }
+
+    public float getRestitution() {
+        return restitution;
+    }
+
+    public void setRestitution(float restitution) {
+        this.restitution = restitution;
     }
 }

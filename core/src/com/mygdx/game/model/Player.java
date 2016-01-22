@@ -57,14 +57,16 @@ public class Player extends Polygon {
 
     /**
      * Player constructor creates a moveable polygon using a colour and vertices
-     * @param vertices 
-     * @param colour 
+     *
+     * @param vertices
+     * @param colour
      */
-    public Player(Vector2[] vertices, Color colour) {
+    public Player(Vector2[] vertices, Color colour, Float friction, Float restitution) {
         super(vertices, colour);
         velocity = new Vector2();
         acceleration = new Vector2();
-
+        this.friction = friction;
+        this.restitution = restitution;
         center = new Vector2();
         updateCenter();
         startPos = center.cpy();
