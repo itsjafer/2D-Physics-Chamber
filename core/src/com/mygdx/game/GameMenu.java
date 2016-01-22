@@ -31,6 +31,7 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.gamescreen.MyScreen;
 import com.mygdx.game.gamescreen.ScreenManager;
 import com.mygdx.game.input.GameInputs;
+import com.mygdx.game.model.GameWorld;
 
 /**
  *
@@ -49,6 +50,7 @@ public class GameMenu extends MyScreen {
     Color drawColour;
     ImageButton colourPalette;
     Pixmap canvas;
+    GameWorld world;
     boolean choosingColour;
 
     public GameMenu(ScreenManager gameStateManager, GameScreen background) {
@@ -58,7 +60,7 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void init() {
-
+        world = MyGdxGame.WORLD;
         //for all the buttons/sliders
         stage = new Stage();
         //for the colour palette 
@@ -171,22 +173,25 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
+
         if (Gdx.input.getInputProcessor() != lastUsedMultiplexer) {
             Gdx.input.setInputProcessor(lastUsedMultiplexer);
         }
-        if(gravitySliderX.getValue() != MyGdxGame.WORLD.getGravity().x){
-            gravitySliderX.setValue(MyGdxGame.WORLD.getGravity().x);
-        }
-        if(gravitySliderY.getValue() != MyGdxGame.WORLD.getGravity().y){
-            gravitySliderY.setValue(MyGdxGame.WORLD.getGravity().y);
-        }
-        if(gravitySliderX.getValue() != MyGdxGame.WORLD.getGravity().x){
-            gravitySliderX.setValue(MyGdxGame.WORLD.getGravity().x);
-        }
-        if(gravitySliderY.getValue() != MyGdxGame.WORLD.getGravity().y){
-            gravitySliderY.setValue(MyGdxGame.WORLD.getGravity().y);
-        }
+
         processInput();
+
+        if (gravitySliderX.getValue() != world.getGravity().x) {
+            gravitySliderX.setValue(MyGdxGame.WORLD.getGravity().x);
+        }
+        if (gravitySliderY.getValue() != world.getGravity().y) {
+            gravitySliderY.setValue(MyGdxGame.WORLD.getGravity().y);
+        }
+        if (restitutionSlider.getValue() != world.getRestitution()) {
+            restitutionSlider.setValue(world.getRestitution());
+        }
+        if (frictionSlider.getValue() != world.getFriction()) {
+            restitutionSlider.setValue(world.getFriction());
+        }
     }
 
     @Override
@@ -226,23 +231,84 @@ public class GameMenu extends MyScreen {
     public void dispose() {
     }
 
-    //to avoid the clutter of code
+    @Override
+    public void processInput() {
+        if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
+        if (resetPlayer.isChecked()) {
+            //if the player exists, reset the location of the player
+            resetPlayer.setChecked(false);
+            background.resetPlayer();
+            background.update(Gdx.graphics.getDeltaTime());
+        }
+        if (resetLevel.isChecked()) {
+            resetLevel.setChecked(false);
+            background.resetLevel();
+        }
+//        if (gravitySliderX.isDragging()) {
+//            world.setGravity(new Vector2(gravitySliderX.getVisualValue(), world.getGravity().y));
+//            labelGravityX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
+//        }
+//        if (gravitySliderY.isDragging()) {
+//            world.setGravity(new Vector2(world.getGravity().x, gravitySliderY.getVisualValue()));
+//            labelGravityY.setText("Gravity y-dir: " + gravitySliderY.getVisualValue());
+//        }
+        if (snapToGrid.isChecked()) {
+            background.gridMode = true;
+        } else if (!snapToGrid.isChecked()) {
+            background.gridMode = false;
+        }
+        if (colours.isChecked()) {
+            colours.setChecked(false);
+            choosingColour = true;
+            Gdx.input.setInputProcessor(im2);
+            lastUsedMultiplexer = im2;
+        }
+        if (backToMenu.isChecked()) {
+            backToMenu.setChecked(false);
+            choosingColour = false;
+            Gdx.input.setInputProcessor(im);
+            lastUsedMultiplexer = im;
+        }
+        if (backToGame.isChecked()) {
+            backToGame.setChecked(false);
+            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
+//        if (restitutionSlider.isDragging()) {
+//            if (world.getPlayer() != null) {
+//                world.getPlayer().setRestitution(restitutionSlider.getVisualValue());
+//                labelRestitution.setText("Restitution: " + restitutionSlider.getVisualValue());
+//            } else {
+//                labelRestitution.setText("Create player first.");
+//            }
+//        }
+//        if (frictionSlider.isDragging()) {
+//            if (world.getPlayer() != null) {
+//                world.getPlayer().setFriction(frictionSlider.getVisualValue());
+//                labelFriction.setText("Friction: " + frictionSlider.getVisualValue());
+//            } else {
+//                labelFriction.setText("Create player first.");
+//            }
+//        }
+    }
+
     public void addInputs() {
-        resetPlayer.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //if the player exists, reset the location of the player
-                background.resetPlayer();
-                background.update(Gdx.graphics.getDeltaTime());
-            }
-        });
-        resetLevel.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //if the player exists, reset the location of the player
-                background.resetLevel();
-            }
-        });
+//        resetPlayer.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                //if the player exists, reset the location of the player
+//                background.resetPlayer();
+//                background.update(Gdx.graphics.getDeltaTime());
+//            }
+//        });
+//        resetLevel.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                //if the player exists, reset the location of the player
+//                background.resetLevel();
+//            }
+//        });
         gravitySliderY.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
@@ -257,49 +323,49 @@ public class GameMenu extends MyScreen {
                 labelGravityX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
             }
         });
-        snapToGrid.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
-                if (snapToGrid.isChecked()) {
-                    background.gridMode = true;
-                } else if (!snapToGrid.isChecked()) {
-                    background.gridMode = false;
-                }
-            }
-        });
+//        snapToGrid.addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+//                if (snapToGrid.isChecked()) {
+//                    background.gridMode = true;
+//                } else if (!snapToGrid.isChecked()) {
+//                    background.gridMode = false;
+//                }
+//            }
+//        });
         colourPalette.addListener(new DragListener() {
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 setColour((int) x, (int) y);
             }
         });
-        colours.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                choosingColour = true;
-                Gdx.input.setInputProcessor(im2);
-                lastUsedMultiplexer = im2;
-            }
-        });
-        backToMenu.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                choosingColour = false;
-                Gdx.input.setInputProcessor(im);
-                lastUsedMultiplexer = im;
-            }
-        });
-        backToGame.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-            }
-        });
+//        colours.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                choosingColour = true;
+//                Gdx.input.setInputProcessor(im2);
+//                lastUsedMultiplexer = im2;
+//            }
+//        });
+//        backToMenu.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                choosingColour = false;
+//                Gdx.input.setInputProcessor(im);
+//                lastUsedMultiplexer = im;
+//            }
+//        });
+//        backToGame.addListener(new ClickListener() {
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+//            }
+//        });
         restitutionSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
-                if (background.world.getPlayer() != null) {
-                    background.world.getPlayer().setRestitution(restitutionSlider.getVisualValue());
+                if (world.getPlayer() != null) {
+                    world.setRestitution(restitutionSlider.getValue());
                     labelRestitution.setText("Restitution: " + restitutionSlider.getVisualValue());
                 } else {
                     labelRestitution.setText("Create player first.");
@@ -309,9 +375,9 @@ public class GameMenu extends MyScreen {
         frictionSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
-                if (background.world.getPlayer() != null) {
-                    background.world.getPlayer().setFriction(frictionSlider.getVisualValue());
-                    labelFriction.setText("Friction: " + frictionSlider.getVisualValue());
+                if (world.getPlayer() != null) {
+                    world.setFriction(frictionSlider.getVisualValue());
+                    labelFriction.setText("Friction: " + frictionSlider.getValue());
                 } else {
                     labelFriction.setText("Create player first.");
                 }
@@ -323,12 +389,5 @@ public class GameMenu extends MyScreen {
         drawColour = new Color(canvas.getPixel(xPos, (canvas.getHeight() - yPos)));
         sampleColourButton.setColor(drawColour);
         background.drawColour = drawColour;
-    }
-
-    @Override
-    public void processInput() {
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
-            gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-        }
     }
 }
