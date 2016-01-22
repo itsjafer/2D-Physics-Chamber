@@ -52,8 +52,6 @@ public class ScreenManager {
             currentGameState.dispose();
         }
 
-        ////////////////// IMPORTANT  FIX THE DEFAULT THING... WITH THE PARAMATER THING SAVE/LOAD..
-
         // Initialize each screen based on its requirements
         switch (screen) {
             case GAME_MENU:
@@ -73,6 +71,7 @@ public class ScreenManager {
                 break;
         }
         currentGameState = activeScreens.get(screen);
+        // resize the screen to potentially updated screen dimensions
         currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
     }
 
