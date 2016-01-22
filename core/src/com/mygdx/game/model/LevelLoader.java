@@ -23,15 +23,15 @@ public class LevelLoader {
     GameWorld world;
     String[] slotNames;
 
-    public LevelLoader() 
-    {
-       world = MyGdxGame.WORLD;
-       slotNames = new String[3];
+    public LevelLoader() {
+        world = MyGdxGame.WORLD;
+        slotNames = new String[3];
     }
 
     /**
      * Saves the position of the polygons and the player
-     * @param index 
+     *
+     * @param index
      * @param slotName
      */
     public void saveLevel(int index, String slotName) {
@@ -137,9 +137,19 @@ public class LevelLoader {
             }
         }
     }
-    
-    public String getSlotName(int index)
-    {
+
+    public String getSlotName(int index) {
+        if (slotNames[index].isEmpty()) {
+            FileReader file = null;
+            try {
+                file = new FileReader("level" + index + ".txt");
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
+
+            slotNames[index] = input.nextLine();
+        }
         return slotNames[index];
     }
 }
