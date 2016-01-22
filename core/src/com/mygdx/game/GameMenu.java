@@ -173,6 +173,8 @@ public class GameMenu extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
+        processInput();
+
         if (Gdx.input.getInputProcessor() != lastUsedMultiplexer) {
             Gdx.input.setInputProcessor(lastUsedMultiplexer);
         }
@@ -182,13 +184,12 @@ public class GameMenu extends MyScreen {
         if (gravitySliderY.getValue() != world.getGravity().y) {
             gravitySliderY.setValue(MyGdxGame.WORLD.getGravity().y);
         }
-        if (restitutionSlider.getValue() == 0) {
-            gravitySliderX.setValue(MyGdxGame.WORLD.getGravity().x);
+        if (restitutionSlider.getValue() != world.getRestitution()) {
+            restitutionSlider.setValue(world.getRestitution());
         }
-        if (gravitySliderY.getValue() != world.getGravity().y) {
-            gravitySliderY.setValue(MyGdxGame.WORLD.getGravity().y);
+        if (frictionSlider.getValue() != world.getFriction()) {
+            restitutionSlider.setValue(world.getFriction());
         }
-        processInput();
     }
 
     @Override
@@ -244,11 +245,11 @@ public class GameMenu extends MyScreen {
             background.resetLevel();
         }
         if (gravitySliderX.isDragging()) {
-            background.world.setGravity(new Vector2(gravitySliderX.getVisualValue(), background.world.getGravity().y));
+            world.setGravity(new Vector2(gravitySliderX.getVisualValue(), world.getGravity().y));
             labelGravityX.setText("Gravity x-dir: " + gravitySliderX.getVisualValue());
         }
         if (gravitySliderY.isDragging()) {
-            background.world.setGravity(new Vector2(background.world.getGravity().x, gravitySliderY.getVisualValue()));
+            world.setGravity(new Vector2(world.getGravity().x, gravitySliderY.getVisualValue()));
             labelGravityY.setText("Gravity y-dir: " + gravitySliderY.getVisualValue());
         }
         if (snapToGrid.isChecked()) {
@@ -273,16 +274,16 @@ public class GameMenu extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
         if (restitutionSlider.isDragging()) {
-            if (background.world.getPlayer() != null) {
-                background.world.getPlayer().setRestitution(restitutionSlider.getVisualValue());
+            if (world.getPlayer() != null) {
+                world.getPlayer().setRestitution(restitutionSlider.getVisualValue());
                 labelRestitution.setText("Restitution: " + restitutionSlider.getVisualValue());
             } else {
                 labelRestitution.setText("Create player first.");
             }
         }
         if (frictionSlider.isDragging()) {
-            if (background.world.getPlayer() != null) {
-                background.world.getPlayer().setFriction(frictionSlider.getVisualValue());
+            if (world.getPlayer() != null) {
+                world.getPlayer().setFriction(frictionSlider.getVisualValue());
                 labelFriction.setText("Friction: " + frictionSlider.getVisualValue());
             } else {
                 labelFriction.setText("Create player first.");
