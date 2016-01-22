@@ -147,6 +147,14 @@ public class GameWorld {
     public Vector2 getGravity() {
         return this.gravity;
     }
+    
+    /**
+     * @return the vertical movement axis
+     */
+    public Vector2 getVerticalMovementAxis()
+    {
+        return verticalMovementAxis;
+    }
 
     /**
      * Get the polygon list
