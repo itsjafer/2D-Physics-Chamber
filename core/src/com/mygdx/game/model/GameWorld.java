@@ -70,8 +70,8 @@ public class GameWorld {
             if (!polygons.isEmpty()) {
                 player.collideWithPolygons(polygons);
             }
-            // update the player
-            player.update();
+            // clear the player's acceleration for the next loop
+            player.clearAcceleration();
         }
     }
 

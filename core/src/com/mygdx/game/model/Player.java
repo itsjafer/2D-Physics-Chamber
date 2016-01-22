@@ -210,7 +210,7 @@ public class Player extends Polygon {
         }
     }
 
-    public void update() {
+    public void clearAcceleration() {
         acceleration.set(Vector2.Zero);
     }
 
