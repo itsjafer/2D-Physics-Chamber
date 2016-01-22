@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class Player extends Polygon {
 
     // MOVEMENT STUFF
-    public static final float RUN_SPEED = 100f;
+    public static final float RUN_SPEED = 150f;
     public static final float JUMP_DISTANCE = 100f;
 
     private Vector2 acceleration;
@@ -329,8 +329,17 @@ public class Player extends Polygon {
         checkForCollisions(polygons);
 
         if (collided) {
-            doCollision();
+            // Run the collision loop 4 times just to make sure the polygon isn't colliding with anything (since the player could be colliding with multiple at once)
+            // A way to improve this would be to store a list of all the polygons currently in collision with  the player, and then run this loop while that list is not empty
+            // in this loop, the checks will be made for these polygons, as well as the rest in the world (since moving the player out of collision can cause other collisions)
+            int numChecks = 0;
+            while (collided && numChecks < 4) {
+                doCollision();
+                checkForCollisions(polygons);
+                numChecks++;
+            }
 
+            ///// Apply movement transformations on the basis of the last polygon the player has collided with
             // The component of velocity parallel to the collision axis
             Vector2 parallelComponent = VectorMath.vectorProject(velocity, collisionAxis);
             // friction 0 means 100% conservation of momentum
@@ -346,15 +355,31 @@ public class Player extends Polygon {
         }
     }
 
-    public float runningSpeed(Vector2 horizontalMovementAxis) {
-        return VectorMath.scalarProject(velocity, horizontalMovementAxis);
+    /**
+     * @param movementAxis the axis onto which the velocity is to be projected
+     * @return the magnitude of the player's velocity projected onto the
+     * movement axis
+     */
+    public float getRunningSpeed(Vector2 movementAxis) {
+        return VectorMath.scalarProject(velocity, movementAxis);
     }
 
-    public Vector2 runningVelocity(Vector2 horizontalMovementAxis) {
-        return VectorMath.vectorProject(velocity, horizontalMovementAxis);
+    /**
+     * @param movementAxis the axis onto which the velocity is to be projected
+     * @return the player's velocity projected onto the movement axis
+     */
+    public Vector2 getRunningVelocity(Vector2 movementAxis) {
+        return VectorMath.vectorProject(velocity, movementAxis);
     }
 
-    public Vector2 accelerationToVelocity(Vector2 movementAxis, Vector2 desiredMovementVelocity) {
-        return desiredMovementVelocity.sub(VectorMath.vectorProject(velocity, movementAxis)).scl(1f / Gdx.graphics.getDeltaTime());
+    /**
+     * @param movementAxis the direction of the movement
+     * @param desiredMovementVelocity
+     * @param time
+     * @return the necessary acceleration to set the player's velocity to the
+     * desired velocity in the desired direction, in the desired time
+     */
+    public Vector2 getInstantaneousAcceleration(Vector2 movementAxis, Vector2 desiredMovementVelocity, float time) {
+        return desiredMovementVelocity.sub(VectorMath.vectorProject(velocity, movementAxis)).scl(1f / time);
     }
 }

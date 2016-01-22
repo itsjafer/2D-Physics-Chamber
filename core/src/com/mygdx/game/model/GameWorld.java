@@ -4,6 +4,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
@@ -80,11 +81,11 @@ public class GameWorld {
      */
     public void movePlayerRight() {
         // only apply movement if the player's speed is smaller than the running speed
-        if (player.runningSpeed(horizontalMovementAxis) >= Player.RUN_SPEED) {
+        if (player.getRunningSpeed(horizontalMovementAxis) >= Player.RUN_SPEED) {
             return;
         }
         // get the "instantaneous" acceleration to achieve the desired velocity
-        Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(Player.RUN_SPEED));
+        Vector2 accel = player.getInstantaneousAcceleration(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(Player.RUN_SPEED), Gdx.graphics.getDeltaTime());
         player.applyAcceleration(accel);
     }
 
@@ -93,11 +94,11 @@ public class GameWorld {
      */
     public void movePlayerLeft() {
         // only apply movement if the player's speed is smaller than the running speed
-        if (player.runningSpeed(horizontalMovementAxis) <= -Player.RUN_SPEED) {
+        if (player.getRunningSpeed(horizontalMovementAxis) <= -Player.RUN_SPEED) {
             return;
         }
         // get the "instantaneous" acceleration to achieve the desired velocity
-        Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(-Player.RUN_SPEED));
+        Vector2 accel = player.getInstantaneousAcceleration(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(-Player.RUN_SPEED), Gdx.graphics.getDeltaTime());
         player.applyAcceleration(accel);
     }
 
@@ -112,7 +113,7 @@ public class GameWorld {
             // and apply that resulting Vi onto the desired axis
             Vector2 verticalVel = verticalMovementAxis.cpy().scl((float) Math.sqrt(-2 * VectorMath.scalarProject(gravity, verticalMovementAxis) * verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
             // get the "instantaneous" acceleration to achieve the desired velocity
-            Vector2 accel = player.accelerationToVelocity(verticalMovementAxis, verticalVel);
+            Vector2 accel = player.getInstantaneousAcceleration(verticalMovementAxis, verticalVel, Gdx.graphics.getDeltaTime());
             player.applyAcceleration(accel);
         }
     }
