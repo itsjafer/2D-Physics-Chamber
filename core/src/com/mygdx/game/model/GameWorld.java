@@ -4,7 +4,6 @@
  */
 package com.mygdx.game.model;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
@@ -85,7 +84,6 @@ public class GameWorld {
      * Moves the player left
      */
     public void movePlayerLeft() {
-        System.out.println("moving him right");
         // only apply movement if the player's speed is smaller than the running speed
         if (player.runningSpeed(horizontalMovementAxis) <= -Player.RUN_SPEED)
             return;
