@@ -8,8 +8,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.mygdx.game.input.GameInputs;
-import com.mygdx.game.gamestate.ScreenManager;
-import com.mygdx.game.gamestate.MyScreen;
+import com.mygdx.game.gamescreen.ScreenManager;
+import com.mygdx.game.gamescreen.MyScreen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.GridPoint2;
@@ -62,11 +62,11 @@ public class GameScreen extends MyScreen {
     @Override
     public void init() {
         //initializing all variables
-        camera = new OrthographicCamera();
+        camera = new OrthographicCamera(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
         shapeRenderer = new ShapeRenderer();
-        world = new GameWorld();
+        world = MyGdxGame.WORLD;
         potentialPolygon = new ArrayList();
         gridLayout = new ArrayList();
         lastPolygonMoved = new ArrayList();
@@ -95,10 +95,14 @@ public class GameScreen extends MyScreen {
     @Override
     public void render(float deltaTime) {
         // updates the camera to the world space
+//        if (world.getPlayer() != null) {
+//            camera.position.set(world.getPlayer().getCenter().x, world.getPlayer().getCenter().y, 0);
+//        }
         camera.update();
 
         //shapeRenderer initialization
         shapeRenderer.setAutoShapeType(true);
+        shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin();
 
         //draws the grid points
@@ -118,7 +122,6 @@ public class GameScreen extends MyScreen {
             }
         }
         validPos = true;
-
 
         for (Polygon polygon : world.getPolygons()) {
             //Checking and verifying polygon dragging
@@ -169,6 +172,7 @@ public class GameScreen extends MyScreen {
 
         //check to make sure the correct processor is in use
         if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
+            System.out.println("NEW INPTU SPROCES");
             Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
 
@@ -230,7 +234,6 @@ public class GameScreen extends MyScreen {
 
         //click the left mouse button
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-
             // Loop preventing the user from adding dupliate points to the potential polygon
             // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
             if (rectangleMode && potentialPolygon.size() == 4) {
@@ -286,12 +289,11 @@ public class GameScreen extends MyScreen {
             if (!potentialPolygon.isEmpty()) {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
-            if (rectangleMode)
-            {
+            if (rectangleMode) {
                 rectangleMode = false;
                 potentialPolygon.clear();
             }
-            
+
         }
 
         //pressing enter instantiates a polygon
@@ -439,7 +441,7 @@ public class GameScreen extends MyScreen {
         //store the original point to begin the rectangle from
         Vector2 origin = potentialPolygon.get(0);
         potentialPolygon.clear();
-        
+
         potentialPolygon.add(origin);
 
         //create the vertical and horizontal components of the rectangle
@@ -453,7 +455,7 @@ public class GameScreen extends MyScreen {
 
         shapeRenderer.line(origin, mouseDrawPos);
         shapeRenderer.line(horizontal, vertical);
-        
+
         //draw the rectangle
         for (int i = 0; i < potentialPolygon.size(); i++) {
             // Draw a dot at every point

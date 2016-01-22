@@ -6,6 +6,7 @@ package com.mygdx.game.input;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.mygdx.game.MyGdxGame;
 
 /**
  * The source of the input for the game
@@ -14,45 +15,86 @@ import com.badlogic.gdx.InputAdapter;
  */
 public class InputProcessor extends InputAdapter {
 
-    @Override
-    public boolean keyDown(int keyCode) {
-
-        // If the user has pressed a key recognized by the game, the key's flag is updated
+    /**
+     * Returns the corresponding key enum from GameInputs.Keys
+     * @param keyCode the numerical value of the key from InptutAdapter
+     * @return the corresponding key enum from GameInputs.Keys if it is found there; otherwise, return null
+     */
+    private GameInputs.Keys getKey(int keyCode)
+    {
+        GameInputs.Keys key = null;
         switch (keyCode) {
             case Input.Keys.UP:
-                GameInputs.setKey(GameInputs.Keys.UP, true);
+                key = GameInputs.Keys.UP;
                 break;
             case Input.Keys.ENTER:
-                GameInputs.setKey(GameInputs.Keys.ENTER, true);
+                key = GameInputs.Keys.ENTER;
                 break;
             case Input.Keys.ESCAPE:
-                GameInputs.setKey(GameInputs.Keys.ESCAPE, true);
+                key = GameInputs.Keys.ESCAPE;
                 break;
             case Input.Keys.P:
-                GameInputs.setKey(GameInputs.Keys.P, true);
+                key = GameInputs.Keys.P;
                 break;
             case Input.Keys.TAB:
-                GameInputs.setKey(GameInputs.Keys.TAB, true);
+                key = GameInputs.Keys.TAB;
                 break;
             case Input.Keys.W:
-                GameInputs.setKey(GameInputs.Keys.W, true);
+                key = GameInputs.Keys.W;
                 break;
             case Input.Keys.A:
-                GameInputs.setKey(GameInputs.Keys.A, true);
+                key = GameInputs.Keys.A;
                 break;
             case Input.Keys.S:
-                GameInputs.setKey(GameInputs.Keys.S, true);
+                key = GameInputs.Keys.S;
                 break;
             case Input.Keys.D:
-                GameInputs.setKey(GameInputs.Keys.D, true);
+                key = GameInputs.Keys.D;
                 break;
+            case Input.Keys.CONTROL_RIGHT:
             case Input.Keys.CONTROL_LEFT:
-                GameInputs.setKey(GameInputs.Keys.CTRL, true);
+                key = GameInputs.Keys.CTRL;
                 break;
-                case Input.Keys.SHIFT_LEFT:
-                GameInputs.setKey(GameInputs.Keys.SHIFT, true);
+            case Input.Keys.SHIFT_RIGHT:
+            case Input.Keys.SHIFT_LEFT:
+                key = GameInputs.Keys.SHIFT;
                 break;
         }
+        
+        return key;
+    }
+    
+    /**
+     * Returns the corresponding mouse button enum from GameInputs.MouseButtons
+     * @param button the numerical value of the mouse button from InptutAdapter
+     * @return the corresponding mouse button enum from GameInputs.MouseButtons if it is found there; otherwise, return null
+     */
+    private GameInputs.MouseButtons getButton(int button)
+    {
+        GameInputs.MouseButtons bttn = null;
+        switch (button) {
+            case 0:
+                bttn = GameInputs.MouseButtons.LEFT;
+                break;
+            case 1:
+                bttn = GameInputs.MouseButtons.RIGHT;
+                break;
+        }
+        return bttn;
+    }
+    
+/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    @Override
+    public boolean keyDown(int keyCode) {
+        // If the user has pressed a key recognized by the game, the key's flag is updated
+        GameInputs.Keys key = getKey(keyCode);
+        if (key != null)
+        {
+            GameInputs.setKey(key, true);
+        }
+        
         return true;
     }
 
@@ -60,41 +102,12 @@ public class InputProcessor extends InputAdapter {
     public boolean keyUp(int keyCode) {
 
         // If the user has pressed a key recognized by the game, the key's flag is updated
-        switch (keyCode) {
-            case Input.Keys.UP:
-                GameInputs.setKey(GameInputs.Keys.UP, false);
-                break;
-            case Input.Keys.ENTER:
-                GameInputs.setKey(GameInputs.Keys.ENTER, false);
-                break;
-            case Input.Keys.ESCAPE:
-                GameInputs.setKey(GameInputs.Keys.ESCAPE, false);
-                break;
-            case Input.Keys.P:
-                GameInputs.setKey(GameInputs.Keys.P, false);
-                break;
-            case Input.Keys.TAB:
-                GameInputs.setKey(GameInputs.Keys.TAB, false);
-                break;
-            case Input.Keys.W:
-                GameInputs.setKey(GameInputs.Keys.W, false);
-                break;
-            case Input.Keys.A:
-                GameInputs.setKey(GameInputs.Keys.A, false);
-                break;
-            case Input.Keys.S:
-                GameInputs.setKey(GameInputs.Keys.S, false);
-                break;
-            case Input.Keys.D:
-                GameInputs.setKey(GameInputs.Keys.D, false);
-                break;
-           case Input.Keys.CONTROL_LEFT:
-                GameInputs.setKey(GameInputs.Keys.CTRL, false);
-                break;
-               case Input.Keys.SHIFT_LEFT:
-                GameInputs.setKey(GameInputs.Keys.SHIFT, false);
-                break;
+        GameInputs.Keys key = getKey(keyCode);
+        if (key != null)
+        {
+            GameInputs.setKey(key, false);
         }
+        
         return true;
     }
 
@@ -104,38 +117,37 @@ public class InputProcessor extends InputAdapter {
     }
 
     @Override
-    public boolean touchDown(int i, int i1, int i2, int button) {
-        switch (button) {
-            case 0:
-                GameInputs.setMouseButton(GameInputs.MouseButtons.LEFT, true);
-                break;
-            case 1:
-                GameInputs.setMouseButton(GameInputs.MouseButtons.RIGHT, true);
-                break;
+    public boolean touchDown(int x, int y, int i2, int button) {
+        GameInputs.MouseButtons bttn = getButton(button);
+        if (bttn != null)
+        {
+            GameInputs.setMouseButton(bttn, true);
         }
         return true;
     }
 
     @Override
-    public boolean touchUp(int i, int i1, int i2, int button) {
-        switch (button) {
-            case 0:
-                GameInputs.setMouseButton(GameInputs.MouseButtons.LEFT, false);
-                break;
-            case 1:
-                GameInputs.setMouseButton(GameInputs.MouseButtons.RIGHT, false);
-                break;
+    public boolean touchUp(int x, int y, int i2, int button) {
+        GameInputs.MouseButtons bttn = getButton(button);
+        if (bttn != null)
+        {
+            GameInputs.setMouseButton(bttn, false);
         }
         return true;
     }
-
+    
     @Override
-    public boolean touchDragged(int i, int i1, int i2) {
+    public boolean touchDragged(int x, int y, int i2) {
+        // don't need to set mouse bttn down because that's already handled in touchDown
+        GameInputs.setMousePosition(x, MyGdxGame.HEIGHT-y);
+        GameInputs.moveMouse();
         return false;
     }
 
     @Override
-    public boolean mouseMoved(int i, int i1) {
+    public boolean mouseMoved(int x, int y) {
+        GameInputs.setMousePosition(x, MyGdxGame.HEIGHT-y);
+        GameInputs.moveMouse();
         return false;
     }
 

@@ -5,9 +5,7 @@
  */
 package com.mygdx.game.input;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.MyGdxGame;
 import java.util.HashMap;
 
 /**
@@ -29,9 +27,8 @@ public class GameInputs {
     }
 
     private static boolean mouseMoved;
-
     private static Vector2 mousePosition;
-    private static Vector2 oldMousePosition;
+    
     // boolean values corresponding to each key's pressed state
     private static HashMap<Keys, Boolean> keysDown;
     // boolean values corresponding to each key's long-pressed state
@@ -76,14 +73,12 @@ public class GameInputs {
             // If the mouse button's value is true, it has now been held down for two cycles, therefore it can be considered to be held down
             mouseButtonsHeldDown.put(mouseButton, mouseButtonsDown.get(mouseButton));
         }
-        oldMousePosition = mousePosition.cpy();
-        mousePosition.set(Gdx.input.getX(), MyGdxGame.HEIGHT - Gdx.input.getY());
-
-        if (mousePosition.x != oldMousePosition.x || mousePosition.y != oldMousePosition.y) {
-            mouseMoved = true;
-        } else {
-            mouseMoved = false;
-        }
+        mouseMoved = false;
+    }
+    
+    public static void moveMouse()
+    {
+        mouseMoved = true;
     }
 
     /**
@@ -163,6 +158,10 @@ public class GameInputs {
         mouseButtonsDown.put(button, state);
     }
 
+    public static void setMousePosition(int x, int y)
+    {
+        mousePosition.set(x, y);
+    }
     public static Vector2 getMousePosition() {
         return mousePosition.cpy();
     }
