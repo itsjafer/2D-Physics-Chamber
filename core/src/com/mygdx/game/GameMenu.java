@@ -174,6 +174,18 @@ public class GameMenu extends MyScreen {
         if (Gdx.input.getInputProcessor() != lastUsedMultiplexer) {
             Gdx.input.setInputProcessor(lastUsedMultiplexer);
         }
+        if(gravitySliderX.getValue() != MyGdxGame.WORLD.getGravity().x){
+            gravitySliderX.setValue(MyGdxGame.WORLD.getGravity().x);
+        }
+        if(gravitySliderY.getValue() != MyGdxGame.WORLD.getGravity().y){
+            gravitySliderY.setValue(MyGdxGame.WORLD.getGravity().y);
+        }
+        if(gravitySliderX.getValue() != MyGdxGame.WORLD.getGravity().x){
+            gravitySliderX.setValue(MyGdxGame.WORLD.getGravity().x);
+        }
+        if(gravitySliderY.getValue() != MyGdxGame.WORLD.getGravity().y){
+            gravitySliderY.setValue(MyGdxGame.WORLD.getGravity().y);
+        }
         processInput();
     }
 
