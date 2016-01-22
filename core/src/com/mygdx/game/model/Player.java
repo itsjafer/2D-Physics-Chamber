@@ -91,53 +91,78 @@ public class Player extends Polygon {
     /**
      * Move the player
      *
-     * @param deltaTime the time it took to render the last frame
+     * @param deltaTime the time to rotate for
      */
     public void move(float deltaTime) {
         // d = vi*t + 1/2*a*t^2
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
+        // vf = vi + at
         velocity.add(acceleration.cpy().scl(deltaTime));
 
-//      Each vertex is moved by the velocity
+        // Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
             vertex.add(movement);
         }
         updateCenter();
+
         // Only rotate the player if rotation is turned on
         if (doRotate) {
             rotate(deltaTime);
         }
+
         // Assume the player isn't on ground anymore
         onGround = false;
     }
 
+    /**
+     * @return the player's center
+     */
     public Vector2 getCenter() {
         return center;
     }
 
+    /**
+     * @return whether or not the player is on ground
+     */
     public boolean onGround() {
         return onGround;
     }
 
+    /**
+     * @return the player's velocity
+     */
     public Vector2 getVelocity() {
         return velocity;
     }
 
+    /**
+     * Set the player's velocity
+     *
+     * @param velocity
+     */
     public void setVelocity(Vector2 velocity) {
         this.velocity = velocity;
     }
 
+    /**
+     * Rotates the player
+     *
+     * @param deltaTime the time to rotate for
+     */
     public void rotate(float deltaTime) {
+        // rotate each vertex about the center
         for (Vector2 vertex : vertices) {
+            // get the current angle between this vertex and the center
             float existingAngle = (float) Math.atan2(vertex.y - center.y, vertex.x - center.x);
+            // the distance between this vertex and the center
             float radius = (vertex.cpy().sub(center)).len();
-
+            // apply rotation
             float newX = center.x + radius * (float) Math.cos(existingAngle + rotationSpeed * deltaTime);
             float newY = center.y + radius * (float) Math.sin(existingAngle + rotationSpeed * deltaTime);
 
             vertex.set(newX, newY);
-
         }
+        // the total rotation has now increased
         rotation += rotationSpeed * deltaTime;
     }
 
