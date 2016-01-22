@@ -44,7 +44,7 @@ public class ScreenManager {
     /**
      * Sets the current game screen
      *
-     * @param gameState the enum value of the target game state
+     * @param screen the enum value of the target game state
      */
     public void setGameScreen(GameScreens screen) {
         // Dispose of the current screen as it is going to be switched
@@ -60,15 +60,19 @@ public class ScreenManager {
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new GameMenu(this, (GameScreen) activeScreens.get(GameScreens.MAIN_GAME)));
                 }
-                currentGameState = activeScreens.get(screen);
                 break;
-            default:
+            case MAIN_MENU:
+                if (!activeScreens.containsKey(screen)) {
+                    activeScreens.put(screen, new MainMenuScreen(this));
+                }
+                break;
+            case MAIN_GAME:
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new GameScreen(this));
                 }
-                currentGameState = activeScreens.get(screen);
                 break;
         }
+        currentGameState = activeScreens.get(screen);
         currentGameState.resize(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
     }
 
