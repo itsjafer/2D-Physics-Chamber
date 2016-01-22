@@ -7,6 +7,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.gamescreen.ScreenManager;
 import com.mygdx.game.gamescreen.MyScreen;
@@ -25,7 +26,7 @@ import com.mygdx.game.model.LevelLoader;
  * @author CaiusDmitryJafer
  */
 public class MainMenuScreen extends MyScreen {
-
+    
     private Skin skin;
     private Stage stageMenu, stageLoad;
     private Table tableMenu, tableLoad;
@@ -36,17 +37,17 @@ public class MainMenuScreen extends MyScreen {
     private TextField inputSlot1, inputSlot2, inputSlot3;
     private Label notification;
     private boolean isSaving, isLoading;
-    private InputMultiplexer lastUsedMultiplexer;
+    private InputProcessor lastUsedProcessor;
     private LevelLoader loader;
-
+    
     public MainMenuScreen(ScreenManager gameStateManager) {
         super(gameStateManager);
     }
-
+    
     @Override
     public void show() {
     }
-
+    
     @Override
     public void render(float delta) {
 
@@ -59,7 +60,7 @@ public class MainMenuScreen extends MyScreen {
             stageMenu.draw();
         }
     }
-
+    
     @Override
     public void init() {
         //create the stage for the main menu
@@ -81,16 +82,11 @@ public class MainMenuScreen extends MyScreen {
         slot2Text = loader.getSlotName(1);
         slot3Text = loader.getSlotName(2);
 
-        //Input multiplexer, giving priority to stageMenu over gameinput
-//        inputMultiplexMain = new InputMultiplexer(stageMenu, MyGdxGame.gameInput);
-//        inputMultiplexLoad = new InputMultiplexer(stageLoad, MyGdxGame.gameInput);
+        //initially input is set to main menu
+        lastUsedProcessor = stageMenu;
 
-        //set the processor to the initial default one
-//        lastUsedMultiplexer = inputMultiplexMain;
-
-        // set the input multiplexer as the input processor
-//        Gdx.input.setInputProcessor(inputMultiplexMain);
-        Gdx.input.setInputProcessor(stageMenu);
+        // set the default input to be menu input
+        Gdx.input.setInputProcessor(lastUsedProcessor);
 
         //initialize skin by imlpementing the json file that implements the atlas
         // the json file has the buttonstyle, sliderstyle, etc already coded into it, only need to call the name to use it
@@ -130,7 +126,7 @@ public class MainMenuScreen extends MyScreen {
         slot2 = new TextButton("Slot 2:\n\n" + "'" + slot2Text + "'", skin, "default");
         slot3 = new TextButton("Slot 3:\n\n" + "'" + slot3Text + "'", skin, "default");
         returnToMenu = new TextButton("Return to Menu", skin);
-        notification = new Label("Input level title \n then click on the corresponding slot", skin);
+        notification = new Label("Input level title \n then click on the \ncorresponding slot", skin);
         inputSlot1 = new TextField(slot1Text, skin);
         inputSlot2 = new TextField(slot2Text, skin);
         inputSlot3 = new TextField(slot3Text, skin);
@@ -148,23 +144,22 @@ public class MainMenuScreen extends MyScreen {
         tableLoad.add(slot3).pad(20, 20, 0, 20).size(200, 100);
         tableLoad.add(inputSlot3);
         tableLoad.row();
-
+        
     }
-
+    
     @Override
     public void update(float deltaTime) {
-//        if (Gdx.input.getInputProcessor() != lastUsedMultiplexer) {
-//            Gdx.input.setInputProcessor(lastUsedMultiplexer);
-//        }
-        //if the user loaded a level, give them the option of going to game. if they haven't loaded, let them go to main menu
-        if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
-            returnToMenu.setText("Go to Game");
-        } else if (!notification.isVisible() && !returnToMenu.getText().equals("Return to Menu")) {
-            returnToMenu.setText("Return to Menu");
+        if (Gdx.input.getInputProcessor() != lastUsedProcessor) {
+            Gdx.input.setInputProcessor(lastUsedProcessor);
         }
         processInput();
+        
+        slot1Text = inputSlot1.getText();
+        slot2Text = inputSlot2.getText();
+        slot3Text = inputSlot3.getText();
+        
     }
-
+    
     @Override
     public void processInput() {
         //to easily switch between main menu and main game using the ESC key
@@ -179,14 +174,15 @@ public class MainMenuScreen extends MyScreen {
         }
         //if the Save Game button is pressed
         if (saveGame.isChecked()) {
+            returnToMenu.setText("Return to Menu");
             saveGame.setChecked(false); //uncheck the button
             isSaving = true; // this means that the user wants to save
-            Gdx.input.setInputProcessor(stageLoad);
+            lastUsedProcessor = stageLoad;
         }
         if (loadGame.isChecked()) {
             loadGame.setChecked(false);
             isLoading = true;
-            Gdx.input.setInputProcessor(stageLoad);
+            lastUsedProcessor = stageLoad;
         }
         if (slot1.isChecked()) {
             slot1.setChecked(false);
@@ -194,7 +190,7 @@ public class MainMenuScreen extends MyScreen {
                 slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                 notification.setText("Saved to slot 1");
                 loader.saveLevel(0, slot1Text);
-
+                
             } else if (isLoading) {
                 notification.setText("Loaded slot 1");
                 returnToMenu.setText("Go to Game");
@@ -209,7 +205,7 @@ public class MainMenuScreen extends MyScreen {
                 slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                 notification.setText("Saved to slot 2");
                 loader.saveLevel(1, slot2Text);
-
+                
             } else if (isLoading) {
                 notification.setText("Loaded slot 2");
                 returnToMenu.setText("Go to Game");
@@ -222,7 +218,7 @@ public class MainMenuScreen extends MyScreen {
                 slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
                 notification.setText("Saved to slot 3");
                 loader.saveLevel(2, slot3Text);
-
+                
             } else if (isLoading) {
                 notification.setText("Loaded slot 3");
                 returnToMenu.setText("Go to Game");
@@ -233,21 +229,20 @@ public class MainMenuScreen extends MyScreen {
             returnToMenu.setChecked(false);
             if (returnToMenu.getText().charAt(0) == 'G') {
                 gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-                Gdx.input.setInputProcessor(stageMenu);
                 isLoading = false;
                 isSaving = false;
             } else {
-                Gdx.input.setInputProcessor(stageLoad);
                 isLoading = false;
                 isSaving = false;
             }
+            lastUsedProcessor = stageMenu;
         }
         if (quitGame.isChecked()) {
             quitGame.setChecked(false);
             Gdx.app.exit();
         }
     }
-
+    
     public void addInputs() {
 //        startGame.addListener(new ClickListener() {
 //            @Override
@@ -265,7 +260,7 @@ public class MainMenuScreen extends MyScreen {
 //                notification.setVisible(false);
 //                isSaving = true;
 //                Gdx.input.setInputProcessor(inputMultiplexLoad);
-//                lastUsedMultiplexer = inputMultiplexLoad;
+//                lastUsedProcessor = inputMultiplexLoad;
 //            }
 //        });
 //        loadGame.addListener(new ClickListener() {
@@ -275,7 +270,7 @@ public class MainMenuScreen extends MyScreen {
 //                notification.setVisible(false);
 //                isLoading = true;
 //                Gdx.input.setInputProcessor(inputMultiplexLoad);
-//                lastUsedMultiplexer = inputMultiplexLoad;
+//                lastUsedProcessor = inputMultiplexLoad;
 //            }
 //        });
 //        slot1.addListener(new ClickListener() {
@@ -334,12 +329,12 @@ public class MainMenuScreen extends MyScreen {
 //                if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
 //                    gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
 //                    Gdx.input.setInputProcessor(inputMultiplexMain);
-//                    lastUsedMultiplexer = inputMultiplexMain;
+//                    lastUsedProcessor = inputMultiplexMain;
 //                    isLoading = false;
 //                    isSaving = false;
 //                } else {
 //                    Gdx.input.setInputProcessor(inputMultiplexMain);
-//                    lastUsedMultiplexer = inputMultiplexMain;
+//                    lastUsedProcessor = inputMultiplexMain;
 //                    isLoading = false;
 //                    isSaving = false;
 //                }
@@ -347,24 +342,24 @@ public class MainMenuScreen extends MyScreen {
 //            }
 //        });
     }
-
+    
     @Override
     public void resize(int width, int height) {
         stageMenu.getViewport().update(width, height, true);
     }
-
+    
     @Override
     public void pause() {
     }
-
+    
     @Override
     public void resume() {
     }
-
+    
     @Override
     public void hide() {
     }
-
+    
     @Override
     public void dispose() {
     }

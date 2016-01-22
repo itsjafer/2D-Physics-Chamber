@@ -139,7 +139,7 @@ public class LevelLoader {
     }
 
     public String getSlotName(int index) {
-        if (slotNames[index].isEmpty()) {
+        if (slotNames[index] == null) {
             FileReader file = null;
             try {
                 file = new FileReader("level" + index + ".txt");
