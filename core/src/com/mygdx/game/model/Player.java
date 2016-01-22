@@ -16,56 +16,42 @@ import java.util.ArrayList;
  */
 public class Player extends Polygon {
 
-    //initializing movement variables
+    // MOVEMENT STUFF
     public static final float RUN_SPEED = 100f;
     public static final float JUMP_DISTANCE = 100f;
+    // 
     private Vector2 acceleration;
+    private Vector2 velocity;
+    private Vector2 center;
+    private Vector2 startPos;
+    
     private boolean onGround;
-    Vector2 totalHeight = new Vector2(0, 0);
-    Vector2 startPos;
-    Vector2 velocity;
-    private float rotationSpeed;
+    
     private float rotation;
-    //environmental factors affecting the player
-    private float friction = 0f;
-    private float restitution = 1f;
-    //collision variables
-    float collisionDepth;
-    Vector2 collisionAxis;
-    boolean collided;
-    Vector2 center;
-    float totalTime = 0f;
+    private float rotationSpeed;
+    
+    private boolean collided;
+    private float collisionDepth;
+    private Vector2 collisionAxis;
+    
+    private GameWorld world;
 
     /**
-     * Sets the amount of friction affecting the player
-     *
-     * @param friction the new friction
+     * Creates the player
+     * @param vertices the list of vertices that define the player's polygon
+     * @param colour the player's colour
+     * @param world the world the player exist in
      */
-    public void setFriction(float friction) {
-        this.friction = friction;
-    }
-
-    /**
-     * Sets the level of restitution of the player
-     *
-     * @param restitution the new restitution to be applied
-     */
-    public void setRestitution(float restitution) {
-        this.restitution = restitution;
-    }
-
-    /**
-     * Player constructor creates a moveable polygon using a colour and vertices
-     *
-     * @param vertices
-     * @param colour
-     */
-    public Player(Vector2[] vertices, Color colour, Float friction, Float restitution) {
+    public Player(Vector2[] vertices, Color colour, GameWorld world) {
         super(vertices, colour);
+        this.world = world;
+        init();
+    }
+    
+    private void init()
+    {
         velocity = new Vector2();
         acceleration = new Vector2();
-        this.friction = friction;
-        this.restitution = restitution;
         center = new Vector2();
         updateCenter();
         startPos = center.cpy();
@@ -79,14 +65,27 @@ public class Player extends Polygon {
 
         onGround = false;
     }
+    
+    /**
+     * Resets the player's position to the initial creation position. Also
+     * resets momentum
+     */
+    public void reset() {
+        bump(startPos.cpy().sub(center));
+        updateCenter();
+        velocity.set(new Vector2(0, 0));
+        System.out.println(rotation);
+        rotationSpeed = -rotation;
+        rotate(1);
+        rotation = 0;
+        rotationSpeed = 0;
+    }
 
     public void move(float deltaTime) {
 
         onGround = false;
-        totalTime += deltaTime;
 
         Vector2 movement = velocity.cpy().scl(deltaTime).add(acceleration.cpy().scl(0.5f * deltaTime * deltaTime));
-        totalHeight.add(movement);
         velocity.add(acceleration.cpy().scl(deltaTime));
 //         Each vertex is moved by the velocity
         for (Vector2 vertex : vertices) {
@@ -157,24 +156,9 @@ public class Player extends Polygon {
 
 //        rotationSpeed += (float)Math.toRadians(displacement.angle());
         if (!Float.isNaN(displacement.len() * (float) Math.atan2(displacement.y, displacement.x) * Math.signum((float) Math.cos(displacement.y / displacement.x)))) {
-            rotationSpeed += displacement.len() * (float) Math.atan2(displacement.y, displacement.x) * Math.signum(Math.cos(displacement.y / displacement.x) * restitution);
+            rotationSpeed += displacement.len() * (float) Math.atan2(displacement.y, displacement.x) * Math.signum(Math.cos(displacement.y / displacement.x) * world.getRestitution());
             rotationSpeed *= -1;
         }
-    }
-
-    /**
-     * Resets the player's position to the initial creation position. Also
-     * resets momentum
-     */
-    public void reset() {
-        bump(startPos.cpy().sub(center));
-        updateCenter();
-        velocity.set(new Vector2(0, 0));
-        System.out.println(rotation);
-        rotationSpeed = -rotation;
-        rotate(1);
-        rotation = 0;
-        rotationSpeed = 0;
     }
 
     public void update() {
@@ -280,10 +264,10 @@ public class Player extends Polygon {
                 }
             }
             Vector2 parallelComponent = VectorMath.vectorProject(velocity, collisionAxis);
-            parallelComponent.scl(1f - friction);
+            parallelComponent.scl(1f - world.getFriction());
 
             Vector2 normalComponent = VectorMath.vectorProject(velocity, VectorMath.getNormal(collisionAxis));
-            normalComponent.scl(-restitution);
+            normalComponent.scl(-world.getRestitution());
 
             velocity = parallelComponent.add(normalComponent);
         }
