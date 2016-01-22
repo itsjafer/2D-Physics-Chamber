@@ -198,7 +198,7 @@ public class GameScreen extends MyScreen {
         //player movement
         if (world.getPlayer() != null) {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
-                world.playerJump = true;
+                world.jumpPlayer();
             }
             if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
             }
@@ -429,8 +429,7 @@ public class GameScreen extends MyScreen {
      */
     public void resetLevel() {
         potentialPolygon.clear();
-        world.getPolygons().clear();
-        world.deletePlayer();
+        world.reset();
     }
 
     /**

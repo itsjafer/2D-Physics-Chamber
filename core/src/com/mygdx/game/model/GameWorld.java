@@ -17,58 +17,95 @@ public class GameWorld {
 
     private ArrayList<Polygon> polygons;
     private Player player;
+    
     private Vector2 gravity;
+    // Axis on which the player jumps (unit vector)
     private Vector2 horizontalMovementAxis;
-    static public Vector2 verticalMovementAxis;
-    private Polygon finish;
+    // Axis on which the player runs (unit vector)
+    private Vector2 verticalMovementAxis;
     
-    public boolean playerJump = false;
-    
+    /**
+     * Creates the game world
+     */
     public GameWorld() {
         polygons = new ArrayList();
-        setGravity(new Vector2(0, -30));
+        init();
+    }
+    
+    /**
+     * Resets the defaults
+     */
+    public void reset()
+    {
+        init();
+    }
+    
+    /**
+     * Sets the default values
+     */
+    private void init()
+    {
+        player = null;
+        polygons.clear();
+        setGravity(new Vector2(0, -500));
     }
 
+    /**
+     * Updates the player
+     * @param deltaTime 
+     */
     public void update(float deltaTime) {
-
-//        if (player != null && GameInputs.isKeyDown(GameInputs.Keys.UP)) {
-//        if (player != null && GameInputs.isKeyJustPressed(GameInputs.Keys.UP)) {
         if (player != null) {
+            // gravity is applied here. any movement forces should have already been applied elsewhere
             player.applyAcceleration(gravity);
-            if (playerJump)
-            {
-                System.out.println("hHI");
-                jumpPlayer();
-                playerJump = false;
-            }
+            // moves the player for one gametick
             player.move(deltaTime);
+            // Collides the player with the polygons of the world
             if (!polygons.isEmpty()) {
                 player.collideWithPolygons(polygons);
             }
+            // update the player
             player.update();
         }
     }
 
+    /**
+     * Moves the player right
+     */
     public void movePlayerRight() {
-        if (Polygon.scalarProject(player.getVelocity(), horizontalMovementAxis) >= 70)
+        // only apply movement if the player's speed is smaller than the running speed
+        if (player.runningSpeed(horizontalMovementAxis) >= Player.RUN_SPEED)
             return;
-        Vector2 accel = horizontalMovementAxis.cpy().scl(70).sub(Polygon.vectorProject(player.getVelocity(), horizontalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+        // get the "instantaneous" acceleration to achieve the desired velocity
+        Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(Player.RUN_SPEED));
         player.applyAcceleration(accel);
     }
 
+    /**
+     * Moves the player left
+     */
     public void movePlayerLeft() {
-        if (Polygon.scalarProject(player.getVelocity(), horizontalMovementAxis) <= -70)
+        // only apply movement if the player's speed is smaller than the running speed
+        if (player.runningSpeed(horizontalMovementAxis) >= Player.RUN_SPEED)
             return;
-        Vector2 accel = horizontalMovementAxis.cpy().scl(-70).sub(Polygon.vectorProject(player.getVelocity(), horizontalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+        // get the "instantaneous" acceleration to achieve the desired velocity
+        Vector2 accel = player.accelerationToVelocity(horizontalMovementAxis, horizontalMovementAxis.cpy().scl(Player.RUN_SPEED));
         player.applyAcceleration(accel);
     }
 
+    /**
+     * Jumps the player
+     */
     public void jumpPlayer() {
+        // the player should only jump when he is on ground
         if (player.onGround()) {
-            Vector2 vi = verticalMovementAxis.cpy().scl((float)Math.sqrt(-2*Polygon.scalarProject(gravity, verticalMovementAxis)*verticalMovementAxis.cpy().scl(100).len()));
-            Vector2 accel = vi.sub(Polygon.vectorProject(player.getVelocity(), verticalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
+            // Vf^2 = Vi^2-2ad ..... Vf is zero (the peak of the jump).... therefore, Vi = Math.sqrt(-2ad)...
+                // so all that's left to do is to scalar project the acceleration + displacement onto the desired movement axis
+                // and apply that resulting Vi onto the desired axis
+            Vector2 verticalVel = verticalMovementAxis.cpy().scl((float)Math.sqrt(-2*Polygon.scalarProject(gravity, verticalMovementAxis)*verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
+            // get the "instantaneous" acceleration to achieve the desired velocity
+            Vector2 accel = player.accelerationToVelocity(verticalMovementAxis, verticalVel);
             player.applyAcceleration(accel);
-//            player.move(Gdx.graphics.getDeltaTime());
         }
     }
 
@@ -132,9 +169,5 @@ public class GameWorld {
 
     public void deletePlayer() {
         player = null;
-    }
-
-    public void createFinish(ArrayList<Vector2> vertices, Color colour) {
-        finish = new Polygon(vertices.toArray(new Vector2[vertices.size()]), colour);
     }
 }

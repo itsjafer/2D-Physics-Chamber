@@ -4,6 +4,7 @@
  */
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.MyGdxGame;
@@ -16,12 +17,13 @@ import java.util.ArrayList;
  */
 public class Player extends Polygon {
 
-    public static final float HORIZONTAL_ACCELERATION = 700f;
-    public static final float JUMPING_ACCELERATION = 1500f;
+    public static final float RUN_SPEED = 70f;
+    public static final float JUMP_DISTANCE = 100f;
+    
     private Vector2 acceleration;
     private float friction = 0f;
     private float restitution = 1f;
-
+    
     public void setFriction(float friction) {
         this.friction = friction;
     }
@@ -267,5 +269,19 @@ public class Player extends Polygon {
 
             velocity = parallelComponent.add(normalComponent);
         }
+    }
+    
+    public float runningSpeed(Vector2 horizontalMovementAxis)
+    {
+        return scalarProject(velocity, horizontalMovementAxis);
+    }
+    public Vector2 runningVelocity(Vector2 horizontalMovementAxis)
+    {
+        return vectorProject(velocity, horizontalMovementAxis);
+    }
+    
+    public Vector2 accelerationToVelocity(Vector2 movementAxis, Vector2 desiredMovementVelocity)
+    {
+        return desiredMovementVelocity.sub(vectorProject(velocity, movementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
     }
 }
