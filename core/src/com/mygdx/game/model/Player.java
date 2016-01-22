@@ -186,19 +186,27 @@ public class Player extends Polygon {
         center.set(x, y);
     }
 
-    public void collidePhysics() {
-        if (VectorMath.scalarProject(velocity, MyGdxGame.WORLD.getGravity()) > 0) {
-            System.out.println("CAN JUMP");
+    /**
+     * Apply collision to the player
+     */
+    public void doCollision() {
+        // If the player collides while going downwards, he can jump
+        // This obviously lets the player walljump
+        if (VectorMath.scalarProject(velocity, world.getVerticalMovementAxis()) < 0) {
             onGround = true;
         }
+        // the minimum translation vector (amount player must be moved to be out of collision)
+        Vector2 mtv = VectorMath.getNormal(collisionAxis).nor().scl(-collisionDepth);
+        // move the player out of collision
+        bump(mtv);
 
-        Vector2 displacement = VectorMath.getNormal(collisionAxis).nor().scl(-collisionDepth);
-        bump(displacement);
-
-//        rotationSpeed += (float)Math.toRadians(displacement.angle());
-        if (!Float.isNaN(displacement.len() * (float) Math.atan2(displacement.y, displacement.x) * Math.signum((float) Math.cos(displacement.y / displacement.x)))) {
-            rotationSpeed += displacement.len() * (float) Math.atan2(displacement.y, displacement.x) * Math.signum(Math.cos(displacement.y / displacement.x) * world.getRestitution());
-            rotationSpeed *= -1;
+        // some test rotation code... it's just rotating the player by the mtv... completely incorrect and poorly written
+        if (doRotate)
+        {
+            if (!Float.isNaN(mtv.len() * (float) Math.atan2(mtv.y, mtv.x) * Math.signum((float) Math.cos(mtv.y / mtv.x)))) {
+                rotationSpeed += mtv.len() * (float) Math.atan2(mtv.y, mtv.x) * Math.signum(Math.cos(mtv.y / mtv.x) * world.getRestitution());
+                rotationSpeed *= -1;
+            }
         }
     }
 
@@ -297,7 +305,7 @@ public class Player extends Polygon {
         if (collided) {
             int safety = 0;
             while (collided) {
-                collidePhysics();
+                doCollision();
                 updateCollisionStatus(polygons);
                 safety++;
                 if (safety > 10) {
