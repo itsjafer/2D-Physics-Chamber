@@ -38,7 +38,18 @@ public class LevelLoader {
         try {
             //loading up the text file with the infomration
             BufferedWriter out = new BufferedWriter(new FileWriter("level" + index + ".txt"));
+            
+            //saving the name of the level
             out.write(slotName);
+            
+            //saving the restitution
+            out.write("\nRestitution:");
+            out.write("\n" + world.getRestitution());
+
+            //saving the friction
+            out.write("\nFriction:");
+            out.write("\n" + world.getFriction());
+            
             //saving the gravity
             out.write("\nGravity:");
             out.write("\n" + world.getGravity().x);
@@ -92,6 +103,10 @@ public class LevelLoader {
 
         //setting the Gravity
         slotNames[index] = input.nextLine();
+        input.nextLine();
+        world.setRestitution(Float.parseFloat(input.nextLine()));
+        input.nextLine();
+        world.setFriction(Float.parseFloat(input.nextLine()));
         input.nextLine();
         world.setGravity(new Vector2(Float.parseFloat(input.nextLine()), Float.parseFloat(input.nextLine())));
 
