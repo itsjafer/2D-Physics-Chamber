@@ -210,6 +210,9 @@ public class Player extends Polygon {
         }
     }
 
+    /**
+     * Clears the player's acceleration. Used to maintain newton's first law of motion (only applied forces change a body's velocity)
+     */
     public void clearAcceleration() {
         acceleration.set(Vector2.Zero);
     }
