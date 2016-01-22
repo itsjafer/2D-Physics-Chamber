@@ -50,11 +50,15 @@ public class GameWorld {
     }
 
     public void movePlayerRight() {
+        if (Polygon.scalarProject(player.getVelocity(), horizontalMovementAxis) >= 70)
+            return;
         Vector2 accel = horizontalMovementAxis.cpy().scl(70).sub(Polygon.vectorProject(player.getVelocity(), horizontalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
         player.applyAcceleration(accel);
     }
 
     public void movePlayerLeft() {
+        if (Polygon.scalarProject(player.getVelocity(), horizontalMovementAxis) <= -70)
+            return;
         Vector2 accel = horizontalMovementAxis.cpy().scl(-70).sub(Polygon.vectorProject(player.getVelocity(), horizontalMovementAxis)).scl(1f/Gdx.graphics.getDeltaTime());
         player.applyAcceleration(accel);
     }
