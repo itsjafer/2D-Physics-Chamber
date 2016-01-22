@@ -11,7 +11,7 @@ import java.util.HashMap;
 /**
  * The collection of all the valid keys in the game and their states
  *
- * @author Dmitry
+ * @author Dmitry, Jafer, Caius
  */
 public class GameInputs {
 

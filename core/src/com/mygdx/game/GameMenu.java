@@ -34,7 +34,7 @@ import com.mygdx.game.model.GameWorld;
 
 /**
  *
- * @author branc2347
+ * @author Dmitry, Jafer, Caius
  */
 public class GameMenu extends MyScreen {
 

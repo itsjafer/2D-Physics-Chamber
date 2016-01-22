@@ -8,6 +8,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.model.GameWorld;
 
+/**
+ * 
+ * @author Dmitry, Jafer, Caius
+ */
 public class MyGdxGame extends Game {
 
     // The game screen manager for the entire game
@@ -16,6 +20,7 @@ public class MyGdxGame extends Game {
     public static InputProcessor gameInput;
     // screen width and height
     public static int WIDTH, HEIGHT;
+    // Global world
     public static final GameWorld WORLD = new GameWorld();
 
     /**

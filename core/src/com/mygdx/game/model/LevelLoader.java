@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 /**
  *
- * @author haidj9901
+ * @author Dmitry, Jafer, Caius
  */
 public class LevelLoader {
 

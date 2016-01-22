@@ -17,7 +17,7 @@ import java.util.HashMap;
  * managing functions of the badlogic Game class, but adds some input flow, and
  * separates logic from drawing
  *
- * @author Dmitry
+ * @author Dmitry, Jafer, Caius
  */
 public class ScreenManager {
 
@@ -44,7 +44,6 @@ public class ScreenManager {
 
     /**
      * Sets the current game screen
-     *
      * @param screen the enum value of the target game state
      */
     public void setGameScreen(GameScreens screen) {

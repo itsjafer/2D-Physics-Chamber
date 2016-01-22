@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  *
- * @author kobed6328
+ * @author Dmitry, Jafer, Caius
  */
 public class VectorMath {
     

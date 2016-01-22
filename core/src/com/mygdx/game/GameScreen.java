@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author DmitryJaferCaius
+ * @author Dmitry, Jafer, Caius
  */
 public class GameScreen extends MyScreen {
 
@@ -169,7 +169,6 @@ public class GameScreen extends MyScreen {
     public void update(float deltaTime) {
         //check to make sure the correct processor is in use
         if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
-            System.out.println("NEW INPTU SPROCES");
             Gdx.input.setInputProcessor(MyGdxGame.gameInput);
         }
 
@@ -226,7 +225,6 @@ public class GameScreen extends MyScreen {
 
         //pressing esc takes you to the main menu
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
-            System.out.println("ESCAPE");
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
 
@@ -243,14 +241,6 @@ public class GameScreen extends MyScreen {
                 rectangleMode = false;
             }
 
-            //loop through each vertex to check if it already exists
-            for (Vector2 vertex : potentialPolygon) {
-                if (vertex.x == mouseDrawPos.x && vertex.y == mouseDrawPos.y) {
-                    validPos = false;
-                }
-            }
-
-            //if the click is valid based on the previous test
             if (validPos) {
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());

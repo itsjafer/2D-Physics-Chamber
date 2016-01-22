@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * A custom polygon object, to be used as the base object in the world
- * @author Dmitry
+ * @author Dmitry, Jafer, Caius
  */
 public class Polygon {
 

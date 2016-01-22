@@ -23,7 +23,7 @@ import com.mygdx.game.model.LevelLoader;
 
 /**
  *
- * @author CaiusDmitryJafer
+ * @author Dmitry, Jafer, Caius
  */
 public class MainMenuScreen extends MyScreen {
     
