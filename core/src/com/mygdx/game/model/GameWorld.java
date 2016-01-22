@@ -175,7 +175,9 @@ public class GameWorld {
 
     public void setFriction(float friction) {
         this.friction = friction;
-        player.setFriction(friction);
+        if (player != null) {
+            player.setFriction(friction);
+        }
     }
 
     public float getRestitution() {
@@ -185,6 +187,8 @@ public class GameWorld {
 
     public void setRestitution(float restitution) {
         this.restitution = restitution;
-        player.setRestitution(restitution);
+        if (player != null) {
+            player.setRestitution(restitution);
+        }
     }
 }
