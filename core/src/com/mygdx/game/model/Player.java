@@ -230,7 +230,7 @@ public class Player extends Polygon {
      * 
      * @param polygons 
      */
-    public void updateCollisionStatus(ArrayList<Polygon> polygons) {
+    public void checkForCollisions(ArrayList<Polygon> polygons) {
         collided = false;
         // The player's normals
         Vector2[] normals1 = getNormals();
@@ -313,23 +313,22 @@ public class Player extends Polygon {
     }
 
     public void collideWithPolygons(ArrayList<Polygon> polygons) {
-        updateCollisionStatus(polygons);
+        checkForCollisions(polygons);
+        
         if (collided) {
-            int safety = 0;
-            while (collided) {
-                doCollision();
-                updateCollisionStatus(polygons);
-                safety++;
-                if (safety > 10) {
-                    break;
-                }
-            }
+            doCollision();
+            
+            // The component of velocity parallel to the collision axis
             Vector2 parallelComponent = VectorMath.vectorProject(velocity, collisionAxis);
+            // friction 0 means 100% conservation of momentum
             parallelComponent.scl(1f - world.getFriction());
 
+            // The component of velocity normal to the collision axis
             Vector2 normalComponent = VectorMath.vectorProject(velocity, VectorMath.getNormal(collisionAxis));
+            // the negative is needed for a bounce
             normalComponent.scl(-world.getRestitution());
-
+            
+            // the new velocity is the sum of both transformed components
             velocity = parallelComponent.add(normalComponent);
         }
     }
