@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class GameWorld {
 
-    private float friction = 0.05f;
+    private float friction = 0.1f;
     private float restitution = 1f;
     private ArrayList<Polygon> polygons;
     private Player player;
@@ -101,9 +101,9 @@ public class GameWorld {
         // the player should only jump when he is on ground
         if (player.onGround()) {
             // Vf^2 = Vi^2-2ad ..... Vf is zero (the peak of the jump).... therefore, Vi = Math.sqrt(-2ad)...
-                // so all that's left to do is to scalar project the acceleration + displacement onto the desired movement axis
-                // and apply that resulting Vi onto the desired axis
-            Vector2 verticalVel = verticalMovementAxis.cpy().scl((float)Math.sqrt(-2*VectorMath.scalarProject(gravity, verticalMovementAxis)*verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
+            // so all that's left to do is to scalar project the acceleration + displacement onto the desired movement axis
+            // and apply that resulting Vi onto the desired axis
+            Vector2 verticalVel = verticalMovementAxis.cpy().scl((float) Math.sqrt(-2 * VectorMath.scalarProject(gravity, verticalMovementAxis) * verticalMovementAxis.cpy().scl(Player.JUMP_DISTANCE).len()));
             // get the "instantaneous" acceleration to achieve the desired velocity
             Vector2 accel = player.accelerationToVelocity(verticalMovementAxis, verticalVel);
             player.applyAcceleration(accel);
@@ -175,13 +175,16 @@ public class GameWorld {
 
     public void setFriction(float friction) {
         this.friction = friction;
+        player.setFriction(friction);
     }
 
     public float getRestitution() {
         return restitution;
+
     }
 
     public void setRestitution(float restitution) {
         this.restitution = restitution;
+        player.setRestitution(restitution);
     }
 }

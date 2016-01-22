@@ -25,7 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.game.gamescreen.MyScreen;
@@ -118,12 +117,12 @@ public class GameMenu extends MyScreen {
         //create the objects for table 2
         gravitySliderY = new Slider(-1000f, 1000f, 20f, false, skin);
         gravitySliderX = new Slider(-1000f, 1000f, 20f, false, skin);
-        restitutionSlider = new Slider(0f, 1f, 0.05f, false, skin);
-        frictionSlider = new Slider(0f, 1f, 0.05f, false, skin);
-        labelGravityY = new Label("Gravity y-dir: " + gravitySliderY.getVisualValue(), skin);
-        labelGravityX = new Label("Gravity x-dir: " + gravitySliderX.getVisualValue(), skin);
-        labelFriction = new Label("Friction: " + frictionSlider.getVisualValue(), skin);
-        labelRestitution = new Label("Restitution: " + restitutionSlider.getVisualValue(), skin);
+        restitutionSlider = new Slider(0, 1, 0.1f, false, skin);
+        frictionSlider = new Slider(0, 1, 0.1f, false, skin);
+        labelGravityY = new Label("Gravity y-dir: " + world.getGravity().y, skin);
+        labelGravityX = new Label("Gravity x-dir: " + world.getGravity().x, skin);
+        labelFriction = new Label("Friction: " + world.getFriction(), skin);
+        labelRestitution = new Label("Restitution: " + world.getRestitution(), skin);
 
         //add objects to table 2
         table2.add(gravitySliderY).pad(4, 4, 4, 4);
@@ -190,7 +189,7 @@ public class GameMenu extends MyScreen {
             restitutionSlider.setValue(world.getRestitution());
         }
         if (frictionSlider.getValue() != world.getFriction()) {
-            restitutionSlider.setValue(world.getFriction());
+            frictionSlider.setValue(world.getFriction());
         }
     }
 
@@ -366,7 +365,7 @@ public class GameMenu extends MyScreen {
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
                 if (world.getPlayer() != null) {
                     world.setRestitution(restitutionSlider.getValue());
-                    labelRestitution.setText("Restitution: " + restitutionSlider.getVisualValue());
+                    labelRestitution.setText("Restitution: " + restitutionSlider.getValue());
                 } else {
                     labelRestitution.setText("Create player first.");
                 }
