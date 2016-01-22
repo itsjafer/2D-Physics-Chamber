@@ -135,7 +135,7 @@ public class GameWorld {
     }
 
     /**
-     * Get the gravity of the world, including direction and magnitude
+     * @return the world's gravity vector
      */
     public Vector2 getGravity() {
         return this.gravity;
@@ -175,9 +175,6 @@ public class GameWorld {
 
     public void setFriction(float friction) {
         this.friction = friction;
-        if (player != null) {
-            player.setFriction(friction);
-        }
     }
 
     public float getRestitution() {
@@ -187,8 +184,5 @@ public class GameWorld {
 
     public void setRestitution(float restitution) {
         this.restitution = restitution;
-        if (player != null) {
-            player.setRestitution(restitution);
-        }
     }
 }
