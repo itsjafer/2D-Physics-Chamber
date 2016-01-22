@@ -45,40 +45,47 @@ public class Player extends Polygon {
     public Player(Vector2[] vertices, Color colour, GameWorld world) {
         super(vertices, colour);
         this.world = world;
-        init();
-    }
-    
-    private void init()
-    {
+        
         velocity = new Vector2();
         acceleration = new Vector2();
         center = new Vector2();
+        
+        collisionAxis = new Vector2();
+        
+        init();
+    }
+    
+    /**
+     * Set defaults
+     */
+    private void init()
+    {
+        velocity.set(0, 0);
+        acceleration.set(0, 0);
         updateCenter();
         startPos = center.cpy();
 
-        collisionAxis = new Vector2();
-        collisionDepth = 0f;
         collided = false;
+        collisionAxis.set(0, 0);
+        collisionDepth = 0f;
 
-        rotationSpeed = 0f;
         rotation = 0f;
+        rotationSpeed = 0f;
 
         onGround = false;
     }
     
     /**
-     * Resets the player's position to the initial creation position. Also
-     * resets momentum
+     * Reset to defaults
      */
     public void reset() {
+        // Bring the player back to the start
         bump(startPos.cpy().sub(center));
-        updateCenter();
-        velocity.set(new Vector2(0, 0));
-        System.out.println(rotation);
+        // Undo rotation (rotate opposite direction for 1 second)
         rotationSpeed = -rotation;
         rotate(1);
-        rotation = 0;
-        rotationSpeed = 0;
+        // set the rest of the defaults
+        init();
     }
 
     public void move(float deltaTime) {
