@@ -44,7 +44,6 @@ public class ScreenManager {
 
     /**
      * Sets the current game screen
-     *
      * @param screen the enum value of the target game state
      */
     public void setGameScreen(GameScreens screen) {

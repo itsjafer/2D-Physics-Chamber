@@ -16,6 +16,7 @@ public class MyGdxGame extends Game {
     public static InputProcessor gameInput;
     // screen width and height
     public static int WIDTH, HEIGHT;
+    // Global world
     public static final GameWorld WORLD = new GameWorld();
 
     /**
