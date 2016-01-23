@@ -7,6 +7,7 @@ package com.mygdx.game.model;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.MyGdxGame;
 import java.util.ArrayList;
 
 /**
@@ -224,6 +225,18 @@ public class GameWorld {
         if (player != null)
         {
             player.setRotate(doRotate);
+        }
+    }
+    
+    /**
+     * Removes a polygon from the list
+     * @param polygon the polygon to be removed
+     */
+    public void deletePolygon(Polygon polygon)
+    {
+        if (!polygons.isEmpty())
+        {
+            polygons.remove(polygon);
         }
     }
 }

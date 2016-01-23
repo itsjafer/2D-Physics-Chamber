@@ -208,19 +208,32 @@ public class GameScreen extends MyScreen {
                 world.movePlayerRight();
             }
         }
-
-        //pressing ctrl results in toggle of rectangle mode
-        if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
-            if (rectangleMode) {
-                if (!potentialPolygon.isEmpty()) {
-                    Vector2 temp = potentialPolygon.get(0);
-                    potentialPolygon.clear();
-                    potentialPolygon.add(temp);
-                }
-                rectangleMode = false;
-            } else {
-                rectangleMode = true;
+        // CTRL + SHIFT + Right_Click --> delete last added/moved polygon
+        if (GameInputs.isKeyDown(GameInputs.Keys.CTRL) && GameInputs.isKeyDown(GameInputs.Keys.SHIFT) && GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT))
+        {
+            if (!world.getPolygons().isEmpty())
+            {
+                world.deletePolygon(lastPolygonMoved.get(0));
+                lastPolygonMoved.remove(0); 
             }
+        }
+        else
+        {
+            // straight should only be true while the SHIFT key is being HELD DOWN
+            straight = GameInputs.isKeyDown(GameInputs.Keys.SHIFT);
+            //pressing ctrl results in toggle of rectangle mode
+            if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
+                if (rectangleMode) {
+                    if (!potentialPolygon.isEmpty()) {
+                        Vector2 temp = potentialPolygon.get(0);
+                        potentialPolygon.clear();
+                        potentialPolygon.add(temp);
+                    }
+                    rectangleMode = false;
+                } else {
+                    rectangleMode = true;
+                }
+            }           
         }
 
         //pressing esc takes you to the main menu
@@ -273,9 +286,6 @@ public class GameScreen extends MyScreen {
         if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT)) {
             clickedInsidePolygon = false;
         }
-
-        // straight should only be true while the SHIFT key is being HELD DOWN
-        straight = GameInputs.isKeyDown(GameInputs.Keys.SHIFT);
 
         //right-clicking removes the last vertice of the potential polygon
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
