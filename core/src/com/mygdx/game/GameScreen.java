@@ -29,7 +29,7 @@ import java.util.ArrayList;
 public class GameScreen extends MyScreen {
 
     protected GameWorld world;
-    
+
     //essential variables
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -62,7 +62,7 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void init() {
-        
+
         world = MyGdxGame.WORLD;
         // view stuff
         camera = new OrthographicCamera(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
@@ -156,10 +156,6 @@ public class GameScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
-        //check to make sure the correct processor is in use
-        if (Gdx.input.getInputProcessor() != MyGdxGame.gameInput) {
-            Gdx.input.setInputProcessor(MyGdxGame.gameInput);
-        }
 
         //check for any inputs
         processInput();
@@ -168,7 +164,7 @@ public class GameScreen extends MyScreen {
         mouseDrawPos = GameInputs.getMousePosition();
 
         //check if the mouse drawing position needs to be adjusted
-            // if the angle between points should be at fixed intervals
+        // if the angle between points should be at fixed intervals
         if (straight && !potentialPolygon.isEmpty()) {
             straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         } else if (gridMode) {
@@ -219,7 +215,7 @@ public class GameScreen extends MyScreen {
                     }
                 }
                 // toggle rectangle mode
-                rectangleMode = rectangleMode ? false: true;
+                rectangleMode = rectangleMode ? false : true;
             }
         }
 
@@ -518,13 +514,13 @@ public class GameScreen extends MyScreen {
 
         return theta;
     }
-    
+
     /**
      * Sets the grid mode
+     *
      * @param gridMode
      */
-    public void setGridMode(boolean gridMode)
-    {
+    public void setGridMode(boolean gridMode) {
         this.gridMode = gridMode;
     }
 
