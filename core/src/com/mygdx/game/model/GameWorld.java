@@ -215,4 +215,15 @@ public class GameWorld {
     public void setRestitution(float restitution) {
         this.restitution = restitution;
     }
+
+    /**
+     * Sets whether or not the player rotates
+     * @param doRotate the player's rotate state
+     */
+    public void setRotatePlayer(boolean doRotate) {
+        if (player != null)
+        {
+            player.setRotate(doRotate);
+        }
+    }
 }

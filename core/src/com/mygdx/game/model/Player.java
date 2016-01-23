@@ -81,11 +81,11 @@ public class Player extends Polygon {
      * Reset to defaults
      */
     public void reset() {
-        // Bring the player back to the start
-        bump(startPos.cpy().sub(center));
         // Undo rotation (rotate opposite direction for 1 second)
         rotationSpeed = -rotation;
         rotate(1);
+        // Bring the player back to the start
+        bump(startPos.cpy().sub(center));
         // set the rest of the defaults
         init();
     }
@@ -383,5 +383,9 @@ public class Player extends Polygon {
      */
     public Vector2 getInstantaneousAcceleration(Vector2 movementAxis, Vector2 desiredMovementVelocity, float time) {
         return desiredMovementVelocity.sub(VectorMath.vectorProject(velocity, movementAxis)).scl(1f / time);
+    }
+
+    void setRotate(boolean doRotate) {
+        this.doRotate = doRotate;
     }
 }

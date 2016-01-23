@@ -45,7 +45,7 @@ public class GameMenu extends MyScreen {
     TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton, backToGame;
     Slider gravitySliderY, gravitySliderX, restitutionSlider, frictionSlider;
     Label labelGravityY, labelGravityX, labelRestitution, labelFriction;
-    CheckBox snapToGrid;
+    CheckBox snapToGrid, playerRotate;
     Color drawColour;
     ImageButton colourPalette;
     Pixmap canvas;
@@ -100,6 +100,7 @@ public class GameMenu extends MyScreen {
         colours = new TextButton("Colours:", skin, "default");
         backToGame = new TextButton("Return to Game", skin);
         snapToGrid = new CheckBox("Snap to grid", skin);
+        playerRotate = new CheckBox("Player rotate", skin);
 
         //add objects to table1
         table1.add(resetPlayer).pad(4, 4, 4, 4);
@@ -108,6 +109,7 @@ public class GameMenu extends MyScreen {
         table1.add(backToGame);
         table1.row();
         table1.add(snapToGrid);
+        table1.add(playerRotate);
 
         //table 2 LAYOUT
         stage.addActor(table2);
@@ -257,6 +259,11 @@ public class GameMenu extends MyScreen {
             background.gridMode = true;
         } else if (!snapToGrid.isChecked()) {
             background.gridMode = false;
+        }
+        if (playerRotate.isChecked()) {
+            world.setRotatePlayer(true);
+        } else if (!snapToGrid.isChecked()) {
+            world.setRotatePlayer(false);
         }
         if (colours.isChecked()) {
             colours.setChecked(false);
