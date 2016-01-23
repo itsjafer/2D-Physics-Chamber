@@ -28,18 +28,17 @@ import java.util.ArrayList;
  */
 public class GameScreen extends MyScreen {
 
-    //initializing essential variables
+    //essential variables
     private OrthographicCamera camera;
     private Viewport viewport;
     private ShapeRenderer shapeRenderer;
     protected GameWorld world;
-    //initializing storage variables used to change appearance of the game
+    //storage variables used to change appearance of the game
     private ArrayList<Vector2> potentialPolygon;
     private ArrayList<GridPoint2> gridLayout;
     private ArrayList<Polygon> lastPolygonMoved;
     private float gridSize;
     protected Color drawColour;
-    private boolean finishMode;
     private final float SNAP_ANGLE = (float) Math.toRadians(45); // The angle multiple to which to snap
     //drawing variables
     private boolean validPos;
@@ -84,7 +83,6 @@ public class GameScreen extends MyScreen {
         oldMousePos = null;
         mouseDrawPos = new Vector2();
         rectangleMode = false;
-        finishMode = false;
     }
 
     /**
@@ -199,8 +197,6 @@ public class GameScreen extends MyScreen {
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
                 world.jumpPlayer();
             }
-            if (GameInputs.isKeyDown(GameInputs.Keys.S)) {
-            }
             if (GameInputs.isKeyDown(GameInputs.Keys.A)) {
                 world.movePlayerLeft();
             }
@@ -209,16 +205,13 @@ public class GameScreen extends MyScreen {
             }
         }
         // CTRL + SHIFT + Right_Click --> delete last added/moved polygon
-        if (GameInputs.isKeyDown(GameInputs.Keys.CTRL) && GameInputs.isKeyDown(GameInputs.Keys.SHIFT) && GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT))
-        {
-            if (!world.getPolygons().isEmpty())
-            {
+        if (GameInputs.isKeyDown(GameInputs.Keys.CTRL) && GameInputs.isKeyDown(GameInputs.Keys.SHIFT)
+                && GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
+            if (!world.getPolygons().isEmpty()) {
                 world.deletePolygon(lastPolygonMoved.get(0));
-                lastPolygonMoved.remove(0); 
+                lastPolygonMoved.remove(0);
             }
-        }
-        else
-        {
+        } else {
             // straight should only be true while the SHIFT key is being HELD DOWN
             straight = GameInputs.isKeyDown(GameInputs.Keys.SHIFT);
             //pressing ctrl results in toggle of rectangle mode
@@ -233,7 +226,7 @@ public class GameScreen extends MyScreen {
                 } else {
                     rectangleMode = true;
                 }
-            }           
+            }
         }
 
         //pressing esc takes you to the main menu
@@ -241,20 +234,22 @@ public class GameScreen extends MyScreen {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
         }
 
-        //holding tab will take you to the game menu
+        //pressing tab will take you to the game menu
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.TAB)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.GAME_MENU);
         }
 
         //click the left mouse button
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.LEFT)) {
-            // Loop preventing the user from adding dupliate points to the potential polygon
-            // the click is assumed to be valid until a matching coordinate is found in the existing potential polygon
+
+            //RectangleMode set to false results in the rectangle becoming permanent
             if (rectangleMode && potentialPolygon.size() == 4) {
                 rectangleMode = false;
             }
 
+            //add the vertice if it is valid
             if (validPos) {
+
                 // if the mouse click is added, simply add a new point to the potential polygon at the valid mouse position
                 potentialPolygon.add(mouseDrawPos.cpy());
 
@@ -263,6 +258,7 @@ public class GameScreen extends MyScreen {
                     potentialPolygon.remove(potentialPolygon.size() - 1);
                 }
             } else {
+                //if its not a validpos to create a polygon, update dragging variables
                 clickedInsidePolygon = true;
                 oldMousePos = mouseDrawPos;
                 for (Polygon polygon : lastPolygonMoved) {
@@ -370,14 +366,17 @@ public class GameScreen extends MyScreen {
             // reset the color to white for the next loop of drawing points
             shapeRenderer.setColor(drawColour);
         }
+
+        //give user color feedback on if they're creating a concave polygon
         potentialPolygon.add(mouseDrawPos.cpy());
-        if (!isConvex(potentialPolygon)) {
-            shapeRenderer.setColor(Color.RED);
-        } else {
-            shapeRenderer.setColor(Color.GREEN);
-        }
+//        if (!isConvex(potentialPolygon)) {
+//            shapeRenderer.setColor(Color.RED);
+//        } else {
+//            shapeRenderer.setColor(Color.GREEN);
+//        }
         potentialPolygon.remove(potentialPolygon.size() - 1);
         potentialPolygon.trimToSize();
+
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
         if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
@@ -402,15 +401,13 @@ public class GameScreen extends MyScreen {
         int n = potentialConvexPolygon.size();
         for (int i = 0; i < potentialConvexPolygon.size(); i++) {
 
-            //use the gift-wrapping algorithm to determine if a polygon is complex
+            //use the gift-wrapping algorithm
             double dx1 = potentialConvexPolygon.get((i + 2) % n).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy1 = potentialConvexPolygon.get((i + 2) % n).y - potentialConvexPolygon.get((i + 1) % n).y;
             double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy2 = potentialConvexPolygon.get(i).y - potentialConvexPolygon.get((i + 1) % n).y;
-
             //calculate the z-value of the crossproduct
             double zCrossProduct = dx1 * dy2 - dy1 * dx2;
-
             //return concavity based on the sign of the cross product
             if (zCrossProduct == 0) {
                 return false;
@@ -436,7 +433,7 @@ public class GameScreen extends MyScreen {
     }
 
     /**
-     * Draws a based based on two points
+     * Draws a rectangle based on two points
      */
     public void drawRectangle() {
         //recreate the polygon using only the first vertice
