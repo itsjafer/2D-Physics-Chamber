@@ -5,6 +5,7 @@
  */
 package com.mygdx.game.gamescreen;
 
+import com.badlogic.gdx.Gdx;
 import com.mygdx.game.GameMenu;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.MainMenuScreen;
@@ -66,6 +67,7 @@ public class ScreenManager {
                 break;
             case MAIN_GAME:
                 if (!activeScreens.containsKey(screen)) {
+                    Gdx.input.setInputProcessor(MyGdxGame.gameInput);
                     activeScreens.put(screen, new GameScreen(this));
                 }
                 break;

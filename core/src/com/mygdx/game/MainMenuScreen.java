@@ -26,7 +26,7 @@ import com.mygdx.game.model.LevelLoader;
  * @author Dmitry, Jafer, Caius
  */
 public class MainMenuScreen extends MyScreen {
-    
+
     private Skin skin;
     private Stage stageMenu, stageLoad;
     private Table tableMenu, tableLoad;
@@ -39,15 +39,15 @@ public class MainMenuScreen extends MyScreen {
     private boolean isSaving, isLoading;
     private InputProcessor lastUsedProcessor;
     private LevelLoader loader;
-    
+
     public MainMenuScreen(ScreenManager gameStateManager) {
         super(gameStateManager);
     }
-    
+
     @Override
     public void show() {
     }
-    
+
     @Override
     public void render(float delta) {
 
@@ -60,7 +60,7 @@ public class MainMenuScreen extends MyScreen {
             stageMenu.draw();
         }
     }
-    
+
     @Override
     public void init() {
         //create the stage for the main menu
@@ -144,22 +144,23 @@ public class MainMenuScreen extends MyScreen {
         tableLoad.add(slot3).pad(20, 20, 0, 20).size(200, 100);
         tableLoad.add(inputSlot3);
         tableLoad.row();
-        
+
     }
-    
+
     @Override
     public void update(float deltaTime) {
+        
         if (Gdx.input.getInputProcessor() != lastUsedProcessor) {
             Gdx.input.setInputProcessor(lastUsedProcessor);
         }
         processInput();
-        
+
         slot1Text = inputSlot1.getText();
         slot2Text = inputSlot2.getText();
         slot3Text = inputSlot3.getText();
-        
+
     }
-    
+
     @Override
     public void processInput() {
         //to easily switch between main menu and main game using the ESC key
@@ -190,7 +191,7 @@ public class MainMenuScreen extends MyScreen {
                 slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                 notification.setText("Saved to slot 1");
                 loader.saveLevel(0, slot1Text);
-                
+
             } else if (isLoading) {
                 notification.setText("Loaded slot 1");
                 returnToMenu.setText("Go to Game");
@@ -205,7 +206,7 @@ public class MainMenuScreen extends MyScreen {
                 slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                 notification.setText("Saved to slot 2");
                 loader.saveLevel(1, slot2Text);
-                
+
             } else if (isLoading) {
                 notification.setText("Loaded slot 2");
                 returnToMenu.setText("Go to Game");
@@ -218,7 +219,7 @@ public class MainMenuScreen extends MyScreen {
                 slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
                 notification.setText("Saved to slot 3");
                 loader.saveLevel(2, slot3Text);
-                
+
             } else if (isLoading) {
                 notification.setText("Loaded slot 3");
                 returnToMenu.setText("Go to Game");
@@ -242,124 +243,24 @@ public class MainMenuScreen extends MyScreen {
             Gdx.app.exit();
         }
     }
-    
-    public void addInputs() {
-//        startGame.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                startGame.setText("Resume Game");
-//                startGame.setChecked(false);
-//                gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-//
-//            }
-//        });
-//        saveGame.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                saveGame.setChecked(false);
-//                notification.setVisible(false);
-//                isSaving = true;
-//                Gdx.input.setInputProcessor(inputMultiplexLoad);
-//                lastUsedProcessor = inputMultiplexLoad;
-//            }
-//        });
-//        loadGame.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                loadGame.setChecked(false);
-//                notification.setVisible(false);
-//                isLoading = true;
-//                Gdx.input.setInputProcessor(inputMultiplexLoad);
-//                lastUsedProcessor = inputMultiplexLoad;
-//            }
-//        });
-//        slot1.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                if (isSaving) {
-//                    slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
-//                    notification.setVisible(true);
-//                    notification.setText("Saved to slot 1");
-//                    loader.saveLevel(0, slot1Text);
-//
-//                } else if (isLoading) {
-//                    notification.setVisible(true);
-//                    notification.setText("Loaded slot 1");
-//                    loader.loadLevel(0);
-//                    slot1Text = loader.getSlotName(0);
-//                    slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
-//                }
-//            }
-//        });
-//        slot2.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                if (isSaving) {
-//                    slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
-//                    notification.setVisible(true);
-//                    notification.setText("Saved to slot 2");
-//                    loader.saveLevel(1, slot2Text);
-//
-//                } else if (isLoading) {
-//                    notification.setVisible(true);
-//                    notification.setText("Loaded slot 2");
-//                    loader.loadLevel(1);
-//                }
-//            }
-//        });
-//        slot3.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                if (isSaving) {
-//                    slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
-//                    notification.setVisible(true);
-//                    notification.setText("Saved to slot 3");
-//                    loader.saveLevel(2, slot3Text);
-//
-//                } else if (isLoading) {
-//                    notification.setVisible(true);
-//                    notification.setText("Loaded slot 3");
-//                    loader.loadLevel(2);
-//                }
-//            }
-//        });
-//        returnToMenu.addListener(new ClickListener() {
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                if (notification.isVisible() && notification.getText().charAt(0) == 'L') {
-//                    gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
-//                    Gdx.input.setInputProcessor(inputMultiplexMain);
-//                    lastUsedProcessor = inputMultiplexMain;
-//                    isLoading = false;
-//                    isSaving = false;
-//                } else {
-//                    Gdx.input.setInputProcessor(inputMultiplexMain);
-//                    lastUsedProcessor = inputMultiplexMain;
-//                    isLoading = false;
-//                    isSaving = false;
-//                }
-//
-//            }
-//        });
-    }
-    
+
     @Override
     public void resize(int width, int height) {
         stageMenu.getViewport().update(width, height, true);
     }
-    
+
     @Override
     public void pause() {
     }
-    
+
     @Override
     public void resume() {
     }
-    
+
     @Override
     public void hide() {
     }
-    
+
     @Override
     public void dispose() {
     }

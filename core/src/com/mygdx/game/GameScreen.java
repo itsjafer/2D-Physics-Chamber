@@ -75,12 +75,7 @@ public class GameScreen extends MyScreen {
         gridLayout = new ArrayList();
         lastPolygonMoved = new ArrayList();
         gridSize = 20; //default grid size is set at 20
-        //spawn the grid
-        for (int i = 0; i <= MyGdxGame.HEIGHT; i += gridSize) {
-            for (int j = 0; j <= MyGdxGame.WIDTH; j += gridSize) {
-                gridLayout.add(new GridPoint2(j, i));
-            }
-        }
+
         drawColour = Color.WHITE; //the default drawing colour set to white
 
         //Default values for any special factors affecting the game
@@ -108,8 +103,11 @@ public class GameScreen extends MyScreen {
         //draws the grid points
         if (gridMode) {
             shapeRenderer.setColor(Color.WHITE);
-            for (GridPoint2 point : gridLayout) {
-                shapeRenderer.circle(point.x, point.y, 1);
+            //spawn the grid
+            for (float i = 0; i <= MyGdxGame.HEIGHT; i += gridSize) {
+                for (float j = 0; j <= MyGdxGame.WIDTH; j += gridSize) {
+                    shapeRenderer.circle(i, j, 1);
+                }
             }
         }
 
@@ -282,7 +280,6 @@ public class GameScreen extends MyScreen {
                     }
                 }
             }
-
         }
         //check if the left mouse button has been dragged
         if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
@@ -348,6 +345,8 @@ public class GameScreen extends MyScreen {
         float xPos = gridSize * Math.round(curMousePos.x / gridSize);
         float yPos = gridSize * Math.round(curMousePos.y / gridSize);
 
+        //the -1 is to center the drawing of it. Otherwise the mouse snaps 
+        //to one pixel above the grid point
         mouseDrawPos.set(xPos, yPos - 1);
     }
 
