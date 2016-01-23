@@ -156,7 +156,7 @@ public class LevelLoader {
             try {
                 file = new FileReader("level" + index + ".txt");
             } catch (Exception e) {
-                System.out.println(e);
+                return "No Save Found";
             }
             Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
 
