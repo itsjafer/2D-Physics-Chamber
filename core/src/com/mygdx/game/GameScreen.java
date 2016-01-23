@@ -34,20 +34,20 @@ public class GameScreen extends MyScreen {
     private ShapeRenderer shapeRenderer;
     protected GameWorld world;
     //storage variables used to change appearance of the game
-    private ArrayList<Vector2> potentialPolygon;
-    private ArrayList<GridPoint2> gridLayout;
-    private ArrayList<Polygon> lastPolygonMoved;
-    private float gridSize;
-    protected Color drawColour;
+    private ArrayList<Vector2> potentialPolygon; //stores vertices of polygon actively being drawn
+    private ArrayList<GridPoint2> gridLayout; //holds the gridpoints
+    private float gridSize; //the size of each individual grid
+    private ArrayList<Polygon> lastPolygonMoved; //stores the last polygon that was moved
+    protected Color drawColour; //the current colour used to draw
     private final float SNAP_ANGLE = (float) Math.toRadians(45); // The angle multiple to which to snap
     //drawing variables
-    private boolean validPos;
-    private boolean clickedInsidePolygon;
-    private Vector2 oldMousePos;
+    private boolean validPos; //boolean stores whether a position is valid for a new vertice
+    private boolean clickedInsidePolygon; //boolean stores whether a click has occured inside a polygon
     private boolean straight; // Whether the line being drawn is to be straightened
+    private Vector2 oldMousePos; // The position at which the previous point was added
     private Vector2 mouseDrawPos; // The position at which the next point should be added
-    private boolean rectangleMode;
-    protected boolean gridMode;
+    private boolean rectangleMode; //boolean used to determine if rectangles are to be drawn
+    protected boolean gridMode; //boolean used to determine if grids arre to be shown
 
     /**
      * Creates a UI object
@@ -59,30 +59,37 @@ public class GameScreen extends MyScreen {
     }
 
     @Override
+    /**
+     * Method used to initialize all variables
+     */
     public void init() {
-        //initializing all variables
+        //initializing all essential variables 
+        world = MyGdxGame.WORLD;
         camera = new OrthographicCamera(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
         shapeRenderer = new ShapeRenderer();
-        world = MyGdxGame.WORLD;
+
+        //initializing variables affecting appearance
         potentialPolygon = new ArrayList();
         gridLayout = new ArrayList();
         lastPolygonMoved = new ArrayList();
-        gridSize = 20;
+        gridSize = 20; //default grid size is set at 20
         //spawn the grid
         for (int i = 0; i <= MyGdxGame.HEIGHT; i += gridSize) {
             for (int j = 0; j <= MyGdxGame.WIDTH; j += gridSize) {
                 gridLayout.add(new GridPoint2(j, i));
             }
         }
-        drawColour = Color.WHITE;
-        gridMode = false;
-        straight = false;
+        drawColour = Color.WHITE; //the default drawing colour set to white
+
+        //Default values for any special factors affecting the game
+        gridMode = false; //grids are disabled by default
+        straight = false; //straight lines are disabled by default
+        rectangleMode = false;  //rectanlges are disabled by default
         clickedInsidePolygon = false;
         oldMousePos = null;
         mouseDrawPos = new Vector2();
-        rectangleMode = false;
     }
 
     /**
@@ -92,11 +99,6 @@ public class GameScreen extends MyScreen {
      */
     @Override
     public void render(float deltaTime) {
-        // updates the camera to the world space
-//        if (world.getPlayer() != null) {
-//            camera.position.set(world.getPlayer().getCenter().x, world.getPlayer().getCenter().y, 0);
-//        }
-//        camera.update();
 
         //shapeRenderer initialization
         shapeRenderer.setAutoShapeType(true);
@@ -113,14 +115,17 @@ public class GameScreen extends MyScreen {
 
         //draw any polygon in progress
         if (!potentialPolygon.isEmpty()) {
+
+            //call the appropriate polygon creation method
             if (rectangleMode) {
                 drawRectangle();
             } else {
                 drawPotentialPolygon();
             }
         }
-        validPos = true;
 
+        //Assume a position is valid until proven false
+        validPos = true;
         for (Polygon polygon : world.getPolygons()) {
             //Checking and verifying polygon dragging
             if (!lastPolygonMoved.contains(polygon)) {
@@ -194,17 +199,20 @@ public class GameScreen extends MyScreen {
 
         //player movement
         if (world.getPlayer() != null) {
+            //jump if W is pressed
             if (GameInputs.isKeyDown(GameInputs.Keys.W)) {
                 world.jumpPlayer();
             }
+            //move left if A is pressed
             if (GameInputs.isKeyDown(GameInputs.Keys.A)) {
                 world.movePlayerLeft();
             }
+            //move right if D is pressed
             if (GameInputs.isKeyDown(GameInputs.Keys.D)) {
                 world.movePlayerRight();
             }
         }
-        // CTRL + SHIFT + Right_Click --> delete last added/moved polygon
+        // CTRL + SHIFT + Right_Click deletes last added/moved polygon
         if (GameInputs.isKeyDown(GameInputs.Keys.CTRL) && GameInputs.isKeyDown(GameInputs.Keys.SHIFT)
                 && GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
             if (!world.getPolygons().isEmpty()) {
@@ -216,11 +224,14 @@ public class GameScreen extends MyScreen {
             straight = GameInputs.isKeyDown(GameInputs.Keys.SHIFT);
             //pressing ctrl results in toggle of rectangle mode
             if (GameInputs.isKeyJustPressed(GameInputs.Keys.CTRL)) {
+
+                //if rectangle mode is already enabled, set it to false, and remove all the vertices except the first
                 if (rectangleMode) {
                     if (!potentialPolygon.isEmpty()) {
-                        Vector2 temp = potentialPolygon.get(0);
-                        potentialPolygon.clear();
-                        potentialPolygon.add(temp);
+                        //remove all vertices except the first
+                        for (int i = potentialPolygon.size() - 1; i > 0; i--) {
+                            potentialPolygon.remove(i);
+                        }
                     }
                     rectangleMode = false;
                 } else {
@@ -261,6 +272,8 @@ public class GameScreen extends MyScreen {
                 //if its not a validpos to create a polygon, update dragging variables
                 clickedInsidePolygon = true;
                 oldMousePos = mouseDrawPos;
+
+                //replace the previously last moved polygon with the new one
                 for (Polygon polygon : lastPolygonMoved) {
                     if (polygon.containsPoint(mouseDrawPos)) {
                         lastPolygonMoved.remove(polygon);
@@ -273,21 +286,27 @@ public class GameScreen extends MyScreen {
         }
         //check if the left mouse button has been dragged
         if (GameInputs.isMouseDragged(GameInputs.MouseButtons.LEFT)) {
+            //if a click occurs inside a polygon and it exists
             if (clickedInsidePolygon && !lastPolygonMoved.isEmpty()) {
+                //apply a displacement on the polygon equal to the displacment of the mouse
                 Vector2 displacement = mouseDrawPos.cpy().sub(oldMousePos);
                 lastPolygonMoved.get(0).bump(displacement);
                 oldMousePos = mouseDrawPos;
             }
         }
+        //releasing the mouse left button stops mouse dragging
         if (GameInputs.isMouseButtonJustReleased(GameInputs.MouseButtons.LEFT)) {
             clickedInsidePolygon = false;
         }
 
         //right-clicking removes the last vertice of the potential polygon
         if (GameInputs.isMouseButtonJustPressed(GameInputs.MouseButtons.RIGHT)) {
+            //removes the last vertice
             if (!potentialPolygon.isEmpty()) {
                 potentialPolygon.remove(potentialPolygon.size() - 1);
             }
+
+            //removes the rectangle altogether
             if (rectangleMode) {
                 rectangleMode = false;
                 potentialPolygon.clear();
@@ -299,8 +318,10 @@ public class GameScreen extends MyScreen {
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ENTER)) {
             //assuming a valid polygon can be made
             if (potentialPolygon.size() > 2) {
+                //creates a polygon based on the vertices and colours given
                 world.createPolygon(potentialPolygon, drawColour);
                 lastPolygonMoved.add(0, world.getPolygons().get(world.getPolygons().size() - 1));
+                //clear the potential polygon to allow more polygons to be made
                 potentialPolygon.clear();
             }
         }
@@ -308,7 +329,9 @@ public class GameScreen extends MyScreen {
         //pressing P results in the creation of a player
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.P)) {
             if (world.getPlayer() == null && potentialPolygon.size() > 2) {
+                //create the player using the vertices and colour passed in
                 world.createPlayer(potentialPolygon, drawColour);
+                //clear the potential polygon to allow more polygons to be made
                 potentialPolygon.clear();
             }
         }
@@ -368,19 +391,20 @@ public class GameScreen extends MyScreen {
         }
 
         //give user color feedback on if they're creating a concave polygon
-        potentialPolygon.add(mouseDrawPos.cpy());
+        potentialPolygon.add(mouseDrawPos.cpy()); //add mouse position to the potentialPolygon temporarily
         if (!isConvex(potentialPolygon)) {
+            //change color to red if the resulting point causes a non-convex shape
             shapeRenderer.setColor(Color.RED);
         } else {
+            //change color to green if the point causes a convex shape
             shapeRenderer.setColor(Color.GREEN);
         }
-        potentialPolygon.remove(potentialPolygon.size() - 1);
-        potentialPolygon.trimToSize();
+        potentialPolygon.remove(potentialPolygon.size() - 1); //remove the temporary point
 
         // draw a line from the first point to the mouse (to complete the white outline
         shapeRenderer.line(potentialPolygon.get(0), mouseDrawPos);
-        if (potentialPolygon.size() >= 2) // only draw a line from the last added polygon to the mouse if there's at least 2 points.. otherwise, it's just a waste of a line because the polygon is still a line if this condition is not met
-        {
+        // only draw a line from the last added polygon to the mouse if there's at least 2 points
+        if (potentialPolygon.size() >= 2) {
             shapeRenderer.line(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         }
 
