@@ -369,11 +369,11 @@ public class GameScreen extends MyScreen {
 
         //give user color feedback on if they're creating a concave polygon
         potentialPolygon.add(mouseDrawPos.cpy());
-//        if (!isConvex(potentialPolygon)) {
-//            shapeRenderer.setColor(Color.RED);
-//        } else {
-//            shapeRenderer.setColor(Color.GREEN);
-//        }
+        if (!isConvex(potentialPolygon)) {
+            shapeRenderer.setColor(Color.RED);
+        } else {
+            shapeRenderer.setColor(Color.GREEN);
+        }
         potentialPolygon.remove(potentialPolygon.size() - 1);
         potentialPolygon.trimToSize();
 
@@ -399,9 +399,9 @@ public class GameScreen extends MyScreen {
         }
         boolean sign = false;
         int n = potentialConvexPolygon.size();
-        for (int i = 0; i < potentialConvexPolygon.size(); i++) {
+        for (int i = 0; i < n; i++) {
 
-            //use the gift-wrapping algorithm
+            //use the gift-wrapping algorithm, modulus used to account for i+2 greater than n
             double dx1 = potentialConvexPolygon.get((i + 2) % n).x - potentialConvexPolygon.get((i + 1) % n).x;
             double dy1 = potentialConvexPolygon.get((i + 2) % n).y - potentialConvexPolygon.get((i + 1) % n).y;
             double dx2 = potentialConvexPolygon.get(i).x - potentialConvexPolygon.get((i + 1) % n).x;
