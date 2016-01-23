@@ -58,7 +58,7 @@ public class LevelLoader {
             //Writing player information to file
             if (world.getPlayer() != null) {
                 out.write("Player: " + "\n");
-                out.write(world.getPlayer().getPolygonColour().toString() + "\n");
+                out.write(world.getPlayer().getColor().toString() + "\n");
                 Vector2[] playerVertices = world.getPlayer().getVertices();
                 for (int x = 0; x < playerVertices.length; x++) {
                     out.write(playerVertices[x].x + "\n");
@@ -70,7 +70,7 @@ public class LevelLoader {
             if (!world.getPolygons().isEmpty()) {
                 for (Polygon polygon : world.getPolygons()) {
                     out.write("\n" + "Polygon ");
-                    out.write("\n" + polygon.getPolygonColour().toString());
+                    out.write("\n" + polygon.getColor().toString());
                     for (Vector2 vertice : polygon.getVertices()) {
                         out.write("\n" + vertice.x);
                         out.write("\n" + vertice.y);

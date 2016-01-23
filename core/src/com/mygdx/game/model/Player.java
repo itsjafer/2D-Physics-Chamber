@@ -331,11 +331,11 @@ public class Player extends Polygon {
         checkForCollisions(polygons);
 
         if (collided) {
-            // Run the collision loop 4 times just to make sure the polygon isn't colliding with anything (since the player could be colliding with multiple at once)
+            // Run the collision loop 10 times just to be safe that the polygon isn't colliding with anything (since the player could be colliding with multiple at once)
             // A way to improve this would be to store a list of all the polygons currently in collision with  the player, and then run this loop while that list is not empty
             // in this loop, the checks will be made for these polygons, as well as the rest in the world (since moving the player out of collision can cause other collisions)
             int numChecks = 0;
-            while (collided && numChecks < 4) {
+            while (collided && numChecks < 10) {
                 doCollision();
                 checkForCollisions(polygons);
                 numChecks++;

@@ -293,9 +293,9 @@ public class GameMenu extends MyScreen {
 
         //enable or disable snap to grid mode
         if (snapToGrid.isChecked()) {
-            background.gridMode = true;
-        } else if (!snapToGrid.isChecked()) {
-            background.gridMode = false;
+            background.setGridMode(true);
+        } else if (!snapToGrid.isChecked()){
+            background.setGridMode(false);
         }
 
         //enable or disable player rotation

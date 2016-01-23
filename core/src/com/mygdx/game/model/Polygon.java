@@ -36,7 +36,7 @@ public class Polygon {
     /**
      * @return the polygon's color
      */
-    public Color getPolygonColour() {
+    public Color getColor() {
         return polygonColour;
     }
 
