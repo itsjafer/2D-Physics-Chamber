@@ -28,29 +28,31 @@ import java.util.ArrayList;
  */
 public class GameScreen extends MyScreen {
 
+    protected GameWorld world;
+    
     //essential variables
     private OrthographicCamera camera;
     private Viewport viewport;
     private ShapeRenderer shapeRenderer;
-    protected GameWorld world;
     //storage variables used to change appearance of the game
     private ArrayList<Vector2> potentialPolygon; //stores vertices of polygon actively being drawn
+    private Player player;
+    private ArrayList<Polygon> lastPolygonMoved; //stores the last polygon that was moved
     private ArrayList<GridPoint2> gridLayout; //holds the gridpoints
     private float gridSize; //the size of each individual grid
-    private ArrayList<Polygon> lastPolygonMoved; //stores the last polygon that was moved
     protected Color drawColour; //the current colour used to draw
     private final float SNAP_ANGLE = (float) Math.toRadians(45); // The angle multiple to which to snap
     //drawing variables
-    private boolean validPos; //boolean stores whether a position is valid for a new vertice
+    private boolean validPos; //boolean stores whether a position is valid for a new vertex
     private boolean clickedInsidePolygon; //boolean stores whether a click has occured inside a polygon
     private boolean straight; // Whether the line being drawn is to be straightened
     private Vector2 oldMousePos; // The position at which the previous point was added
     private Vector2 mouseDrawPos; // The position at which the next point should be added
     private boolean rectangleMode; //boolean used to determine if rectangles are to be drawn
-    protected boolean gridMode; //boolean used to determine if grids arre to be shown
+    private boolean gridMode; //boolean used to determine if grids arre to be shown
 
     /**
-     * Creates a UI object
+     * Creates the game screen
      *
      * @param gameStateManager
      */
@@ -59,17 +61,14 @@ public class GameScreen extends MyScreen {
     }
 
     @Override
-    /**
-     * Method used to initialize all variables
-     */
     public void init() {
-        //initializing all essential variables 
+        
         world = MyGdxGame.WORLD;
+        // view stuff
         camera = new OrthographicCamera(MyGdxGame.WIDTH, MyGdxGame.HEIGHT);
         viewport = new FitViewport(MyGdxGame.WIDTH, MyGdxGame.HEIGHT, camera);
         viewport.apply(true);
         shapeRenderer = new ShapeRenderer();
-
         //initializing variables affecting appearance
         potentialPolygon = new ArrayList();
         gridLayout = new ArrayList();
@@ -92,11 +91,6 @@ public class GameScreen extends MyScreen {
         mouseDrawPos = new Vector2();
     }
 
-    /**
-     * Draws the game
-     *
-     * @param deltaTime
-     */
     @Override
     public void render(float deltaTime) {
 
@@ -113,7 +107,7 @@ public class GameScreen extends MyScreen {
             }
         }
 
-        //draw any polygon in progress
+        //draw 
         if (!potentialPolygon.isEmpty()) {
 
             //call the appropriate polygon creation method
@@ -133,7 +127,7 @@ public class GameScreen extends MyScreen {
             }
 
             //set polygon colour
-            shapeRenderer.setColor(polygon.getPolygonColour());
+            shapeRenderer.setColor(polygon.getColor());
 
             //checking if the mouse is on the polygon
             if (polygon.containsPoint(GameInputs.getMousePosition())) {
@@ -141,7 +135,7 @@ public class GameScreen extends MyScreen {
                 shapeRenderer.setColor(Color.GOLD);
             }
 
-            //drawing each polygon
+            //draw each polygon by connecting each vertex
             Vector2[] shapeVertices = polygon.getVertices();
             for (int i = 0; i < shapeVertices.length; i++) {
                 shapeRenderer.line(shapeVertices[i], shapeVertices[i + 1 == shapeVertices.length ? 0 : i + 1]);
@@ -151,19 +145,13 @@ public class GameScreen extends MyScreen {
         if (world.getPlayer() != null) {
             //initialize the player
             Player player = world.getPlayer();
-            shapeRenderer.setColor(player.getPolygonColour());
-
-            //change the colour based on if the mouse is in the player
-            if (player.containsPoint(GameInputs.getMousePosition())) {
-                shapeRenderer.setColor(Color.GOLD);
-            }
+            shapeRenderer.setColor(player.getColor());
 
             //render the player
             Vector2[] playerVertices = player.getVertices();
             for (int i = 0; i < playerVertices.length; i++) {
                 shapeRenderer.line(playerVertices[i], playerVertices[i + 1 == playerVertices.length ? 0 : i + 1]);
             }
-            shapeRenderer.setColor(Color.WHITE);
         }
         shapeRenderer.end();
     }
@@ -181,7 +169,8 @@ public class GameScreen extends MyScreen {
         //update the mouse position
         mouseDrawPos = GameInputs.getMousePosition();
 
-        //check if there are any special conditions for drawing a line
+        //check if the mouse drawing position needs to be adjusted
+            // if the angle between points should be at fixed intervals
         if (straight && !potentialPolygon.isEmpty()) {
             straightenMouse(potentialPolygon.get(potentialPolygon.size() - 1), mouseDrawPos);
         } else if (gridMode) {
@@ -192,9 +181,6 @@ public class GameScreen extends MyScreen {
     }
 
     @Override
-    /**
-     * Processes any inputs taken by the game
-     */
     public void processInput() {
 
         //player movement
@@ -233,10 +219,9 @@ public class GameScreen extends MyScreen {
                             potentialPolygon.remove(i);
                         }
                     }
-                    rectangleMode = false;
-                } else {
-                    rectangleMode = true;
                 }
+                // toggle rectangle mode
+                rectangleMode = rectangleMode ? false: true;
             }
         }
 
@@ -533,6 +518,15 @@ public class GameScreen extends MyScreen {
         float theta = MathUtils.atan2(yVal, xVal);
 
         return theta;
+    }
+    
+    /**
+     * Sets the grid mode
+     * @param gridMode
+     */
+    public void setGridMode(boolean gridMode)
+    {
+        this.gridMode = gridMode;
     }
 
     @Override

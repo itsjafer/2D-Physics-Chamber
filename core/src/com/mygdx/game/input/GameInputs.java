@@ -142,6 +142,7 @@ public class GameInputs {
     }
 
     public static boolean isMouseButtonJustReleased(MouseButtons button) {
+        // user let go of the mouse but its long press state hasn't been updated yet
         return !mouseButtonsDown.get(button) && mouseButtonsHeldDown.get(button);
     }
 
@@ -171,10 +172,18 @@ public class GameInputs {
         mouseButtonsDown.put(button, state);
     }
 
+    /**
+     * Sets the mouse coordinates
+     * @param x
+     * @param y 
+     */
     public static void setMousePosition(int x, int y)
     {
         mousePosition.set(x, y);
     }
+    /**
+     * @return the mouse position
+     */
     public static Vector2 getMousePosition() {
         return mousePosition.cpy();
     }
