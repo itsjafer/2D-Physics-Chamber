@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.mygdx.game.GameMenu;
 import com.mygdx.game.GameScreen;
 import com.mygdx.game.MainMenuScreen;
+import com.mygdx.game.MusicManager;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.input.GameInputs;
 import java.util.HashMap;
@@ -54,7 +55,6 @@ public class ScreenManager {
             currentGameState.dispose();
         }
 
-        
         // Initialize each screen based on its requirements
         switch (screen) {
             case GAME_MENU:
@@ -66,14 +66,14 @@ public class ScreenManager {
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new MainMenuScreen(this));
                 }
-                MyGdxGame.setSong(MyGdxGame.menuMusic);
+                MusicManager.switchSong(MusicManager.MENU_MUSIC);
                 break;
             case MAIN_GAME:
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new GameScreen(this));
                 }
                 Gdx.input.setInputProcessor(MyGdxGame.gameInput);
-                MyGdxGame.setSong(MyGdxGame.gameMusic);
+                MusicManager.switchSong(MusicManager.GAME_MUSIC);
                 break;
         }
         currentGameState = activeScreens.get(screen);

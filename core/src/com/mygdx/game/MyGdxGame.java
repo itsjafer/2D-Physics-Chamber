@@ -23,18 +23,12 @@ public class MyGdxGame extends Game {
     public static int WIDTH, HEIGHT;
     // Global world
     public static final GameWorld WORLD = new GameWorld();
-    // instance of the background music
-    public static Music gameMusic, menuMusic;
-    private static Music currentSong;
 
     /**
      * Creates the game
      */
     @Override
     public void create() {
-        //create the music by implementing the music file
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("rolling_hills.wav"));
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("onwards.wav"));
         // initialize width and height
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
@@ -45,16 +39,6 @@ public class MyGdxGame extends Game {
         screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
     }
     
-    public static void setSong(Music song)
-    {
-        if (currentSong != null)
-            currentSong.stop();
-        currentSong = song;
-        currentSong.setLooping(true);
-        currentSong.setVolume(0.5f);
-        currentSong.play();
-    }
-
     /**
      * The main game loop
      */
