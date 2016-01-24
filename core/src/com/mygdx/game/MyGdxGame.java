@@ -24,13 +24,17 @@ public class MyGdxGame extends Game {
     // Global world
     public static final GameWorld WORLD = new GameWorld();
     // instance of the background music
-    Music musicIntro, musicMenu;
+    public static Music gameMusic, menuMusic;
+    private static Music currentSong;
 
     /**
      * Creates the game
      */
     @Override
     public void create() {
+        //create the music by implementing the music file
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("rolling_hills.wav"));
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("onwards.wav"));
         // initialize width and height
         WIDTH = Gdx.graphics.getWidth();
         HEIGHT = Gdx.graphics.getHeight();
@@ -39,15 +43,16 @@ public class MyGdxGame extends Game {
         Gdx.input.setInputProcessor(gameInput);
         // The game screen manager starts out showing the menu screen
         screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
-        //create the music by implementing the music file
-        musicIntro = Gdx.audio.newMusic(Gdx.files.internal("relaxingIntro.wav"));
-        musicMenu = Gdx.audio.newMusic(Gdx.files.internal("compSciMusic.wav"));
-        //loop the music
-        musicIntro.setLooping(true);
-        //set the volume to half
-        musicIntro.setVolume(0.5f);
-        //play the music
-        musicIntro.play();
+    }
+    
+    public static void setSong(Music song)
+    {
+        if (currentSong != null)
+            currentSong.stop();
+        currentSong = song;
+        currentSong.setLooping(true);
+        currentSong.setVolume(0.5f);
+        currentSong.play();
     }
 
     /**

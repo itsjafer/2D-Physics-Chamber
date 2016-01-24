@@ -54,6 +54,7 @@ public class ScreenManager {
             currentGameState.dispose();
         }
 
+        
         // Initialize each screen based on its requirements
         switch (screen) {
             case GAME_MENU:
@@ -65,12 +66,14 @@ public class ScreenManager {
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new MainMenuScreen(this));
                 }
+                MyGdxGame.setSong(MyGdxGame.menuMusic);
                 break;
             case MAIN_GAME:
                 if (!activeScreens.containsKey(screen)) {
                     activeScreens.put(screen, new GameScreen(this));
                 }
                 Gdx.input.setInputProcessor(MyGdxGame.gameInput);
+                MyGdxGame.setSong(MyGdxGame.gameMusic);
                 break;
         }
         currentGameState = activeScreens.get(screen);
