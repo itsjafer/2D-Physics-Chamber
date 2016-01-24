@@ -24,7 +24,7 @@ public class MyGdxGame extends Game {
     // Global world
     public static final GameWorld WORLD = new GameWorld();
     // instance of the background music
-    Music music;
+    Music musicIntro, musicMenu;
 
     /**
      * Creates the game
@@ -40,13 +40,14 @@ public class MyGdxGame extends Game {
         // The game screen manager starts out showing the menu screen
         screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
         //create the music by implementing the music file
-        music = Gdx.audio.newMusic(Gdx.files.internal("compSciMusic.wav"));
+        musicIntro = Gdx.audio.newMusic(Gdx.files.internal("relaxingIntro.wav"));
+        musicMenu = Gdx.audio.newMusic(Gdx.files.internal("compSciMusic.wav"));
         //loop the music
-        music.setLooping(true);
+        musicIntro.setLooping(true);
         //set the volume to half
-        music.setVolume(0.5f);
+        musicIntro.setVolume(0.5f);
         //play the music
-        music.play();
+        musicIntro.play();
     }
 
     /**
