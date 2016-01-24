@@ -31,7 +31,7 @@ public class MusicManager {
             return;
         // stop the current song if it exists
         if (currentSong != null)
-            currentSong.stop();
+            currentSong.pause();
         // set the current song
         currentSong = song;
         // the song should be forever looping
