@@ -100,7 +100,7 @@ public class GameScreen extends MyScreen {
             //spawn the grid
             for (float i = 0; i <= MyGdxGame.HEIGHT; i += gridSize) {
                 for (float j = 0; j <= MyGdxGame.WIDTH; j += gridSize) {
-                    shapeRenderer.circle(i, j, 1);
+                    shapeRenderer.circle(j, i, 1);
                 }
             }
         }
