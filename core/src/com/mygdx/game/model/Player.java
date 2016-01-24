@@ -229,8 +229,8 @@ public class Player extends Polygon {
     }
 
     /**
-     *
-     * @param polygons
+     * Updates collision parameters like collision depth and colliding axis
+     * @param polygons the polygons with which to collide
      */
     public void checkForCollisions(ArrayList<Polygon> polygons) {
         // assume the player hasn't collided
@@ -240,6 +240,11 @@ public class Player extends Polygon {
             return;
         }
 
+        // the collision depth is maxed out and is to be reduced throughout the checks
+        collisionDepth = Float.MAX_VALUE;
+        // the collision axis is zeroed and is to be set through the checks
+        collisionAxis.set(0,0);
+        
         // The player's normals
         Vector2[] normals1 = getNormals();
         // The other polygon's normals
@@ -249,15 +254,14 @@ public class Player extends Polygon {
         // The other polygon's projection
         Vector2 projection2;
 
-        // the collision depth is maxed out and is to be reduced throughout the checks
-        float collisionDepthLocal = Float.MAX_VALUE;
-        // the collision axis is zeroed and is to be set through the checks
-        Vector2 collisionAxisLocal = Vector2.Zero;
-
-        // Iterate through all the polygons and check for a collision on a 1 to 1 basis
+        // Iterate through all the polygons and check for a collision on a 1 to 1 basis. The goal is to get the smallest penetration depth out of all the collisions occuring
         for (Polygon otherPoly : polygons) {
+            // first check all the collision stats on a 1 to 1 basis between player and poly, then once a collision has been confirmed, udpate global stats accordingly
+            float collisionDepthLocal = Float.MAX_VALUE;
+            Vector2 collisionAxisLocal = Vector2.Zero;
+            
             // assume collided is true until a collision is not found
-            collided = true;
+            boolean collidedLocal = true;
             // Check all of the player's normals
             for (Vector2 normal : normals1) {
                 // project player and other polygon onto normal
@@ -266,7 +270,7 @@ public class Player extends Polygon {
 
                 // If one normal doesn't contain a collision, then no collision occurs at all for this polygon
                 if (projection1.x >= projection2.y || projection1.y <= projection2.x) {
-                    collided = false;
+                    collidedLocal = false;
                     break;
                 }
 
@@ -296,7 +300,7 @@ public class Player extends Polygon {
 
                 // If one normal doesn't contain a collision, then no collision occurs at all for this polygon
                 if (projection1.x >= projection2.y || projection1.y <= projection2.x) {
-                    collided = false;
+                    collidedLocal = false;
                     break;
                 }
 
@@ -317,38 +321,58 @@ public class Player extends Polygon {
                 }
             }
 
-            // stop at the first collision
-            if (collided) {
-                // update global collision depth & axis
-                collisionDepth = collisionDepthLocal;
-                collisionAxis = collisionAxisLocal;
-                return;
+            // update global stats if need be
+            if (collidedLocal) {
+                if (Math.abs(collisionDepthLocal) < Math.abs(collisionDepth))
+                {
+                    collisionDepth = collisionDepthLocal;
+                    collisionAxis = collisionAxisLocal;
+                    collided = true;
+                }
             }
         }
     }
-
+    
+    /**
+     * The collision loop
+     * @param polygons 
+     */
     public void collideWithPolygons(ArrayList<Polygon> polygons) {
+        // update collision status
         checkForCollisions(polygons);
-
+        
         if (collided) {
-            // Run the collision loop 10 times just to be safe that the polygon isn't colliding with anything (since the player could be colliding with multiple at once)
-            // A way to improve this would be to store a list of all the polygons currently in collision with  the player, and then run this loop while that list is not empty
-            // in this loop, the checks will be made for these polygons, as well as the rest in the world (since moving the player out of collision can cause other collisions)
-            int numChecks = 0;
-            while (collided && numChecks < 10) {
+            // we want to apply bounce transformations after all the collisions have been processed, but at that point the axis is reset
+            // so make a copy here
+            Vector2 collisionAxisCpy = collisionAxis.cpy();
+            
+            // there is a special case where the player can get stuck in a corner with a small gap. At that point, there are two very small and contradictory intersections, which reults in an infinite collision loop
+            //      if a safety counter were applied and the collision loop stopped after a certain number, then the player would eventually teleport through a block
+            //      to avoid this, normal collision mechanics are employed for a number of checks, and after that point, if there is still a collision, the player is slid backwards on the collision axis for one unit
+            //      this takes care of any "sticky" corners
+            int safety = 0;
+            while (collided) {
+                safety++;
+                // get out of collision
                 doCollision();
+                // recheck for collisions
                 checkForCollisions(polygons);
-                numChecks++;
+                // if there is once again a collision but this is now the fourth check, do the "adjustment"
+                if (collided && safety >= 4)
+                {
+                    // the special bump
+                    bump(VectorMath.vectorProject(velocity, collisionAxis).nor().scl(-1));
+                }
             }
-
+            
             ///// Apply movement transformations on the basis of the last polygon the player has collided with
             // The component of velocity parallel to the collision axis
-            Vector2 parallelComponent = VectorMath.vectorProject(velocity, collisionAxis);
+            Vector2 parallelComponent = VectorMath.vectorProject(velocity, collisionAxisCpy);
             // friction 0 means 100% conservation of momentum
             parallelComponent.scl(1f - world.getFriction());
 
             // The component of velocity normal to the collision axis
-            Vector2 normalComponent = VectorMath.vectorProject(velocity, VectorMath.getNormal(collisionAxis));
+            Vector2 normalComponent = VectorMath.vectorProject(velocity, VectorMath.getNormal(collisionAxisCpy));
             // the negative is needed for a bounce
             normalComponent.scl(-world.getRestitution());
 
