@@ -45,6 +45,7 @@ public class ScreenManager {
 
     /**
      * Sets the current game screen
+     *
      * @param screen the enum value of the target game state
      */
     public void setGameScreen(GameScreens screen) {
@@ -67,9 +68,9 @@ public class ScreenManager {
                 break;
             case MAIN_GAME:
                 if (!activeScreens.containsKey(screen)) {
-                    Gdx.input.setInputProcessor(MyGdxGame.gameInput);
                     activeScreens.put(screen, new GameScreen(this));
                 }
+                Gdx.input.setInputProcessor(MyGdxGame.gameInput);
                 break;
         }
         currentGameState = activeScreens.get(screen);

@@ -4,12 +4,13 @@ import com.mygdx.game.input.InputProcessor;
 import com.mygdx.game.gamescreen.ScreenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.game.input.GameInputs;
 import com.mygdx.game.model.GameWorld;
 
 /**
- * 
+ *
  * @author Dmitry, Jafer, Caius
  */
 public class MyGdxGame extends Game {
@@ -22,6 +23,8 @@ public class MyGdxGame extends Game {
     public static int WIDTH, HEIGHT;
     // Global world
     public static final GameWorld WORLD = new GameWorld();
+    // instance of the background music
+    Music music;
 
     /**
      * Creates the game
@@ -36,7 +39,14 @@ public class MyGdxGame extends Game {
         Gdx.input.setInputProcessor(gameInput);
         // The game screen manager starts out showing the menu screen
         screenManager = new ScreenManager(ScreenManager.GameScreens.MAIN_MENU);
-//        screenManager.setGameScreen(ScreenManager.GameScreens.MAIN_MENU);
+        //create the music by implementing the music file
+        music = Gdx.audio.newMusic(Gdx.files.internal("compSciMusic.wav"));
+        //loop the music
+        music.setLooping(true);
+        //set the volume to half
+        music.setVolume(0.5f);
+        //play the music
+        music.play();
     }
 
     /**
