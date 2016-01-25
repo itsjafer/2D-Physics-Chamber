@@ -13,7 +13,6 @@ import com.mygdx.game.gamescreen.ScreenManager;
 import com.mygdx.game.gamescreen.MyScreen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -150,12 +149,13 @@ public class MainMenuScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
-
+        //set the processor everytime the screen changes to the menu
         if (Gdx.input.getInputProcessor() != lastUsedProcessor) {
             Gdx.input.setInputProcessor(lastUsedProcessor);
         }
         processInput();
 
+        //continuously update user inputted text
         slot1Text = inputSlot1.getText();
         slot2Text = inputSlot2.getText();
         slot3Text = inputSlot3.getText();
@@ -164,16 +164,20 @@ public class MainMenuScreen extends MyScreen {
 
     @Override
     public void processInput() {
+
         //to easily switch between main menu and main game using the ESC key
         if (GameInputs.isKeyJustPressed(GameInputs.Keys.ESCAPE)) {
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
+
+        //READ THE NOTE IN GAME MENU ABOUT BUTTONS BEING CHECKED
         //if the Start Game button is pressed
         if (startGame.isChecked()) {
             startGame.setText("Resume Game"); //set the text to resume game, in case user returns to menu
             startGame.setChecked(false); //uncheck the button
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME); //change screens to game screen
         }
+
         //if the Save Game button is pressed
         if (saveGame.isChecked()) {
             returnToMenu.setText("Return to Menu");
@@ -181,64 +185,80 @@ public class MainMenuScreen extends MyScreen {
             isSaving = true; // this means that the user wants to save
             lastUsedProcessor = stageLoad;
         }
+
+        //if the laod game button is pressed, display the load screen
+        //with load logic
         if (loadGame.isChecked()) {
             loadGame.setChecked(false);
             isLoading = true;
             lastUsedProcessor = stageLoad;
         }
+
+        //if slot 1 is pressed do:
         if (slot1.isChecked()) {
             slot1.setChecked(false);
+            //if the user clicked save game button, use save logic
             if (isSaving) {
                 slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
                 notification.setText("Saved to slot 1");
-                loader.saveLevel(0, slot1Text);
-
+                loader.saveLevel(0, slot1Text); //save level
+                //if the user clicked load game button, use load logic
             } else if (isLoading) {
                 notification.setText("Loaded slot 1");
                 returnToMenu.setText("Go to Game");
-                loader.loadLevel(0);
-                slot1Text = loader.getSlotName(0);
-                slot1.setText("Slot 1:\n\n" + "'" + slot1Text + "'");
+                loader.loadLevel(0); //load level
             }
         }
+
+        //if slot 2 is pressed do:
         if (slot2.isChecked()) {
             slot2.setChecked(false);
+            //if the user clicked save game button, use save logic
             if (isSaving) {
                 slot2.setText("Slot 2:\n\n" + "'" + slot2Text + "'");
                 notification.setText("Saved to slot 2");
-                loader.saveLevel(1, slot2Text);
-
+                loader.saveLevel(1, slot2Text); //save the level
+                //if the user clicked load game button, use load logic
             } else if (isLoading) {
                 notification.setText("Loaded slot 2");
                 returnToMenu.setText("Go to Game");
-                loader.loadLevel(1);
+                loader.loadLevel(1); //load the level
             }
         }
+        //if slot 3 is pressed do:
         if (slot3.isChecked()) {
             slot3.setChecked(false);
+            //if the user clicked save game button, use save logic
             if (isSaving) {
                 slot3.setText("Slot 3:\n\n" + "'" + slot3Text + "'");
                 notification.setText("Saved to slot 3");
-                loader.saveLevel(2, slot3Text);
-
+                loader.saveLevel(2, slot3Text); //save the level
+                //if the user clicked load game button, use load logic
             } else if (isLoading) {
                 notification.setText("Loaded slot 3");
                 returnToMenu.setText("Go to Game");
-                loader.loadLevel(2);
+                loader.loadLevel(2); // load the level
             }
         }
+        //when pressing return to menu
         if (returnToMenu.isChecked()) {
             returnToMenu.setChecked(false);
+
+            //if the button is renamed to "Go to Game",
+            //then return to the main game
             if (returnToMenu.getText().charAt(0) == 'G') {
                 gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
                 isLoading = false;
                 isSaving = false;
             } else {
+                //if it's still named as return to menu, return to menu
                 isLoading = false;
                 isSaving = false;
             }
+            //set the last used input processor to the main menu, not the load menu
             lastUsedProcessor = stageMenu;
         }
+        //when quit game is pressed, quit the game.
         if (quitGame.isChecked()) {
             quitGame.setChecked(false);
             Gdx.app.exit();
