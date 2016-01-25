@@ -65,7 +65,7 @@ public class GameMenu extends MyScreen {
         super(gameStateManager);
         this.background = background;
     }
-    
+
     @Override
     public void init() {
 
@@ -128,9 +128,9 @@ public class GameMenu extends MyScreen {
 
         //add objects to tableButtons
         tableButtons.add(resetPlayer).pad(4, 4, 4, 4);
-        tableButtons.add(resetLevel).pad(4, 4, 4, 4);
-        tableButtons.add(colours).pad(4, 4, 4, 8);
-        tableButtons.add(backToGame).pad(4, 4, 4, 4);
+        tableButtons.add(resetLevel).pad(4, 4, 4, 0);
+        tableButtons.add(colours).pad(4, -1, 4, 4);
+        tableButtons.add(backToGame).pad(4, 0, 4, 4);
         tableButtons.row();
         tableButtons.add(snapToGrid).pad(4, 4, 4, 4);
         tableButtons.add(playerRotate).pad(4, 0, 4, 4);
@@ -186,7 +186,7 @@ public class GameMenu extends MyScreen {
         textButtonStyle2.up = skinColourSample.newDrawable("white");
         textButtonStyle2.font = skinColourSample.getFont("default");
         skinColourSample.add("default", textButtonStyle2);
-        
+
         sampleColourButton = new TextButton("", skinColourSample);
 
         // add the buttons to tableColour
@@ -200,7 +200,7 @@ public class GameMenu extends MyScreen {
         //(each button/slider has a default listener, but we sometimes want another instead)
         addInputs();
     }
-    
+
     @Override
     public void update(float deltaTime) {
 
@@ -214,9 +214,9 @@ public class GameMenu extends MyScreen {
 
         //process all the inputs
         processInput();
-        
+
     }
-    
+
     @Override
     public void resize(int width, int height) {
         stageMenu.getViewport().update(width, height, true);
@@ -240,7 +240,7 @@ public class GameMenu extends MyScreen {
             frictionSlider.setValue(world.getFriction());
         }
     }
-    
+
     @Override
     public void show() {
     }
@@ -330,7 +330,7 @@ public class GameMenu extends MyScreen {
             backToGame.setChecked(false);
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
-        
+
         //mute the music if the checkbox is checked
         if (muteMusic.isChecked()) {
             MusicManager.muteMusic();
@@ -338,7 +338,7 @@ public class GameMenu extends MyScreen {
             MusicManager.unmuteMusic();
         }
     }
-    
+
     public void addInputs() {
 
         //add a new listener to the slider. Update world setting based on what the user selects for sliders
@@ -406,19 +406,19 @@ public class GameMenu extends MyScreen {
         sampleColourButton.setColor(drawColour);
         background.drawColour = drawColour; // set the drawing colour in gamescreen
     }
-    
+
     @Override
     public void pause() {
     }
-    
+
     @Override
     public void resume() {
     }
-    
+
     @Override
     public void hide() {
     }
-    
+
     @Override
     public void dispose() {
     }
