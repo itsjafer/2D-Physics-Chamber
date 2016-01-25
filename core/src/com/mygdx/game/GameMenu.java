@@ -44,7 +44,7 @@ public class GameMenu extends MyScreen {
     TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton, backToGame;
     Slider gravitySliderY, gravitySliderX, restitutionSlider, frictionSlider;
     Label labelGravityY, labelGravityX, labelRestitution, labelFriction;
-    CheckBox snapToGrid, playerRotate;
+    CheckBox snapToGrid, playerRotate, muteMusic;
     Color drawColour;
     ImageButton colourPalette;
     Pixmap canvas;
@@ -65,7 +65,7 @@ public class GameMenu extends MyScreen {
         super(gameStateManager);
         this.background = background;
     }
-
+    
     @Override
     public void init() {
 
@@ -124,6 +124,7 @@ public class GameMenu extends MyScreen {
         backToGame = new TextButton("Return to Game", defaultSkin);
         snapToGrid = new CheckBox("Snap to grid", defaultSkin);
         playerRotate = new CheckBox("Player rotation", defaultSkin);
+        muteMusic = new CheckBox("Mute Music", defaultSkin);
 
         //add objects to tableButtons
         tableButtons.add(resetPlayer).pad(4, 4, 4, 4);
@@ -133,6 +134,7 @@ public class GameMenu extends MyScreen {
         tableButtons.row();
         tableButtons.add(snapToGrid).pad(4, 4, 4, 4);
         tableButtons.add(playerRotate).pad(4, 0, 4, 4);
+        tableButtons.add(muteMusic).pad(4, 0, 4, 4);
 
         //tableSliders layout, aligned to bottom left
         stageMenu.addActor(tableSliders);
@@ -184,7 +186,7 @@ public class GameMenu extends MyScreen {
         textButtonStyle2.up = skinColourSample.newDrawable("white");
         textButtonStyle2.font = skinColourSample.getFont("default");
         skinColourSample.add("default", textButtonStyle2);
-
+        
         sampleColourButton = new TextButton("", skinColourSample);
 
         // add the buttons to tableColour
@@ -198,7 +200,7 @@ public class GameMenu extends MyScreen {
         //(each button/slider has a default listener, but we sometimes want another instead)
         addInputs();
     }
-
+    
     @Override
     public void update(float deltaTime) {
 
@@ -212,9 +214,9 @@ public class GameMenu extends MyScreen {
 
         //process all the inputs
         processInput();
-
+        
     }
-
+    
     @Override
     public void resize(int width, int height) {
         stageMenu.getViewport().update(width, height, true);
@@ -238,7 +240,7 @@ public class GameMenu extends MyScreen {
             frictionSlider.setValue(world.getFriction());
         }
     }
-
+    
     @Override
     public void show() {
     }
@@ -294,7 +296,7 @@ public class GameMenu extends MyScreen {
         //enable or disable snap to grid mode
         if (snapToGrid.isChecked()) {
             background.setGridMode(true);
-        } else if (!snapToGrid.isChecked()){
+        } else if (!snapToGrid.isChecked()) {
             background.setGridMode(false);
         }
 
@@ -328,8 +330,15 @@ public class GameMenu extends MyScreen {
             backToGame.setChecked(false);
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
         }
+        
+        //mute the music if the checkbox is checked
+        if (muteMusic.isChecked()) {
+            MusicManager.muteMusic();
+        } else {
+            MusicManager.unmuteMusic();
+        }
     }
-
+    
     public void addInputs() {
 
         //add a new listener to the slider. Update world setting based on what the user selects for sliders
@@ -397,19 +406,19 @@ public class GameMenu extends MyScreen {
         sampleColourButton.setColor(drawColour);
         background.drawColour = drawColour; // set the drawing colour in gamescreen
     }
-
+    
     @Override
     public void pause() {
     }
-
+    
     @Override
     public void resume() {
     }
-
+    
     @Override
     public void hide() {
     }
-
+    
     @Override
     public void dispose() {
     }
