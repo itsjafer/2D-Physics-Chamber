@@ -127,8 +127,8 @@ public class GameMenu extends MyScreen {
 
         //add objects to tableButtons
         tableButtons.add(resetPlayer).pad(4, 4, 4, 4);
-        tableButtons.add(resetLevel).pad(4, 0, 4, 4);
-        tableButtons.add(colours).pad(4, 4, 4, 4);
+        tableButtons.add(resetLevel).pad(4, 4, 4, 4);
+        tableButtons.add(colours).pad(4, 4, 4, 8);
         tableButtons.add(backToGame).pad(4, 4, 4, 4);
         tableButtons.row();
         tableButtons.add(snapToGrid).pad(4, 4, 4, 4);

@@ -150,7 +150,13 @@ public class LevelLoader {
         }
     }
 
+    /**
+     * Getter method for the slot names
+     * @param index the index of the level name desired
+     * @return the level name
+     */
     public String getSlotName(int index) {
+        //if a name hasn't been loaded yet,
         if (slotNames[index] == null) {
             FileReader file = null;
             try {
@@ -159,9 +165,10 @@ public class LevelLoader {
                 return "No Save Found";
             }
             Scanner input = new Scanner(file); //create a scanner out of the file that's been loaded in
-
+            //get the first line (the name)
             slotNames[index] = input.nextLine();
         }
+        //return the name at the index
         return slotNames[index];
     }
 }
