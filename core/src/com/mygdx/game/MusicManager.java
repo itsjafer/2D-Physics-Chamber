@@ -47,9 +47,9 @@ public class MusicManager {
     public static void muteMusic() {
         currentSong.setVolume(0f);
     }
-    
+
     /**
-     * Unmutes the current song but keeps it playing
+     * Unmutes the current song
      */
     public static void unmuteMusic() {
         currentSong.setVolume(0.5f);

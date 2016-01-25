@@ -13,6 +13,7 @@ import com.mygdx.game.gamescreen.ScreenManager;
 import com.mygdx.game.gamescreen.MyScreen;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -149,7 +150,7 @@ public class MainMenuScreen extends MyScreen {
 
     @Override
     public void update(float deltaTime) {
-        
+
         if (Gdx.input.getInputProcessor() != lastUsedProcessor) {
             Gdx.input.setInputProcessor(lastUsedProcessor);
         }

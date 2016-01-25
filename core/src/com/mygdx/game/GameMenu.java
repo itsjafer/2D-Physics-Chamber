@@ -44,7 +44,7 @@ public class GameMenu extends MyScreen {
     TextButton resetPlayer, resetLevel, colours, backToMenu, sampleColourButton, backToGame;
     Slider gravitySliderY, gravitySliderX, restitutionSlider, frictionSlider;
     Label labelGravityY, labelGravityX, labelRestitution, labelFriction;
-    CheckBox snapToGrid, playerRotate;
+    CheckBox snapToGrid, playerRotate, muteMusic;
     Color drawColour;
     ImageButton colourPalette;
     Pixmap canvas;
@@ -124,15 +124,17 @@ public class GameMenu extends MyScreen {
         backToGame = new TextButton("Return to Game", defaultSkin);
         snapToGrid = new CheckBox("Snap to grid", defaultSkin);
         playerRotate = new CheckBox("Player rotation", defaultSkin);
+        muteMusic = new CheckBox("Mute Music", defaultSkin);
 
         //add objects to tableButtons
         tableButtons.add(resetPlayer).pad(4, 4, 4, 4);
-        tableButtons.add(resetLevel).pad(4, 4, 4, 4);
-        tableButtons.add(colours).pad(4, 4, 4, 8);
-        tableButtons.add(backToGame).pad(4, 4, 4, 4);
+        tableButtons.add(resetLevel).pad(4, 4, 4, 0);
+        tableButtons.add(colours).pad(4, -1, 4, 4);
+        tableButtons.add(backToGame).pad(4, 0, 4, 4);
         tableButtons.row();
         tableButtons.add(snapToGrid).pad(4, 4, 4, 4);
         tableButtons.add(playerRotate).pad(4, 0, 4, 4);
+        tableButtons.add(muteMusic).pad(4, 0, 4, 4);
 
         //tableSliders layout, aligned to bottom left
         stageMenu.addActor(tableSliders);
@@ -294,7 +296,7 @@ public class GameMenu extends MyScreen {
         //enable or disable snap to grid mode
         if (snapToGrid.isChecked()) {
             background.setGridMode(true);
-        } else if (!snapToGrid.isChecked()){
+        } else if (!snapToGrid.isChecked()) {
             background.setGridMode(false);
         }
 
@@ -327,6 +329,13 @@ public class GameMenu extends MyScreen {
         if (backToGame.isChecked()) {
             backToGame.setChecked(false);
             gameStateManager.setGameScreen(ScreenManager.GameScreens.MAIN_GAME);
+        }
+
+        //mute the music if the checkbox is checked
+        if (muteMusic.isChecked()) {
+            MusicManager.muteMusic();
+        } else {
+            MusicManager.unmuteMusic();
         }
     }
 
