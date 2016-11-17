@@ -11,7 +11,7 @@ public class DesktopLauncher {
         config.title = "SAT Finpario";
         config.height = 768;
         config.width = 1366;
-        config.fullscreen = true;
+        config.fullscreen = false;
         new LwjglApplication(new MyGdxGame(), config);
     }
 }
